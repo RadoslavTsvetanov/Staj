@@ -1,5 +1,10 @@
 package uk.gov.hmcts.reform.demo.models;
-public class User {
 
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+
+@Entity
+public class User {
 }
 
