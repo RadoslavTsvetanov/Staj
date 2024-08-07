@@ -153,6 +153,8 @@ ext {
 ext['snakeyaml.version'] = '2.0'
 
 dependencies {
+  implementation 'org.postgresql:postgresql' // or the latest version
+  implementation 'com.zaxxer:HikariCP'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-actuator'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-aop'
@@ -165,15 +167,14 @@ dependencies {
   implementation group: 'org.apache.logging.log4j', name: 'log4j-to-slf4j', version: log4JVersion
   implementation group: 'ch.qos.logback', name: 'logback-classic', version: logbackVersion
   implementation group: 'ch.qos.logback', name: 'logback-core', version: logbackVersion
-
   implementation group: 'io.rest-assured', name: 'rest-assured'
-
-  testImplementation(platform('org.junit:junit-bom:5.10.3'))
+   testImplementation(platform('org.junit:junit-bom:5.10.3'))
   testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
   testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test', {
     exclude group: 'junit', module: 'junit'
     exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
   }
+  implementation 'org.springframework.boot:spring-boot-starter-web'
 }
 
 mainClassName = 'uk.gov.hmcts.reform.demo.Application'
