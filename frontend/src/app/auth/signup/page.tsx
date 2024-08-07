@@ -1,4 +1,9 @@
+"use client";
+
 import React from 'react';
+import { Canvas } from '@react-three/fiber';
+import { OrbitControls } from '@react-three/drei';
+import Earth from '../../../../public/Earth';
 
 export default function SignUpRoute() {
   return (
@@ -6,6 +11,17 @@ export default function SignUpRoute() {
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
           <form method="POST" action="#">
+            <div>
+              <Canvas style={{ height: '200px'}}>
+                <ambientLight intensity={0.5} />
+                <directionalLight position={[10, 10, 5]} intensity={1} />
+                <Earth />
+                <OrbitControls />
+              </Canvas>
+              <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900">
+                Sign up
+              </h2>
+            </div>
             <div>
               <label className="block text-sm font-medium text-gray-700" htmlFor="username">
                 Username
@@ -34,22 +50,6 @@ export default function SignUpRoute() {
                   type="email"
                   name="email"
                   id="email"
-                />
-              </div>
-            </div>
-
-            <div className="mt-6">
-              <label className="block text-sm font-medium text-gray-700" htmlFor="confirm-email">
-                Confirm Email address
-              </label>
-              <div className="mt-1">
-                <input
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                  required
-                  autoComplete="email"
-                  type="email"
-                  name="confirm-email"
-                  id="confirm-email"
                 />
               </div>
             </div>
@@ -86,33 +86,6 @@ export default function SignUpRoute() {
               </div>
             </div>
 
-            <div className="mt-6">
-              <label className="block text-sm font-medium text-gray-700" htmlFor="dob">
-                Date of Birth
-              </label>
-              <div className="mt-1">
-                <input
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                  required
-                  type="date"
-                  name="dob"
-                  id="dob"
-                />
-              </div>
-            </div>
-            
-            <div className="flex items-center justify-center mt-6">
-              <span className="mr-3 text-gray-700 font-medium">Gender:</span>
-              <label className="inline-flex items-center">
-                <input type="radio" className="form-radio h-5 w-5 text-pink-600" name="gender" value="Male" />
-                <span className="ml-2 text-gray-700">Male</span>
-              </label>
-              <label className="inline-flex items-center ml-6">
-                <input type="radio" className="form-radio h-5 w-5 text-purple-600" name="gender" value="Female" />
-                <span className="ml-2 text-gray-700">Female</span>
-              </label>
-            </div>
-
             <div className="mt-6 flex items-center justify-between">
               <div className="flex items-center">
                 <input
@@ -121,8 +94,14 @@ export default function SignUpRoute() {
                   name="terms-and-condition"
                   id="terms-and-condition"
                 />
-                <label className="ml-2 block text-sm text-gray-900" htmlFor="terms-and-condition">
-                  I agree to the terms and conditions
+                <label className="mt-2 text-center text-sm text-gray-600">
+                  I agree to the {''}
+                  <a
+                  href="./signup/tandc"
+                  className="font-medium text-indigo-600 hover:text-indigo-500"
+                  >
+                   terms and conditions
+                  </a>
                 </label>
               </div>
             </div>
