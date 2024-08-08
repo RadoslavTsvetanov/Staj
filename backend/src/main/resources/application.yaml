@@ -43,7 +43,7 @@ spring:
     properties:
       show-sql: true
       hibernate:
-        ddl-auto: create
+        ddl-auto: update
         dialect: org.hibernate.dialect.PostgreSQLDialect
         jdbc:
           lob:
