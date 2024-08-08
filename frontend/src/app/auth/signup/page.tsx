@@ -8,13 +8,13 @@ import Earth from '../../../../public/Earth';
 export default function SignUpRoute() {
   return (
     <div className="flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+      <div className="mt-4 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
           <form method="POST" action="#">
             <div>
-              <Canvas style={{ height: '200px'}}>
-                <ambientLight intensity={0.5} />
-                <directionalLight position={[10, 10, 5]} intensity={1} />
+              <Canvas style={{ height: '150px'}}>
+                <ambientLight intensity={1.5} />
+                <directionalLight position={[10, 10, 5]} intensity={2} />
                 <Earth />
                 <OrbitControls />
               </Canvas>
