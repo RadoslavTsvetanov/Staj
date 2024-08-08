@@ -27,9 +27,9 @@ spring:
     name: Spring Boot Template
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://viaduct.proxy.rlwy.net:54520/railway
+    url: jdbc:postgresql://localhost:5432/TEST
     username: postgres
-    password: XeHpLcShvJbxgoehGiuerfwGzeNxnFXJ
+    password: marmalad
     properties:
       charSet: UTF-8
     hikari:
@@ -41,8 +41,10 @@ spring:
       connectionTimeout: 30000
   jpa:
     properties:
+      show-sql: true
       hibernate:
         ddl-auto: create
+        dialect: org.hibernate.dialect.PostgreSQLDialect
         jdbc:
           lob:
             # silence the 'wall-of-text' - unnecessary exception throw about blob types

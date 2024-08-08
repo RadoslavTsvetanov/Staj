@@ -168,6 +168,7 @@ dependencies {
   implementation group: 'ch.qos.logback', name: 'logback-core', version: logbackVersion
 
   implementation group: 'io.rest-assured', name: 'rest-assured'
+  implementation 'org.flywaydb:flyway-core'
 
   testImplementation(platform('org.junit:junit-bom:5.10.3'))
   testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
