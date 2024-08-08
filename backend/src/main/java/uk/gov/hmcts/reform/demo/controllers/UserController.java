@@ -3,6 +3,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import uk.gov.hmcts.reform.demo.models.User;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/users")
 public class UserController {
@@ -11,9 +13,8 @@ public class UserController {
     private uk.gov.hmcts.reform.demo.services.UserService testTableService;
 
     @GetMapping
-    public String getAllTestTables() {
-//        return testTableService.findAll();
-        return "hi";
+    public List<User> getAllTestTables() {
+        return testTableService.findAll();
     }
 
     @PostMapping
