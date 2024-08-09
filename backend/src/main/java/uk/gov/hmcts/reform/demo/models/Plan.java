@@ -28,6 +28,14 @@ public class Plan {
     )
     private Set<User> users = new HashSet<>();
 
+    @ManyToMany
+    @JoinTable(
+        name = "plan_locations",
+        joinColumns = @JoinColumn(name = "plan_id"),
+        inverseJoinColumns = @JoinColumn(name = "location_id")
+    )
+    private Set<Location> locations = new HashSet<>();
+
     // Getters and setters
     public Long getId() {
         return id;
@@ -67,5 +75,13 @@ public class Plan {
 
     public void setUsers(Set<User> users) {
         this.users = users;
+    }
+
+    public Set<Location> getLocations() {
+        return locations;
+    }
+
+    public void setLocations(Set<Location> locations) {
+        this.locations = locations;
     }
 }

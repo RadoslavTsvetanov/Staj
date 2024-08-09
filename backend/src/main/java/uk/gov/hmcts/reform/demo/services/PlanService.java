@@ -2,8 +2,10 @@ package uk.gov.hmcts.reform.demo.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import uk.gov.hmcts.reform.demo.models.Location;
 import uk.gov.hmcts.reform.demo.models.Plan;
 import uk.gov.hmcts.reform.demo.models.User;
+import uk.gov.hmcts.reform.demo.repositories.LocationRepo;
 import uk.gov.hmcts.reform.demo.repositories.PlanRepo;
 import uk.gov.hmcts.reform.demo.repositories.UserRepo;
 
@@ -19,6 +21,9 @@ public class PlanService {
     @Autowired
     private UserRepo userRepo;
 
+    @Autowired
+    private LocationRepo locationRepo;
+
     public Plan save(Plan plan) {
         return planRepo.save(plan);
     }
@@ -33,6 +38,21 @@ public class PlanService {
         }
 
         plan.getUsers().add(user);
+        return planRepo.save(plan);
+    }
+
+    public Plan addLocationsToPlan(Long planId, List<String> locationNames) {
+        Plan plan = planRepo.findById(planId)
+            .orElseThrow(() -> new NoSuchElementException("Plan not found with id " + planId));
+
+        for (String name : locationNames) {
+            Location location = locationRepo.findByName(name);
+            if (location == null) {
+                throw new NoSuchElementException("Location not found with name " + name);
+            }
+            plan.getLocations().add(location);
+        }
+
         return planRepo.save(plan);
     }
 

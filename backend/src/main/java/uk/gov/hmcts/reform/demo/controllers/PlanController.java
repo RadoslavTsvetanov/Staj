@@ -33,4 +33,10 @@ public class PlanController {
     public Plan addUserToPlan(@PathVariable Long planId, @RequestParam String username) {
         return planService.addUserToPlan(planId, username);
     }
+
+    //@PostMapping("/{planId}/locations")
+    @PutMapping("/{planId}/locations")
+    public Plan addLocationsToPlan(@PathVariable Long planId, @RequestBody List<String> locationNames) {
+        return planService.addLocationsToPlan(planId, locationNames);
+    }
 }
