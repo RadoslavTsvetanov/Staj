@@ -1,13 +1,13 @@
 "use client";
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 import Earth from '../../../../public/Earth';
 
 export default function SignUpRoute() {
   return (
-    <div className="relative flex flex-col justify-center py-12 sm:px-6 lg:px-8 bg-main-bg">
+    <div className="relative flex flex-col justify-center py-12 sm:px-6 lg:px-8 bg-[#0e6cc4] w-full h-full">
       {/* Wave animation */}
       <div className='box'>
         <div className='wave -one'></div>
@@ -97,6 +97,7 @@ export default function SignUpRoute() {
               <div className="flex items-center">
                 <input
                   className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+                  required
                   type="checkbox"
                   name="terms-and-condition"
                   id="terms-and-condition"
@@ -142,7 +143,6 @@ export default function SignUpRoute() {
       <style jsx>{`
         .bg-main-bg {
           background-color: #0e6cc4;
-          width: 100%;
         }
 
         .box {
