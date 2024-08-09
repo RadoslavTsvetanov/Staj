@@ -7,7 +7,7 @@ import Earth from '../../../../public/Earth';
 
 export default function SignUpRoute() {
   return (
-    <div className="relative flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div className="relative flex flex-col justify-center py-12 sm:px-6 lg:px-8 bg-main-bg">
       {/* Wave animation */}
       <div className='box'>
         <div className='wave -one'></div>
@@ -101,7 +101,7 @@ export default function SignUpRoute() {
                   name="terms-and-condition"
                   id="terms-and-condition"
                 />
-                <label className="mt-2 text-center text-sm text-gray-600">
+                <label className="ml-2 block text-sm text-gray-600">
                   I agree to the {''}
                   <a
                   href="./signup/tandc"
@@ -126,12 +126,9 @@ export default function SignUpRoute() {
       </div>
 
       <style jsx>{`
-        body {
-          margin: 0;
-          padding: 0;
+        .bg-main-bg {
           background-color: #0e6cc4;
-          overflow-x: hidden;
-          overflow-y: hidden;
+          width: 100%;
         }
 
         .box {
