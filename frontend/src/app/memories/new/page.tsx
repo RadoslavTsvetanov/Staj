@@ -1,4 +1,5 @@
 "use client"
+import { cookies } from "@/utils";
 import React, { useState } from "react";
 
 const FileUploadForm = () => {
@@ -18,7 +19,7 @@ const FileUploadForm = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-
+    console.log(cookies.authToken.get())
     if (!file || !username) {
       setError("Please provide both a file and a username.");
       return;
