@@ -1,6 +1,6 @@
 "use client";
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 import Earth from '../../../../public/Earth';
@@ -118,8 +118,22 @@ export default function SignUpRoute() {
                 className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                 type="submit"
               >
-                Sign up
+                Next
               </button>
+            </div>
+
+            <div className="mt-6 flex items-center justify-between">
+              <div className="flex items-center">
+                <label className="ml-2 block text-sm text-gray-600">
+                  Already have an account? {''}
+                  <a
+                  href="./signin"
+                  className="font-medium text-indigo-600 hover:text-indigo-500"
+                  >
+                   Log in!
+                  </a>
+                </label>
+              </div>
             </div>
           </form>
         </div>

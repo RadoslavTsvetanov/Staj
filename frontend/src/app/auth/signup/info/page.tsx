@@ -33,6 +33,12 @@ export default function InfoRoute() {
                             id="dob"
                           />
                         </div>
+                        <label className='block text-sm font-medium text-gray-700'>
+                            Interests
+                        </label>
+                        <div className="block text-sm font-medium text-gray-700">
+                            
+                        </div>
                     </div>
                 </div>
             </div>
