@@ -1,0 +1,51 @@
+server:
+  port: 4550
+  shutdown: "graceful"
+
+management:
+  endpoint:
+    health:
+      show-details: "always"
+  endpoints:
+    web:
+      base-path: /
+      exposure:
+        include: health, info, prometheus
+
+springdoc:
+  packagesToScan: uk.gov.hmcts.reform.demo.controllers
+  writer-with-order-by-keys: true
+
+spring:
+  config:
+    import: "optional:configtree:/mnt/secrets/rpe/"
+  application:
+    name: Spring Boot Template
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://postgres:XeHpLcShvJbxgoehGiuerfwGzeNxnFXJ@viaduct.proxy.rlwy.net:54520/railway
+    username: "postgres"
+    password: "XeHpLcShvJbxgoehGiuerfwGzeNxnFXJ"
+    properties:
+      charSet: UTF-8
+    hikari:
+      minimumIdle: 2
+      maximumPoolSize: 10
+      idleTimeout: 10000
+      poolName: MyHikariCP
+      maxLifetime: 7200000
+      connectionTimeout: 30000
+  jpa:
+    hibernate:
+      ddl-auto: update # Consider using 'validate' or 'none' for production
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+      jdbc:
+        lob:
+          non_contextual_creation: true
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        use_sql_comments: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
