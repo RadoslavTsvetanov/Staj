@@ -2,7 +2,6 @@ CREATE SEQUENCE credentials_seq;
 
 CREATE TABLE credentials (
     id BIGINT PRIMARY KEY DEFAULT nextval('credentials_seq'),
-    username_cred VARCHAR(255) UNIQUE,
     password VARCHAR(255),
     email VARCHAR(255) UNIQUE
 );

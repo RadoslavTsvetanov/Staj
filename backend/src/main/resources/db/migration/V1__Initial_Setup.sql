@@ -1,5 +1,8 @@
+CREATE SEQUENCE users_seq;
+
 CREATE TABLE users (
     id BIGSERIAL PRIMARY KEY,
-    username VARCHAR(255) NOT NULL,
-    age INT
+    username VARCHAR(255) NOT NULL UNIQUE,
+    age INT,
+    name VARCHAR(255) NOT NULL
 );

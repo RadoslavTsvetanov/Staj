@@ -13,6 +13,7 @@ public class User {
 
     private String username;
     private Integer age;
+    private String name;
 
     @OneToOne
     @JoinColumn(name = "credentials_id", referencedColumnName = "id")
@@ -62,5 +63,14 @@ public class User {
 
     public void setPreferences(Preferences preferences) {
         this.preferences = preferences;
+    }
+
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

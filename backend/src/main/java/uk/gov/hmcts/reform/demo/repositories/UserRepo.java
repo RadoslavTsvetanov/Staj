@@ -8,9 +8,7 @@ import java.util.Optional;
 public interface UserRepo extends JpaRepository<User, Long> {
 
     User findByUsername(String username);
-
-    // Custom query method to find User by the username in Credentials
-    User findByCredentials_Username(String username);
+    //User findByCredentials_Email(String email);
     Optional<User> findById(Long id);
 
 }

@@ -4,5 +4,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import uk.gov.hmcts.reform.demo.models.Credentials;
 
 public interface CredentialsRepo extends JpaRepository<Credentials, Long> {
-    Credentials findByUsername(String username);
+    Credentials findByEmail(String email);
 }

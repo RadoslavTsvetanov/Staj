@@ -27,7 +27,7 @@ spring:
     name: Spring Boot Template
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/TEST
+    url: jdbc:postgresql://localhost:5432/Staj
     username: postgres
     password: marmalad
     properties:
@@ -43,7 +43,7 @@ spring:
     properties:
       show-sql: true
       hibernate:
-        ddl-auto: create
+        ddl-auto: update
         dialect: org.hibernate.dialect.PostgreSQLDialect
         jdbc:
           lob:
