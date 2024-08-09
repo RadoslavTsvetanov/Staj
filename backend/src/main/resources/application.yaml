@@ -21,15 +21,17 @@ springdoc:
   writer-with-order-by-keys: true
 
 spring:
+  flyway:
+    baseline-on-migrate: true
   config:
     import: "optional:configtree:/mnt/secrets/rpe/"
   application:
     name: Spring Boot Template
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/TEST
+    url: jdbc:postgresql://viaduct.proxy.rlwy.net:54520/railway
     username: postgres
-    password: marmalad
+    password: XeHpLcShvJbxgoehGiuerfwGzeNxnFXJ
     properties:
       charSet: UTF-8
     hikari:
@@ -40,10 +42,13 @@ spring:
       maxLifetime: 7200000
       connectionTimeout: 30000
   jpa:
+    generate-ddl: true
     properties:
+      generate-ddl: true
       show-sql: true
       hibernate:
-        ddl-auto: create
+        generate-ddl: true
+        ddl-auto: create-drop
         dialect: org.hibernate.dialect.PostgreSQLDialect
         jdbc:
           lob:
