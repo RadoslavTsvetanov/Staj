@@ -25,5 +25,6 @@ public class RootController {
     public ResponseEntity<String> welcome() {
         return ok("Welcome ggggggg to spring-boot-template");
     }
+    @GetMapping("/healthy")
     public ResponseEntity<String> hi() {return ok("koko"); }
 }

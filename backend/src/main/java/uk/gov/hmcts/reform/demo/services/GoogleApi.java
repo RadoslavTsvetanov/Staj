@@ -58,7 +58,11 @@ public class GoogleApi {
                 "&type=" + types.get(i) + // note only one type can be specified
                 "&key=" + secrets.googleMapsApiKey;
             System.out.println(url);
+<<<<<<< HEAD
             ObjectMapper objMapper = new ObjectMapper();
+=======
+            ObjectMapper objMapper = new com.fasterxml.jackson.databind.ObjectMapper();
+>>>>>>> a75daa6f87d7b9432c2d07570ee511b127f4932c
             try{
                 String apiRes = restTemplate.getForObject(url, String.class);
                 NearbyPlacesResponse response =  objMapper.readValue(apiRes, NearbyPlacesResponse.class);
