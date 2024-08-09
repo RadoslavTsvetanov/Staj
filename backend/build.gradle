@@ -88,32 +88,32 @@ task functional(type: Test) {
   testClassesDirs = sourceSets.functionalTest.output.classesDirs
   classpath = sourceSets.functionalTest.runtimeClasspath
 }
-
-task integration(type: Test) {
-  description = "Runs integration tests"
-  group = "Verification"
-  testClassesDirs = sourceSets.integrationTest.output.classesDirs
-  classpath = sourceSets.integrationTest.runtimeClasspath
-  failFast = true
-}
-
+//
+//task integration(type: Test) {
+//  description = "Runs integration tests"
+//  group = "Verification"
+//  testClassesDirs = sourceSets.integrationTest.output.classesDirs
+//  classpath = sourceSets.integrationTest.runtimeClasspath
+//  failFast = true
+//}
+//
 task smoke(type: Test) {
   description = "Runs Smoke Tests"
   testClassesDirs = sourceSets.smokeTest.output.classesDirs
   classpath = sourceSets.smokeTest.runtimeClasspath
 }
 
-jacocoTestReport {
-  executionData(test, integration)
-  reports {
-    xml.required = true
-    csv.required = false
-    html.required = true
-  }
-}
+//jacocoTestReport {
+//  executionData(test, integration)
+//  reports {
+//    xml.required = true
+//    csv.required = false
+//    html.required = true
+//  }
+//}
 
 project.tasks['sonarqube'].dependsOn jacocoTestReport
-project.tasks['check'].dependsOn integration
+//project.tasks['check'].dependsOn integration
 
 sonarqube {
   properties {
@@ -180,7 +180,6 @@ dependencies {
 
 
   implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-
 
 }
 

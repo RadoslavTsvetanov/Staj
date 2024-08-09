@@ -40,6 +40,8 @@ spring:
       maxLifetime: 7200000
       connectionTimeout: 30000
   jpa:
+    generate-ddl: true
+
     properties:
       show-sql: true
       hibernate:

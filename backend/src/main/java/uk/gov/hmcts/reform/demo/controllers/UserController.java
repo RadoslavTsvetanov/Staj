@@ -7,6 +7,8 @@ import uk.gov.hmcts.reform.demo.services.UserService;
 
 import java.util.List;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/users")
 public class UserController {
