@@ -18,6 +18,10 @@ public class User {
     @JoinColumn(name = "credentials_id", referencedColumnName = "id")
     private Credentials credentials;
 
+    @OneToOne
+    @JoinColumn(name = "preferences_id", referencedColumnName = "id")
+    private Preferences preferences;
+
     // Getters and setters
 
     public Long getId() {
@@ -50,5 +54,13 @@ public class User {
 
     public void setCredentials(Credentials credentials) {
         this.credentials = credentials;
+    }
+
+    public Preferences getPreferences() {
+        return preferences;
+    }
+
+    public void setPreferences(Preferences preferences) {
+        this.preferences = preferences;
     }
 }
