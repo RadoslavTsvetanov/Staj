@@ -1,23 +1,26 @@
 package uk.gov.hmcts.reform.demo.controllers;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import uk.gov.hmcts.reform.demo.models.User;
+import uk.gov.hmcts.reform.demo.services.UserService;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/users")
 public class UserController {
 
     @Autowired
-    private uk.gov.hmcts.reform.demo.services.UserService testTableService;
+    private UserService userService;
 
     @GetMapping
-    public String getAllTestTables() {
-//        return testTableService.findAll();
-        return "hi";
+    public List<User> getAllUsers() {
+        return userService.findAll();
     }
 
     @PostMapping
-    public User createTestTable(@RequestBody User testTable) {
-        return testTableService.save(testTable);
+    public User createUser(@RequestBody User user) {
+        return userService.save(user);
     }
 }

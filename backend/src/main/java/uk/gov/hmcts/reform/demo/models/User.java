@@ -14,6 +14,10 @@ public class User {
     private String username;
     private Integer age;
 
+    @OneToOne
+    @JoinColumn(name = "credentials_id", referencedColumnName = "id")
+    private Credentials credentials;
+
     // Getters and setters
 
     public Long getId() {
@@ -38,5 +42,13 @@ public class User {
 
     public void setAge(Integer age) {
         this.age = age;
+    }
+
+    public Credentials getCredentials() {
+        return credentials;
+    }
+
+    public void setCredentials(Credentials credentials) {
+        this.credentials = credentials;
     }
 }
