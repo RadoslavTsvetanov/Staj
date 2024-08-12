@@ -5,6 +5,8 @@ import org.springframework.stereotype.Service;
 import uk.gov.hmcts.reform.demo.models.Credentials;
 import uk.gov.hmcts.reform.demo.repositories.CredentialsRepo;
 
+import java.util.List;
+
 @Service
 public class CredentialsService {
 
@@ -13,5 +15,13 @@ public class CredentialsService {
 
     public Credentials findByEmail(String email) {
         return credentialsRepo.findByEmail(email);
+    }
+
+    public Credentials save(Credentials credentials) {
+        return credentialsRepo.save(credentials);
+    }
+
+    public List<Credentials> findAll() {
+        return credentialsRepo.findAll();
     }
 }
