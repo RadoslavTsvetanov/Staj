@@ -95,14 +95,29 @@ public class MemoryController {
         @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
 
         if(location != null && date != null) {
+            System.out.println("kkkkkkkkkkkkkkk");
             return memoryService.findByDateAndLocation(date, location.trim());
-        } else if (location != null) {
-            return memoryService.findByLocationIgnoreCase(location.trim()); // ne raboti poradi nqkakva prichina, koqto az ne moga da razbera
-        } else if (date != null) {
-            return memoryService.findByDate(date);
-        } else {
-            return new ArrayList<>();
         }
+
+        if (location != null) {
+            System.out.println(location);
+            System.out.println("kkkkkkkkkkkkkkk22222222222");
+
+            return memoryService.findByLocation(location); // ne raboti poradi nqkakva prichina, koqto az ne moga da razbera
+        }
+
+        if (date != null) {
+
+            System.out.println("kkkkkkkkkkkkkkk3333333333333333333333333");
+
+            return memoryService.findByDate(date);
+        }
+        System.out.println("kkkkkkkkkkkkkkk55555555555555555555");
+
+        return new ArrayList<>();
+
+
+
     }
 }
 
