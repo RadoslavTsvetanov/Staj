@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState } from "react";
-import { Button } from "../../../../components/ui/button";
 
 const interestsList = [
     "Art",
@@ -17,16 +16,34 @@ const interestsList = [
     "Shopping",
     "Relax",
     "Religion",
-    "Flora"
+    "Flora",
+    "Food"
+]
+
+const foodSubInterests = [
+    "Cafe",
+    "Vegan",
+    "Fast food",
+    "Bar",
+    "Bakery",
+    "Deserts"
 ]
 
 export default function InfoRoute() {
     const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
+    const [showFoodSubInterests, setShowFoodSubInterests] = useState(false);
+
     const toggleInterest = (interest: string) => {
         if (selectedInterests.includes(interest)) {
           setSelectedInterests(selectedInterests.filter((item) => item !== interest));
+          if (interest === "Food") {
+            setShowFoodSubInterests(false);
+        }
         } else {
           setSelectedInterests([...selectedInterests, interest]);
+          if (interest === "Food") {
+            setShowFoodSubInterests(true);
+        }
         }
       };
     
@@ -42,9 +59,12 @@ export default function InfoRoute() {
         <div className="mt-4 sm:mx-auto sm:w-full sm:max-w-md z-10">
             <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
                 <form method="POST" action="#">
-                        <h1 className="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900">
-                         Let's get to know you!
-                        </h1>
+
+                    <h1 className="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900">
+                        Let's get to know you!
+                    </h1>
+
+                    <div className="mt-4">
                         <label className="mt-6">
                             Name
                         </label>
@@ -57,34 +77,61 @@ export default function InfoRoute() {
                             id="name"
                             />
                         </div>
+                    </div>
+
+                    <div className="mt-4">
                         <label className="block text-sm font-medium text-gray-700" htmlFor="dob">
-                          Date of Birth
+                        Date of Birth
                         </label>
                         <div className="mt-1">
-                          <input
+                            <input
                             className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                             required
                             type="date"
                             name="dob"
                             id="dob"
-                          />
+                            />
                         </div>
+                    </div>
+
+                    <div className="mt-4">
                         <label className='block text-sm font-medium text-gray-700'>
                             Interests
                         </label>
-                        <div className="flex flex-wrap gap-2">
+                        <div className="appearance-none w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm flex flex-wrap gap-2">
                             {interestsList.map((interest) => (
                                 <button
                                     key={interest}
                                     onClick={() => toggleInterest(interest)}
-                                    className={`px-4 py-2 rounded-lg border 
+                                    className={`px-3 py-1 rounded-lg border 
                                     ${selectedInterests.includes(interest) ? "bg-blue-300 text-white" : "bg-gray-200 text-gray-700"}
                                     `}
                                 >
                                     {interest}
                                 </button>
                             ))}
+                            {showFoodSubInterests && foodSubInterests.map((subInterest) => (
+                                <button
+                                    key={subInterest}
+                                    onClick={() => toggleInterest(subInterest)}
+                                    className={`px-3 py-1 rounded-lg border 
+                                ${selectedInterests.includes(subInterest) ? "bg-blue-300 text-white" : "bg-gray-200 text-gray-700"}
+                                `}
+                                >
+                                    {subInterest}
+                                </button>
+                            ))}
                         </div>
+                    </div>
+
+                    <div className="mt-4">
+                        <button
+                        className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                        type="submit"
+                        >
+                        Sign up
+                        </button>
+                    </div>
                 </form>
             </div>
         </div>
