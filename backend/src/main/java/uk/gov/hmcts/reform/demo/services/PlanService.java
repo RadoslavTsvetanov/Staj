@@ -23,7 +23,14 @@ public class PlanService {
     @Autowired
     private DateWindowRepo dateWindowRepo;
 
+    @Autowired
+    private HistoryRepo historyRepo;
+
     public Plan save(Plan plan) {
+        History history = new History();
+        historyRepo.save(history); // Save the history to get the generated ID
+
+        plan.setHistory(history); // Associate the new history with the plan
         return planRepo.save(plan);
     }
 
