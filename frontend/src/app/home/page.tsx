@@ -3,6 +3,9 @@
 import React, {useEffect} from "react";
 import { Loader } from "@googlemaps/js-api-loader";
 
+import Plan from "@/components/ui/plan";
+import Navbar from '@/components/ui/navbar';
+
 export default function Map()
 {
     const mapRef = React.useRef<HTMLDivElement>(null);
@@ -47,6 +50,26 @@ export default function Map()
   
 
     return (
-        <div style={{height:'600px'}} ref={mapRef}/>
+
+        <div>
+        <Navbar/>
+        
+        <div style={{ display: 'flex', height: '90vh' }}>
+            <div style={{ width: '50vw', borderRadius: '5%' }} ref={mapRef} />
+            <div style={{ width: '50vw',backgroundColor:'blue'}}>
+                <div style={{ height: '50%', backgroundColor: 'pink',borderRadius: '10%', margin:"1%" }}>
+                    <h1>Current trips</h1>
+                    <Plan name="Mountains" />
+                    <Plan name="Rivers" />
+                    <Plan name="Forests" />
+                </div>
+                <div style={{ height: '50%', backgroundColor: 'purple',borderRadius: '5%', margin:"1%" }}>pink</div>
+            </div>
+        </div>
+    </div>
+    
+
+
+
     )
 }
