@@ -114,6 +114,21 @@ export default function SignUpRoute() {
               </div>
             </div>
 
+            <div className="mt-4 flex items-center justify-between">
+              <div className="flex items-center">
+                <input
+                  className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+                  required
+                  type="checkbox"
+                  name="remember-me"
+                  id="remember-me"
+                />
+                <label className="ml-2 block text-sm text-gray-600">
+                  Remember me
+                </label>
+              </div>
+            </div>
+
             <div className="mt-4">
               <button
                 className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
