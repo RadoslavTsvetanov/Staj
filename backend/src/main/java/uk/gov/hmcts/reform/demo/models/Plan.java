@@ -15,6 +15,7 @@ public class Plan {
 
     private Integer estCost;
     private Integer budget;
+    private String name;
 
     @OneToOne
     @JoinColumn(name = "date_window_id", referencedColumnName = "id")
@@ -52,6 +53,10 @@ public class Plan {
     public void setEstCost(Integer estCost) {
         this.estCost = estCost;
     }
+
+    public void setName(String name) { this.name = name; }
+
+    public String getName() { return name; }
 
     public Integer getBudget() {
         return budget;

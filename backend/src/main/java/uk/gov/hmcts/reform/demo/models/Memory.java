@@ -1,7 +1,6 @@
 package uk.gov.hmcts.reform.demo.models;
 
 import jakarta.persistence.*;
-
 import java.time.LocalDate;
 
 @Entity
@@ -9,8 +8,8 @@ import java.time.LocalDate;
 public class Memory {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "plan_seq_gen")
-    @SequenceGenerator(name = "plan_seq_gen", sequenceName = "plan_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "memory_seq_gen")
+    @SequenceGenerator(name = "memory_seq_gen", sequenceName = "memory_seq", allocationSize = 1)
     private Long id;
 
     private String image;

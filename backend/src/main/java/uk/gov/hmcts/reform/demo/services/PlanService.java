@@ -2,12 +2,8 @@ package uk.gov.hmcts.reform.demo.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import uk.gov.hmcts.reform.demo.models.Location;
-import uk.gov.hmcts.reform.demo.models.Plan;
-import uk.gov.hmcts.reform.demo.models.User;
-import uk.gov.hmcts.reform.demo.repositories.LocationRepo;
-import uk.gov.hmcts.reform.demo.repositories.PlanRepo;
-import uk.gov.hmcts.reform.demo.repositories.UserRepo;
+import uk.gov.hmcts.reform.demo.models.*;
+import uk.gov.hmcts.reform.demo.repositories.*;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -23,6 +19,9 @@ public class PlanService {
 
     @Autowired
     private LocationRepo locationRepo;
+
+    @Autowired
+    private DateWindowRepo dateWindowRepo;
 
     public Plan save(Plan plan) {
         return planRepo.save(plan);
@@ -62,5 +61,21 @@ public class PlanService {
 
     public List<Plan> findAll() {
         return planRepo.findAll();
+    }
+
+    public Plan setDateWindowToPlan(Long planId, Long dateWindowId, DateWindow newDateWindow) {
+        Plan plan = planRepo.findById(planId)
+            .orElseThrow(() -> new NoSuchElementException("Plan not found with id " + planId));
+
+        if (dateWindowId != null) {
+            DateWindow existingDateWindow = dateWindowRepo.findById(dateWindowId)
+                .orElseThrow(() -> new NoSuchElementException("DateWindow not found with id " + dateWindowId));
+            plan.setDateWindow(existingDateWindow);
+        } else {
+            DateWindow savedDateWindow = dateWindowRepo.save(newDateWindow);
+            plan.setDateWindow(savedDateWindow);
+        }
+
+        return planRepo.save(plan);
     }
 }

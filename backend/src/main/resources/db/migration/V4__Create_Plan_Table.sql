@@ -8,6 +8,7 @@ CREATE TABLE plan (
     id BIGSERIAL PRIMARY KEY,
     est_cost INT NOT NULL,
     budget INT NOT NULL,
+    name VARCHAR(255) NOT NULL,
     date_window_id BIGINT,
     CONSTRAINT fk_date_window
         FOREIGN KEY (date_window_id)

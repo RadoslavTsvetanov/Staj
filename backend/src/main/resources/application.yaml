@@ -27,7 +27,7 @@ spring:
     name: Spring Boot Template
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/Staj
+    url: jdbc:postgresql://localhost:5432/Staj #pri men si e jdbc:postgresql://localhost:5432/Staj
     username: postgres
     password: marmalad
     properties:

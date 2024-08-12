@@ -2,6 +2,8 @@ package uk.gov.hmcts.reform.demo.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import uk.gov.hmcts.reform.demo.models.DateWindow;
+import uk.gov.hmcts.reform.demo.models.History;
 import uk.gov.hmcts.reform.demo.models.Plan;
 import uk.gov.hmcts.reform.demo.services.PlanService;
 
@@ -34,9 +36,17 @@ public class PlanController {
         return planService.addUserToPlan(planId, username);
     }
 
-    //@PostMapping("/{planId}/locations")
     @PutMapping("/{planId}/locations")
     public Plan addLocationsToPlan(@PathVariable Long planId, @RequestBody List<String> locationNames) {
         return planService.addLocationsToPlan(planId, locationNames);
+    }
+
+    @PutMapping("/{planId}/date-window")
+    public Plan setDateWindowToPlan(
+        @PathVariable Long planId,
+        @RequestParam(required = false) Long dateWindowId,
+        @RequestBody(required = false) DateWindow newDateWindow
+    ) {
+        return planService.setDateWindowToPlan(planId, dateWindowId, newDateWindow);
     }
 }
