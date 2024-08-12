@@ -1,10 +1,36 @@
 "use client";
 
 import React, { useState } from "react";
+import { Button } from "../../../../components/ui/button";
+
+const interestsList = [
+    "Art",
+    "Sports",
+    "Books",
+    "Education",
+    "Entertainment",
+    "Hiking",
+    "History",
+    "Movies",
+    "Theater",
+    "Animals",
+    "Shopping",
+    "Relax",
+    "Religion",
+    "Flora"
+]
 
 export default function InfoRoute() {
-  const [color, changeColor] = useState("#abe0f7");
-  return(
+    const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
+    const toggleInterest = (interest: string) => {
+        if (selectedInterests.includes(interest)) {
+          setSelectedInterests(selectedInterests.filter((item) => item !== interest));
+        } else {
+          setSelectedInterests([...selectedInterests, interest]);
+        }
+      };
+    
+    return(
     <div className="relative flex flex-col justify-center py-12 sm:px-6 lg:px-8 bg-[#0e6cc4] w-full h-screen">
         {/* Wave animation */}
         <div className='box'>
@@ -46,12 +72,22 @@ export default function InfoRoute() {
                         <label className='block text-sm font-medium text-gray-700'>
                             Interests
                         </label>
-                        <div className="block text-sm font-medium text-gray-700">
-                            
+                        <div className="flex flex-wrap gap-2">
+                            {interestsList.map((interest) => (
+                                <button
+                                    key={interest}
+                                    onClick={() => toggleInterest(interest)}
+                                    className={`px-4 py-2 rounded-lg border 
+                                    ${selectedInterests.includes(interest) ? "bg-blue-300 text-white" : "bg-gray-200 text-gray-700"}
+                                    `}
+                                >
+                                    {interest}
+                                </button>
+                            ))}
                         </div>
-                    </form>
-                </div>
+                </form>
             </div>
+        </div>
             
         <style jsx>{`
         .bg-main-bg {
