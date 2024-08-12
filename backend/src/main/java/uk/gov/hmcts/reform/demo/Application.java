@@ -4,6 +4,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+
+
 @SpringBootApplication(scanBasePackages = {"uk.gov.hmcts.reform.demo" })
 @SuppressWarnings("HideUtilityClassConstructor") // Spring needs a constructor, its not a utility class
 @EnableJpaRepositories(basePackages = "uk.gov.hmcts.reform.demo.repositories")
