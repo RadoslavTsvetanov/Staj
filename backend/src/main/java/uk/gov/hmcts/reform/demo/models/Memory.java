@@ -1,5 +1,6 @@
 package uk.gov.hmcts.reform.demo.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 
@@ -16,6 +17,12 @@ public class Memory {
     private LocalDate date;
     private String location;
 
+    @ManyToOne
+    @JoinColumn(name = "history_id")
+    @JsonBackReference
+    private History history;
+
+    // Getters and setters
     public Long getId() {
         return id;
     }
@@ -46,5 +53,13 @@ public class Memory {
 
     public void setLocation(String location) {
         this.location = location;
+    }
+
+    public History getHistory() {
+        return history;
+    }
+
+    public void setHistory(History history) {
+        this.history = history;
     }
 }

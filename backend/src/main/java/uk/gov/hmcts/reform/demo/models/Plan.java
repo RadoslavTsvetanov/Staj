@@ -21,6 +21,10 @@ public class Plan {
     @JoinColumn(name = "date_window_id", referencedColumnName = "id")
     private DateWindow dateWindow;
 
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "history_id", referencedColumnName = "id")
+    private History history;
+
     @ManyToMany
     @JoinTable(
         name = "plan_users",
@@ -38,6 +42,14 @@ public class Plan {
     private Set<Location> locations = new HashSet<>();
 
     // Getters and setters
+    public History getHistory() {
+        return history;
+    }
+
+    public void setHistory(History history) {
+        this.history = history;
+    }
+
     public Long getId() {
         return id;
     }

@@ -1,5 +1,6 @@
 package uk.gov.hmcts.reform.demo.repositories;
 
+import org.springframework.boot.actuate.autoconfigure.metrics.MetricsProperties;
 import org.springframework.data.jpa.repository.JpaRepository;
 import uk.gov.hmcts.reform.demo.models.Memory;
 import org.springframework.data.jpa.repository.Query;

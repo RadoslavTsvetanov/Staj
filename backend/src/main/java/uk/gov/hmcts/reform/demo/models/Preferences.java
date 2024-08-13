@@ -1,6 +1,9 @@
 package uk.gov.hmcts.reform.demo.models;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Size;
+
 import java.util.List;
 
 @Entity
@@ -15,9 +18,9 @@ public class Preferences {
     @ElementCollection
     @CollectionTable(name = "preferences_interests", joinColumns = @JoinColumn(name = "preferences_id"))
     @Column(name = "interest")
+    @NotEmpty(message = "Interests cannot be empty")
+    @Size(min = 1, message = "There must be at least one interest")
     private List<String> interests;
-
-    // Getters and setters
 
     public Long getId() {
         return id;

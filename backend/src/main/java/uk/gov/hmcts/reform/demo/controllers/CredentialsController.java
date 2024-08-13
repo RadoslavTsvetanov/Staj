@@ -1,5 +1,6 @@
 package uk.gov.hmcts.reform.demo.controllers;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,11 +27,7 @@ public class CredentialsController {
     }
 
     @PostMapping
-    public ResponseEntity<Credentials> createCredentials(@RequestBody Credentials credentials) {
-        if (credentials.getEmail() == null || credentials.getPassword() == null) {
-            return ResponseEntity.badRequest().build();
-        }
-
+    public ResponseEntity<Credentials> createCredentials(@Valid @RequestBody Credentials credentials) {
         Credentials savedCredentials = credentialsService.save(credentials);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedCredentials);
     }
@@ -41,4 +38,3 @@ public class CredentialsController {
         return ResponseEntity.ok(credentialsList);
     }
 }
-
