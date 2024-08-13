@@ -155,6 +155,7 @@ ext['snakeyaml.version'] = '2.0'
 dependencies {
   implementation 'org.postgresql:postgresql:42.6.0'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web'
+  implementation 'org.springframework.boot:spring-boot-starter-web'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-actuator'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-aop'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-json'

@@ -21,7 +21,7 @@ public class AuthController {
         authenticationService.logout(token);
     }
 
-    @GetMapping("/validate") 
+    @GetMapping("/validate")
     public boolean validateToken(@RequestParam String token) {
         try {
             authenticationService.validateToken(token);
