@@ -1,5 +1,6 @@
 package uk.gov.hmcts.reform.demo.controllers;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,8 +17,9 @@ public class PreferencesController {
     private PreferencesService preferencesService;
 
     @PostMapping
-    public Preferences createPreferences(@RequestBody Preferences preferences) {
-        return preferencesService.save(preferences);
+    public ResponseEntity<Preferences> createPreferences(@Valid @RequestBody Preferences preferences) {
+        Preferences savedPreferences = preferencesService.save(preferences);
+        return ResponseEntity.ok(savedPreferences);
     }
 
     @GetMapping
