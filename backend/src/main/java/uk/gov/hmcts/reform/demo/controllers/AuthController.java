@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import uk.gov.hmcts.reform.demo.services.AuthenticationService;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
@@ -13,8 +15,16 @@ public class AuthController {
 
     @PostMapping("/login")
     public String login(@RequestParam String email, @RequestParam String password) {
+        System.out.println("Received login request with email: " + email);
         return authenticationService.authenticate(email, password);
     }
+
+    //@PostMapping("/login")
+    //public String login(@RequestBody Map<String, String> loginRequest) {
+    //    String email = loginRequest.get("email");
+    //    String password = loginRequest.get("password");
+    //    return authenticationService.authenticate(email, password);
+    //}
 
     @PostMapping("/logout")
     public void logout(@RequestParam String token) {

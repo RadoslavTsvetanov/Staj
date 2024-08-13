@@ -22,7 +22,7 @@ public class TokenCleanupTask {
         Iterator<Map.Entry<String, AuthenticationService.TokenInfo>> iterator = tokenStore.entrySet().iterator();
         while (iterator.hasNext()) {
             Map.Entry<String, AuthenticationService.TokenInfo> entry = iterator.next();
-            if (entry.getValue().getExpiresAt().isBefore(LocalDateTime.now())) {
+            if (entry.getValue().expiresAt().isBefore(LocalDateTime.now())) {
                 iterator.remove();
             }
         }

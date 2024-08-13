@@ -17,7 +17,7 @@ public class SecurityConfig {
         FilterRegistrationBean<AuthTokenFilter> registrationBean = new FilterRegistrationBean<>();
         registrationBean.setFilter(authTokenFilter);
         registrationBean.addUrlPatterns("/*");
-        //registrationBean.addUrlPatterns("/api/*");
+
         return registrationBean;
     }
 }

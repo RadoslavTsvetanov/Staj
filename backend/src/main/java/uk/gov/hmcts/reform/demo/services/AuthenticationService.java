@@ -8,7 +8,6 @@ import uk.gov.hmcts.reform.demo.repositories.CredentialsRepo;
 import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class AuthenticationService {
@@ -25,45 +24,36 @@ public class AuthenticationService {
 
     public String authenticate(String email, String password) {
         Credentials credentials = credentialsRepo.findByEmail(email);
-
-        if (credentials != null && credentials.getPassword().equals(password)) {
-            String token = UUID.randomUUID().toString();
-
-            tokenStore.put(token, new TokenInfo(credentials, LocalDateTime.now().plusHours(2)));
-            return token;
+        if (credentials != null) {
+            System.out.println("Retrieved credentials: " + credentials.getEmail());
+            if (credentials.getPassword().equals(password)) {
+                String token = UUID.randomUUID().toString();
+                tokenStore.put(token, new TokenInfo(credentials, LocalDateTime.now().plusHours(2)));
+                return token;
+            } else {
+                System.out.println("Password mismatch");
+            }
+        } else {
+            System.out.println("No credentials found for email: " + email);
         }
         throw new RuntimeException("Invalid email or password");
     }
 
-    public Credentials validateToken(String token) {
+
+    public void validateToken(String token) {
         TokenInfo tokenInfo = tokenStore.get(token);
 
-        if (tokenInfo != null && tokenInfo.getExpiresAt().isAfter(LocalDateTime.now())) {
-            return tokenInfo.getCredentials();
+        if (tokenInfo != null && tokenInfo.expiresAt().isAfter(LocalDateTime.now())) {
+            return;
         }
-        throw new RuntimeException("Invalid or expired token");
+        throw new RuntimeException("Invalid or expired token!");
     }
 
     public void logout(String token) {
         tokenStore.remove(token);
     }
 
-    public static class TokenInfo {
-        private final Credentials credentials;
-        private final LocalDateTime expiresAt;
-
-        public TokenInfo(Credentials credentials, LocalDateTime expiresAt) {
-            this.credentials = credentials;
-            this.expiresAt = expiresAt;
-        }
-
-        public Credentials getCredentials() {
-            return credentials;
-        }
-
-        public LocalDateTime getExpiresAt() {
-            return expiresAt;
-        }
+    public record TokenInfo(Credentials credentials, LocalDateTime expiresAt) {
     }
 }
 
