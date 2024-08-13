@@ -1,5 +1,6 @@
 package uk.gov.hmcts.reform.demo.filters;
 
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.reform.demo.services.AuthenticationService;
@@ -25,10 +26,15 @@ public class AuthTokenFilter implements jakarta.servlet.Filter {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         String token = httpRequest.getHeader("Authorization");
 
-        if (token != null && authenticationService.validateToken(token) != null) {
-            chain.doFilter(request, response);
+        if (token != null && !token.isEmpty()) {
+            try {
+                authenticationService.validateToken(token);
+                chain.doFilter(request, response);
+            } catch (RuntimeException e) {
+                ((HttpServletResponse) response).sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid or expired token");
+            }
         } else {
-            throw new ServletException("Invalid or missing token");
+            ((HttpServletResponse) response).sendError(HttpServletResponse.SC_UNAUTHORIZED, "Missing token");
         }
     }
 
