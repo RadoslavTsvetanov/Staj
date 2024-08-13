@@ -3,7 +3,7 @@
 import React from 'react';
 import './styles.css';
 
-const HomePage = () => {
+const Landing = () => {
   return (
     <div style={{ width: '100%', height: '100%', overflow: 'hidden' }}>
       <svg
@@ -73,4 +73,4 @@ const HomePage = () => {
   );
 };
 
-export default HomePage;
+export default Landing;
