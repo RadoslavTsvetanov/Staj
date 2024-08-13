@@ -3,7 +3,6 @@ package uk.gov.hmcts.reform.demo.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import uk.gov.hmcts.reform.demo.models.DateWindow;
-import uk.gov.hmcts.reform.demo.models.History;
 import uk.gov.hmcts.reform.demo.models.Plan;
 import uk.gov.hmcts.reform.demo.services.PlanService;
 
