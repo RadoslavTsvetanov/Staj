@@ -46,7 +46,7 @@ export default function Map() {
 
   return (
     <div>
-      <Navbar />
+      <Navbar  />
 
       <div className="flex h-[90vh]">
         {/* Map Section */}
