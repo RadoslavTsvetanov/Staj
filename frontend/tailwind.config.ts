@@ -1,5 +1,7 @@
 import type { Config } from "tailwindcss"
 
+
+
 const config = {
   darkMode: ["class"],
   content: [
@@ -19,6 +21,8 @@ const config = {
     },
     extend: {
       colors: {
+        // customBlue:' #4aa3c7',
+        customBlue:' #6eb6d4',
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
@@ -53,6 +57,9 @@ const config = {
           foreground: "hsl(var(--card-foreground))",
         },
       },
+      opacity: {
+        '67': '0.67',
+      },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
@@ -78,3 +85,5 @@ const config = {
 } satisfies Config
 
 export default config
+
+

@@ -2,10 +2,35 @@ import React, { useState } from 'react';
 
 type PlanProps = {
     name: string;
+    isEditable: boolean;
 };
 
-const Plan: React.FC<PlanProps> = ({ name }) => {
+const Plan: React.FC<PlanProps> = ({ name, isEditable }) => {
     const [isHovered, setIsHovered] = useState(false);
+
+    const styles = {
+        button: {
+            backgroundColor: isEditable ? '#C2E6F4' : '#F58F92', 
+            color: 'black',
+            padding: '10px 20px',
+            borderRadius: '8px',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            border: '1px solid black',
+            cursor: 'pointer',
+            width: '100%',
+            boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
+        },
+        arrow: {
+            marginLeft: '10px',
+            color: 'black',
+        },
+        editIcon: {
+            marginLeft: '10px',
+            color: 'white',
+        },
+    };
 
     return (
         <button
@@ -14,27 +39,16 @@ const Plan: React.FC<PlanProps> = ({ name }) => {
             onMouseLeave={() => setIsHovered(false)}
         >
             <span>{name}</span>
-            {isHovered && <span style={styles.arrow}>&#x25B6;</span>}
+            {isHovered && (
+                isEditable ? (
+                    <span style={styles.editIcon}>✏️</span>
+                ) : (
+                    <span style={styles.arrow}>&#x25B6;</span>
+                )
+            )}
         </button>
     );
 };
 
-const styles = {
-    button: {
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        backgroundColor: '#f28b82', // pink background
-        borderRadius: '15px', // rounded corners
-        border: '1px solid #000', // black border
-        padding: '10px 20px',
-        fontSize: '16px',
-        cursor: 'pointer',
-        width: '100%',
-    },
-    arrow: {
-        marginLeft: 'auto',
-    },
-};
-
 export default Plan;
+
