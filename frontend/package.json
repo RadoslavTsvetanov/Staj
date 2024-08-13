@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@react-google-maps/api":"2.19.3",
     "@googlemaps/js-api-loader": "1.16.8",
     "@radix-ui/react-slot": "^1.1.0",
     "@react-three/drei": "^9.109.2",
