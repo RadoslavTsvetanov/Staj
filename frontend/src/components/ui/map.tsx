@@ -22,7 +22,11 @@ const mapOptions = {
   scrollwheel: true,
 };
 
-function Map() {
+interface MapProps {
+  children?: React.ReactNode;
+}
+
+const Map: React.FC<MapProps> = ({ children }) => {
   const { isLoaded } = useJsApiLoader({
     id: "google-map-script",
     googleMapsApiKey: process.env.NEXT_PUBLIC_MAPS_API_KEY as string,
@@ -36,7 +40,7 @@ function Map() {
       center={center}
       zoom={10}
     >
-      <MarkerPin />
+    {children}
 
     </GoogleMap>
   ) : (

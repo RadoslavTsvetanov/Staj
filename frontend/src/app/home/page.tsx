@@ -3,6 +3,7 @@
 import Map from "@/components/ui/map";
 import Plan from "@/components/ui/plan";
 import Navbar from "@/components/ui/navbar";
+import HomePageMap from "@/components/ui/HomePageMap";
 
 export default function HomePage() {
 
@@ -12,7 +13,7 @@ export default function HomePage() {
 
       <div className="flex h-[90vh]">
         <div className="w-1/2 rounded-lg m-2 relative overflow-hidden">
-          <Map/>
+          <HomePageMap/>
         </div>
 
         <div className="w-1/2 flex flex-col justify-between">
