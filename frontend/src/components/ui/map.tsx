@@ -4,7 +4,7 @@ import { GoogleMap, useJsApiLoader } from "@react-google-maps/api";
 
 const containerStyle = {
   width: "100%",
-  height: "90vh",
+  height: "100vh",
 };
 
 const center = {
@@ -19,11 +19,13 @@ const mapOptions = {
   mapTypeControl: false,
   zoomControl: false,
   streetViewControl: false,
+  fullscreenControl: false,
   scrollwheel: true,
 };
 
 interface MapProps {
   children?: React.ReactNode;
+  className?: string;
 }
 
 const Map: React.FC<MapProps> = ({ children }) => {

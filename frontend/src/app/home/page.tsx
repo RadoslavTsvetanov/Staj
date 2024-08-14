@@ -1,6 +1,5 @@
 "use client";
 
-import Map from "@/components/ui/map";
 import Plan from "@/components/ui/plan";
 import Navbar from "@/components/ui/navbar";
 import HomePageMap from "@/components/ui/HomePageMap";
