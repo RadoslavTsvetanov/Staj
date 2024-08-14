@@ -31,13 +31,4 @@ public class AuthController {
         authenticationService.logout(token);
     }
 
-    @GetMapping("/validate")
-    public boolean validateToken(@RequestParam String token) {
-        try {
-            authenticationService.validateToken(token);
-            return true;
-        } catch (RuntimeException e) {
-            return false;
-        }
-    }
 }
