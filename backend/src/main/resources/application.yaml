@@ -1,0 +1,57 @@
+server:
+  port: 4550
+  shutdown: "graceful"
+
+# If you use a database then uncomment the `group:, readiness: and include: "db"` lines in the health probes and uncomment the datasource section
+management:
+  endpoint:
+    health:
+      show-details: "always"
+      # group:
+      #  readiness:
+      #   include: "db"
+  endpoints:
+    web:
+      base-path: /
+      exposure:
+        include: health, info, prometheus
+
+springdoc:
+  packagesToScan: uk.gov.hmcts.reform.demo.controllers
+  writer-with-order-by-keys: true
+
+spring:
+  config:
+    import: "optional:configtree:/mnt/secrets/rpe/"
+  application:
+    name: Spring Boot Template
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://viaduct.proxy.rlwy.net:54520/railway
+    username: postgres
+    password: XeHpLcShvJbxgoehGiuerfwGzeNxnFXJ
+    properties:
+      charSet: UTF-8
+    hikari:
+      minimumIdle: 2
+      maximumPoolSize: 10
+      idleTimeout: 10000
+      poolName: MyHikariCP
+      maxLifetime: 7200000
+      connectionTimeout: 30000
+  jpa:
+    generate-ddl: true
+
+    properties:
+      show-sql: true
+      hibernate:
+        ddl-auto: update
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        jdbc:
+          lob:
+            # silence the 'wall-of-text' - unnecessary exception throw about blob types
+            non_contextual_creation: true
+
+azure:
+  application-insights:
+    instrumentation-key: ${rpe.AppInsightsInstrumentationKey:00000000-0000-0000-0000-000000000000}
