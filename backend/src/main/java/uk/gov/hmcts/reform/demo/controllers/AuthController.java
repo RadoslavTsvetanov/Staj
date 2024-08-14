@@ -2,10 +2,9 @@ package uk.gov.hmcts.reform.demo.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import uk.gov.hmcts.reform.demo.models.Credentials;
 import uk.gov.hmcts.reform.demo.services.AuthenticationService;
 
-//import java.util.Map;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/auth")
@@ -14,16 +13,8 @@ public class AuthController {
     @Autowired
     private AuthenticationService authenticationService;
 
-    //@PostMapping("/login")
-    //public String login(@RequestParam String email, @RequestParam String password) {
-    //    System.out.println("Received login request with email: " + email);
-    //    return authenticationService.authenticate(email, password);
-    //}
-
     @PostMapping("/login")
-    public String login(@RequestBody Credentials credentials) {
-        String email = credentials.getEmail();
-        String password = credentials.getPassword();
+    public String login(@RequestParam String email, @RequestParam String password) {
         System.out.println("Received login request with email: " + email);
         return authenticationService.authenticate(email, password);
     }
