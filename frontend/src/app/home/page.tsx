@@ -13,9 +13,6 @@ export default function HomePage() {
       <div className="flex h-[90vh]">
         <div className="w-1/2 rounded-lg m-2 relative overflow-hidden">
           <Map/>
-          <button className="absolute bottom-5 left-5 bg-blue-600 text-black py-2 px-4 rounded-lg">
-            New trip plan
-          </button>
         </div>
 
         <div className="w-1/2 flex flex-col justify-between">
