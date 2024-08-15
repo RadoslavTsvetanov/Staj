@@ -9,6 +9,8 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@react-google-maps/api":"2.19.3",
+    "@googlemaps/js-api-loader": "1.16.8",
     "@radix-ui/react-slot": "^1.1.0",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
@@ -25,6 +27,7 @@
     "three": "^0.167.1"
   },
   "devDependencies": {
+    "@types/google.maps": "3.55.12",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",

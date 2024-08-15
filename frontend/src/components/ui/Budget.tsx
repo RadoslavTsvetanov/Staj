@@ -19,13 +19,22 @@ const RadioForm: React.FC = () => {
       <form onSubmit={handleSubmit}>
         <input
           type="radio"
+          id="-"
+          name="budget"
+          value="-"
+          checked={selectedValue === '-'}
+          onChange={handleChange}
+        />
+        <label htmlFor="-">-</label><br />
+        <input
+          type="radio"
           id="$"
           name="budget"
           value="$"
           checked={selectedValue === '$'}
           onChange={handleChange}
         />
-        <label htmlFor="html">$</label><br />
+        <label htmlFor="$">$</label><br />
         <input
           type="radio"
           id="$$"
@@ -34,7 +43,7 @@ const RadioForm: React.FC = () => {
           checked={selectedValue === '$$'}
           onChange={handleChange}
         />
-        <label htmlFor="css">$$</label><br />
+        <label htmlFor="$$">$$</label><br />
         <input
           type="radio"
           id="$$$"
@@ -43,7 +52,16 @@ const RadioForm: React.FC = () => {
           checked={selectedValue === '$$$'}
           onChange={handleChange}
         />
-        <label htmlFor="javascript">$$$</label><br /><br />
+        <label htmlFor="$$$">$$$</label><br /><br />
+        <input
+          type="radio"
+          id="$$$$"
+          name="budget"
+          value="$$$$"
+          checked={selectedValue === '$$$$'}
+          onChange={handleChange}
+        />
+        <label htmlFor="$$$$">$$$$</label><br />
       </form>
     </div>
   );
