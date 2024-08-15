@@ -159,6 +159,7 @@ dependencies {
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-aop'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-json'
   implementation group: 'org.springdoc', name: 'springdoc-openapi-starter-webmvc-ui', version: '2.6.0'
+  implementation 'org.springframework.boot:spring-boot-starter-validation'
 
   implementation group: 'com.github.hmcts.java-logging', name: 'logging', version: '6.1.5'
 
@@ -168,6 +169,7 @@ dependencies {
   implementation group: 'ch.qos.logback', name: 'logback-core', version: logbackVersion
 
   implementation group: 'io.rest-assured', name: 'rest-assured'
+  implementation 'org.flywaydb:flyway-core'
 
   testImplementation(platform('org.junit:junit-bom:5.10.3'))
   testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
@@ -179,7 +181,6 @@ dependencies {
 
 
   implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-
 
 }
 

@@ -43,12 +43,10 @@ spring:
     generate-ddl: true
 
     properties:
-      generate-ddl: true
-
+      show-sql: true
       hibernate:
-        generate-ddl: true
-
-        ddl-auto: create
+        ddl-auto: update
+        dialect: org.hibernate.dialect.PostgreSQLDialect
         jdbc:
           lob:
             # silence the 'wall-of-text' - unnecessary exception throw about blob types

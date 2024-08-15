@@ -14,15 +14,18 @@ const Navbar = () => {
                     Project
                 </a>
                 <div>
-                    <Link href="../../app/home" className="mx-2 hover:text-grey-300">
-                    Home
+                    <Link href="../../app/about" className="ml-8 hover:text-gray-300">
+                        About
                     </Link>
-                    <Link href="../../app/about" className="mx-2 hover:text-grey-300">
-                    About
+                    <Link href="#contacts" className="ml-8 hover:text-gray-300">
+                        Contacts
                     </Link>
-                    <Link href="/" className="mx-2 hover:text-grey-300">
-                    Contacts
-                    </Link>
+                    <input 
+                        type="button" 
+                        onClick={() => location.href='../../../auth/signup'} 
+                        value="Sign up" 
+                        className="ml-16 py-2 px-4 bg-[rgba(115,209,72,0.2)] border-transparent text-2sm font-medium rounded-md text-white hover:bg-[rgba(115,209,72,0.3)]" 
+                    />
                 </div>
             </div>
         </nav>
