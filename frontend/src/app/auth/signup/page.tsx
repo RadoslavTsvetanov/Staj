@@ -7,11 +7,21 @@ import { OrbitControls } from '@react-three/drei';
 import Earth from '../../../../public/Earth';
 
 export default function SignUpRoute() {
+  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
 
   const router = useRouter();
+
+  const handleUsernameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setUsername(event.target.value);
+  };
+
+  const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setEmail(event.target.value);
+  };
 
   const handlePasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setPassword(event.target.value);
@@ -21,7 +31,7 @@ export default function SignUpRoute() {
     setConfirmPassword(event.target.value);
   };
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (password !== confirmPassword) {
       setError('Passwords do not match');
@@ -29,7 +39,33 @@ export default function SignUpRoute() {
     }
     setError('');
 
-    router.push('./signup/info');
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/register/basic`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+          username,
+          email,
+          password,
+        }),
+      });
+
+      console.log(response);
+      console.log()
+
+      if (response.ok) {
+        router.push(`/signup/info?username=${encodeURIComponent(username)}`);
+      } else {
+        const data = await response.text();
+        setError(data); // Display the error message from the backend
+        console.log(data);
+        console.error('Error:', data);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
   };
 
   return (
@@ -67,6 +103,8 @@ export default function SignUpRoute() {
                   type="text"
                   name="username"
                   id="username"
+                  value={username}
+                  onChange={handleUsernameChange}
                 />
               </div>
             </div>
@@ -83,6 +121,8 @@ export default function SignUpRoute() {
                   type="email"
                   name="email"
                   id="email"
+                  value={email}
+                  onChange={handleEmailChange}
                 />
               </div>
             </div>
