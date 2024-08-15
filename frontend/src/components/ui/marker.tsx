@@ -10,10 +10,6 @@ const pinIcon = {
     scaledSize: { width: 50, height: 40 },
 };
 
-const positionMarker = {
-    lat: 43.642693,
-    lng: -79.3871189,
-};
 
 function MarkerClicked(event)
 {
@@ -22,17 +18,27 @@ function MarkerClicked(event)
   console.log(event.latLng.lng());
 }
 
+type MarkerPinProps = {
+    positionMarker: {
+        lat: number,
+        lng: number,
+      };
+}
 
-
-function MarkerPin()
+const MarkerPin: React.FC<MarkerPinProps> =({positionMarker})=>
 {
-    const [isSelectedLocation, setLocation] = useState(false);
+    const [isSelectedLocation, setSelected] = useState(false);
+    const [Location, setLocation] = useState(positionMarker);
 
-    function MarkerFinishDrag(event)
-    {
-    console.log("The final lat",event.latLng.lat());
-    console.log("The final lng",event.latLng.lng());
-    setLocation(true);
+    function MarkerFinishDrag(event: google.maps.MapMouseEvent) {
+        if (event.latLng) {
+            let lat = event.latLng.lat();
+            let lng = event.latLng.lng();
+            console.log("The final lat", lat);
+            console.log("The final lng", lng);
+            setSelected(true);
+            setLocation({ lat, lng });
+        }
     }
 
     return (
@@ -46,11 +52,11 @@ function MarkerPin()
             />
             {isSelectedLocation && (
                 <div className="absolute left-1/2 transform -translate-x-1/2 mt-2">
-                    <NewTripButton />
+                    <NewTripButton position={Location} />
                 </div>
             )}
         </div>
-    )
+    );
 }
 
 export default MarkerPin;

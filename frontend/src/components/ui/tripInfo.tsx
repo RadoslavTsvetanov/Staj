@@ -1,21 +1,48 @@
 import React from 'react';
+import RadioForm from './Budget';
 
 const TripInfo: React.FC = () => {
   return (
-    <div className="bg-blue-200 rounded-xl p-4 w-full max-w-sm">
-      <h2 className="text-lg font-bold mb-2">Current trip</h2>
-      <p>From: ___ To: ___ ___ days</p>
-      <p>🏙️ Burgas</p>
-      <p>Budget</p>
-      <div className="flex space-x-1">
-        <span>⭐</span>
-        <span>⭐</span>
-        <span>⭐</span>
-        <span>⭐</span>
-        <span>⭐</span>
+    <div className=" h-1/2 w-full bg-blue-100 rounded-xl m-2 mt-4 mr-4 p-4 z-50">
+            <h1 className="text-black text-xl font-bold mb-4 text-center">
+              Current trip
+            </h1>
+            <p className="mb-2">From: ___ To: ___ ___ days</p>
+            <div className="flex items-center mb-2">
+              <span role="img" aria-label="city" className="mr-2">
+                📍
+              </span>
+              <p>Burgas</p>
+            </div>
+            <p className="mb-1">Budget</p>
+            <div className="flex space-x-1">
+        <span className="text-yellow-400">⭐</span>
+        <span className="text-yellow-400">⭐</span>
+        <span className="text-yellow-400">⭐</span>
+        <span className="text-gray-300">⭐</span>
+        <span className="text-gray-300">⭐</span>
       </div>
-    </div>
+          </div>
   );
 };
 
+
+{/* <div className="w-1/2 flex flex-col justify-between">
+          <div className="h-1/2 bg-customBlue rounded-xl m-2 p-4">
+            <h1 className="text-black text-xl font-bold mb-4 text-center">
+              Currently planning
+            </h1>
+            <div className="h-[calc(4*51.5px)] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-transparent">
+            <div className="space-y-2">
+              <Plan name="Italy" isEditable={true} />
+              <Plan name="Italy" isEditable={true} />
+              <Plan name="Italy" isEditable={true} />
+              <Plan name="Italy" isEditable={true} />
+              <Plan name="Italy" isEditable={true} />
+              <Plan name="Italy" isEditable={true} />
+            </div>
+            </div>
+          </div> */}
+
 export default TripInfo;
+
