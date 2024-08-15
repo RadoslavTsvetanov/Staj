@@ -1,11 +1,37 @@
 "use client";
 
-import React from 'react';
+import React, { useState } from 'react';
+import { useRouter } from 'next/navigation'; // Import useRouter from next/navigation
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 import Earth from '../../../../public/Earth';
 
 export default function SignUpRoute() {
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [error, setError] = useState('');
+
+  const router = useRouter();
+
+  const handlePasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setPassword(event.target.value);
+  };
+
+  const handleConfirmPasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setConfirmPassword(event.target.value);
+  };
+
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (password !== confirmPassword) {
+      setError('Passwords do not match');
+      return;
+    }
+    setError('');
+
+    router.push('./signup/info');
+  };
+
   return (
     <div className="relative flex flex-col justify-center py-12 sm:px-6 lg:px-8 bg-[#0e6cc4] w-full h-full">
       {/* Wave animation */}
@@ -17,7 +43,7 @@ export default function SignUpRoute() {
       
       <div className="mt-4 sm:mx-auto sm:w-full sm:max-w-md z-10">
         <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
-          <form method="POST" action="#">
+          <form onSubmit={handleSubmit}>
             <div>
               <Canvas style={{ height: '150px'}}>
                 <ambientLight intensity={1.5} />
@@ -73,6 +99,8 @@ export default function SignUpRoute() {
                   type="password"
                   name="password"
                   id="password"
+                  value={password}
+                  onChange={handlePasswordChange}
                 />
               </div>
             </div>
@@ -89,9 +117,13 @@ export default function SignUpRoute() {
                   type="password"
                   name="confirm-password"
                   id="confirm-password"
+                  value={confirmPassword}
+                  onChange={handleConfirmPasswordChange}
                 />
               </div>
             </div>
+
+            {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
 
             <div className="mt-4 flex items-center justify-between">
               <div className="flex items-center">
@@ -105,8 +137,8 @@ export default function SignUpRoute() {
                 <label className="ml-2 block text-sm text-gray-600">
                   I agree to the {''}
                   <a
-                  href="./signup/tandc"
-                  className="font-medium text-indigo-600 hover:text-indigo-500"
+                    href="./signup/tandc"
+                    className="font-medium text-indigo-600 hover:text-indigo-500"
                   >
                    terms and conditions
                   </a>
@@ -118,7 +150,6 @@ export default function SignUpRoute() {
               <div className="flex items-center">
                 <input
                   className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
-                  required
                   type="checkbox"
                   name="remember-me"
                   id="remember-me"
@@ -143,8 +174,8 @@ export default function SignUpRoute() {
                 <label className="ml-2 block text-sm text-gray-600">
                   Already have an account? {''}
                   <a
-                  href="./signin"
-                  className="font-medium text-indigo-600 hover:text-indigo-500"
+                    href="./signin"
+                    className="font-medium text-indigo-600 hover:text-indigo-500"
                   >
                    Log in!
                   </a>
