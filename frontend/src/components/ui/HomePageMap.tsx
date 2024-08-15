@@ -6,7 +6,8 @@ function HomePageMap() {
   
   return (
     <Map>
-      <MarkerPin positionMarker={{lat:43.553185075739556,lng:-79.42145117539064}}/>
+      <MarkerPin positionMarker={{lat:43.553185075739556,lng:-79.42145117539064} } 
+      draggable={true}/>
     </Map>
   )
 }

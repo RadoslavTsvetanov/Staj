@@ -22,10 +22,11 @@ type MarkerPinProps = {
     positionMarker: {
         lat: number,
         lng: number,
-      };
+      },
+      draggable?: boolean;
 }
 
-const MarkerPin: React.FC<MarkerPinProps> =({positionMarker})=>
+const MarkerPin: React.FC<MarkerPinProps> =({positionMarker, draggable = false})=>
 {
     const [isSelectedLocation, setSelected] = useState(false);
     const [Location, setLocation] = useState(positionMarker);
@@ -46,7 +47,7 @@ const MarkerPin: React.FC<MarkerPinProps> =({positionMarker})=>
             <MarkerF
                 position={positionMarker}
                 icon={pinIcon}
-                draggable
+                draggable={draggable}
                 onClick={MarkerClicked}
                 onDragEnd={MarkerFinishDrag}
             />
