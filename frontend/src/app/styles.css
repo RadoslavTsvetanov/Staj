@@ -1,0 +1,15 @@
+* {
+    padding: 0;
+    margin: 0;
+}
+svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    display: block;
+    background-color: #314b5e;
+    background-image: linear-gradient(to bottom, #81b0d1, rgba(48, 71, 88, 0.86));
+}
