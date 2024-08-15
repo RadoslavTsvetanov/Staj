@@ -4,6 +4,11 @@ import MarkerPin from "./marker";
 import Map from "./map";
 import NewTripButton from "./NewTripButton";
 
+const center = {
+    lat: 43.642693,
+    lng: -79.3871189,
+  };
+
 function HomePageMap() {
 
   const [isSelectedLocation, setSelected] = useState(false);
@@ -23,7 +28,7 @@ function HomePageMap() {
   
   return (
     <div className="relative w-full h-full">
-                <Map>
+                <Map center={center}>
                     <MarkerPin
                         positionMarker={Location}
                         draggable={true}
