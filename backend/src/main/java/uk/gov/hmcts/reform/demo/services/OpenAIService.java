@@ -10,8 +10,7 @@ import java.util.List;
 @Service
 public class OpenAIService {
 
-    private static final String OPENAI_API_KEY =
-        "###";
+    private static final String OPENAI_API_KEY = "###";
 
     public String getMatchedInterests(String customInterest, String[] predefinedInterests) {
         OkHttpClient client = new OkHttpClient();
@@ -74,7 +73,10 @@ public class OpenAIService {
     }
 
     public void runTest() {
-        String[] predefinedInterests = {"Technology", "Sports", "Music", "Art", "Science"};
+        String[] predefinedInterests =
+                {"Food", "Art", "Sport", "Books", "Education", "Entertainment", "History",
+                "Hiking", "Movies", "Theater", "Animals", "Shopping", "Relax", "Religion", "Flora"};
+
         String customInterest = "Piano"; // vzima se ot user-a
 
         String matchedInterests = getMatchedInterests(customInterest, predefinedInterests);
