@@ -2,7 +2,7 @@
 
 import React from 'react';
 import './styles.css';
-import Navbar from "../components/ui/Navbar";
+import { NavbarLanding } from "../components/ui/NavbarLanding";
 import Earth from '../../public/Earth';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
@@ -10,7 +10,7 @@ import { OrbitControls } from '@react-three/drei';
 const Landing = () => {
   return (
     <div className="relative flex flex-col justify-center py-12 sm:px-6 lg:px-8 bg-[#0e6cc4] w-full h-screen">
-      <Navbar/>
+      <NavbarLanding/>
       <div className="mt-4 sm:mx-auto sm:w-full sm:max-w-md z-10">
         <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
           <div style={{ width: '100%', height: '100%', overflow: 'hidden'}}>

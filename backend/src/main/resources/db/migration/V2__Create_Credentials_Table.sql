@@ -1,12 +1,4 @@
 CREATE SEQUENCE credentials_seq;
-CREATE SEQUENCE users_seq;
-
-CREATE TABLE users (
-    id BIGSERIAL PRIMARY KEY,
-    username VARCHAR(255) NOT NULL UNIQUE,
-    age INT,
-    name VARCHAR(255) NOT NULL
-);
 
 CREATE TABLE credentials (
     id BIGINT PRIMARY KEY DEFAULT nextval('credentials_seq'),
