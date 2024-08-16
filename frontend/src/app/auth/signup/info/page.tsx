@@ -74,7 +74,7 @@ const InfoRoute: React.FC = () => {
 
             if (response.ok) {
               alert('Registration complete');
-              router.push('/home');
+              router.push('../../../home');
             } else {
               const data = await response.text();
               setError(data);
