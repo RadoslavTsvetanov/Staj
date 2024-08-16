@@ -1,11 +1,13 @@
 "use client";
 
-import Link from "next/link";
+import React, {useState} from "react";
 import Image from "next/image";
 import Logo from './Logo';
+import DropMenu from "./DropDownMenu";
 
 const Navbar = () => {
-    
+    const [isHovered, setIsHovered]=useState(false);
+
         return (
           <nav className="h-[10vh] w-full flex bg-gray-800 text-white p-2 sm:p-2 md:flex md:justify-between md:items-center z-20" >
 
@@ -16,7 +18,14 @@ const Navbar = () => {
                 </h1>
             </div>
             <div className="flex pr-3">
+                <button onMouseOver={() => setIsHovered(true)} onMouseUp={() => setIsHovered(false)}>
                     <Image src="/images/menu.png" alt="Logo" width={32} height={32} />
+                    </button>
+                    {isHovered && (
+                        <DropMenu/>
+                    )
+
+                    }
                 </div>
         
         </nav>
