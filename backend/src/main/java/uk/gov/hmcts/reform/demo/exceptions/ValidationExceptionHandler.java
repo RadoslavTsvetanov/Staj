@@ -25,4 +25,14 @@ public class ValidationExceptionHandler {
         });
         return ResponseEntity.badRequest().body(errors);
     }
+
+    @ExceptionHandler(DuplicateEmailException.class)
+    public ResponseEntity<String> handleDuplicateEmailException(DuplicateEmailException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(DuplicateUsernameException.class)
+    public ResponseEntity<String> handleDuplicateUsernameException(DuplicateUsernameException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.CONFLICT);
+    }
 }

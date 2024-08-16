@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.reform.demo.models.Credentials;
 import uk.gov.hmcts.reform.demo.repositories.CredentialsRepo;
+import uk.gov.hmcts.reform.demo.exceptions.DuplicateEmailException;
 
 import java.util.List;
 
@@ -18,6 +19,10 @@ public class CredentialsService {
     }
 
     public Credentials save(Credentials credentials) {
+        if (credentialsRepo.existsByEmail(credentials.getEmail())) {
+            throw new DuplicateEmailException("Email " + credentials.getEmail() + " already exists");
+        }
+
         return credentialsRepo.save(credentials);
     }
 

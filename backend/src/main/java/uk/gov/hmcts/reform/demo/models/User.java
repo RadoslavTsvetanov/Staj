@@ -1,9 +1,14 @@
 package uk.gov.hmcts.reform.demo.models;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
+import uk.gov.hmcts.reform.demo.validators.ValidAge;
+
+import java.time.LocalDate;
+import java.util.Set;
 
 @Entity
-@Table(name = "users")
+@Table(name = "users", uniqueConstraints = @UniqueConstraint(columnNames = "username"))
 public class User {
 
     @Id
@@ -11,8 +16,15 @@ public class User {
     @SequenceGenerator(name = "users_seq_gen", sequenceName = "users_seq", allocationSize = 1)
     private Long id;
 
+    @NotBlank(message = "Username cannot be blank")
+    @Size(min = 5, max = 20, message = "Username must be between 5 and 20 characters")
+    @Column(unique = true)
     private String username;
-    private Integer age;
+
+    @ValidAge
+    private LocalDate dateOfBirth;
+
+    @Size(min = 2, max = 40, message = "Name must be between 2 and 40 characters")
     private String name;
 
     @OneToOne
@@ -23,7 +35,11 @@ public class User {
     @JoinColumn(name = "preferences_id", referencedColumnName = "id")
     private Preferences preferences;
 
-    // Getters and setters
+    @ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER)
+    @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role", nullable = false)
+    private Set<Role> roles;
 
     public Long getId() {
         return id;
@@ -39,14 +55,6 @@ public class User {
 
     public void setUsername(String username) {
         this.username = username;
-    }
-
-    public Integer getAge() {
-        return age;
-    }
-
-    public void setAge(Integer age) {
-        this.age = age;
     }
 
     public Credentials getCredentials() {
@@ -65,12 +73,31 @@ public class User {
         this.preferences = preferences;
     }
 
-
     public String getName() {
         return name;
     }
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public LocalDate getDateOfBirth() {
+        return dateOfBirth;
+    }
+
+    public void setDateOfBirth(LocalDate dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
+    }
+
+    public Set<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
+    }
+
+    public String getPassword() {
+        return credentials != null ? credentials.getPassword() : null;
     }
 }

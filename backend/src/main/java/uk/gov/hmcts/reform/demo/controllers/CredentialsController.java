@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import uk.gov.hmcts.reform.demo.exceptions.DuplicateEmailException;
 import uk.gov.hmcts.reform.demo.models.Credentials;
 import uk.gov.hmcts.reform.demo.services.CredentialsService;
 
@@ -28,8 +29,12 @@ public class CredentialsController {
 
     @PostMapping
     public ResponseEntity<Credentials> createCredentials(@Valid @RequestBody Credentials credentials) {
-        Credentials savedCredentials = credentialsService.save(credentials);
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedCredentials);
+        try {
+            Credentials savedCredentials = credentialsService.save(credentials);
+            return ResponseEntity.status(HttpStatus.CREATED).body(savedCredentials);
+        } catch (DuplicateEmailException ex) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(null);
+        }
     }
 
     @GetMapping

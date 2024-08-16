@@ -3,8 +3,11 @@
 import { NextPage } from 'next';
 import Head from 'next/head';
 import Image from 'next/image';
-import { useState } from 'react';
-import  Charles  from "./charles-leclerc-ferrari.jpg"
+import { useState, useEffect } from 'react';
+import  Charles  from "./charles-leclerc-ferrari.jpg";
+import LArrow from "./left.png";
+import { Popup } from "../../components/ui/Popup";
+import axios from "axios";
 
 const interestsList = [
     "Art",
@@ -34,32 +37,49 @@ const foodSubInterests = [
 ]
 
 const AccountPage: NextPage = () => {
-  const [name, setName] = useState('Charles Leclerc');
-  const [username, setUsername] = useState('charles_leclerc');
-  const [email, setEmail] = useState('charles@example.com');
+  const [name, setName] = useState('');
+  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [dob, setDob] = useState('');
   
+  const [isPopupVisible, setIsPopupVisible] = useState(false);
+
+  useEffect(() => {
+    const getName = () => {
+        // const data = axios.get()
+    }
+  }, [])
+
+  const handleDelete = () => {
+    setIsPopupVisible(true);
+  };
+
   const handleSave = () => {
-    // Handle save logic here
-    alert('Profile updated!');
+    //handle save
+  };
+
+  const togglePopup = () => {
+    setIsPopupVisible(!isPopupVisible);
   };
 
   const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
-    const [showFoodSubInterests, setShowFoodSubInterests] = useState(false);
+  const [showFoodSubInterests, setShowFoodSubInterests] = useState(false);
 
-    const toggleInterest = (interest: string) => {
-        if (selectedInterests.includes(interest)) {
-          setSelectedInterests(selectedInterests.filter((item) => item !== interest));
-          if (interest === "Food") {
+  const toggleInterest = (event: React.MouseEvent<HTMLButtonElement>, interest: string) => {
+    event.preventDefault(); // Prevent form submission
+
+    if (selectedInterests.includes(interest)) {
+        setSelectedInterests(selectedInterests.filter((item) => item !== interest));
+        if (interest === "Food") {
             setShowFoodSubInterests(false);
         }
-        } else {
-          setSelectedInterests([...selectedInterests, interest]);
-          if (interest === "Food") {
+    } else {
+        setSelectedInterests([...selectedInterests, interest]);
+        if (interest === "Food") {
             setShowFoodSubInterests(true);
         }
-        }
-      };
+    }
+};
 
   return (
     <>
@@ -70,7 +90,29 @@ const AccountPage: NextPage = () => {
 
       <div className="min-h-screen bg-gray-100 flex items-center justify-center">
         <div className="w-full max-w-md bg-white shadow-md rounded-lg p-6">
-          <h1 className="text-2xl font-semibold text-gray-700 flex justify-center mb-4">My profile</h1>
+          <div className="flex items-center justify-center mb-4 relative">
+            <div className="absolute left-0 max-w-7">
+              <Image
+                src={LArrow}
+                alt="Left arrow"
+                onClick={() => history.back()}
+                className='cursor-pointer'
+              />
+            </div>
+            <h1 className="text-2xl font-semibold text-gray-700">
+              My profile
+            </h1>
+            <div className='absolute right-0'>
+              <button
+                className="text-white-500 bg-green-300 rounded-md px-3 py-1 hover:text-white-700 hover:bg-green-500"
+                onClick={handleSave}
+                type="submit"
+              >
+                Save
+              </button>
+            </div>
+          </div>
+
           <div className="flex items-center float-left mb-4">
             <Image
               src={Charles}
@@ -131,7 +173,7 @@ const AccountPage: NextPage = () => {
                     {interestsList.map((interest) => (
                         <button
                             key={interest}
-                            onClick={() => toggleInterest(interest)}
+                            onClick={(event) => toggleInterest(event, interest)}
                             className={`px-3 py-1 rounded-lg border 
                             ${selectedInterests.includes(interest) ? "bg-blue-300 text-white" : "bg-gray-200 text-gray-700"}
                             `}
@@ -142,7 +184,7 @@ const AccountPage: NextPage = () => {
                     {showFoodSubInterests && foodSubInterests.map((subInterest) => (
                         <button
                             key={subInterest}
-                            onClick={() => toggleInterest(subInterest)}
+                            onClick={(event) => toggleInterest(event, subInterest)}
                             className={`px-3 py-1 rounded-lg border 
                         ${selectedInterests.includes(subInterest) ? "bg-blue-300 text-white" : "bg-gray-200 text-gray-700"}
                         `}
@@ -154,14 +196,15 @@ const AccountPage: NextPage = () => {
             </div>
             <button
               type="button"
-              onClick={handleSave}
-              className="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              onClick={handleDelete}
+              className="w-full bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500"
             >
-              Save Changes
+              Delete profile
             </button>
           </form>
         </div>
       </div>
+      {isPopupVisible && <Popup togglePopup={togglePopup} />}
     </>
   );
 };

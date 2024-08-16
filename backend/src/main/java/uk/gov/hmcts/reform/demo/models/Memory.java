@@ -2,6 +2,9 @@ package uk.gov.hmcts.reform.demo.models;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
 import java.time.LocalDate;
 
 @Entity
@@ -13,8 +16,13 @@ public class Memory {
     @SequenceGenerator(name = "memory_seq_gen", sequenceName = "memory_seq", allocationSize = 1)
     private Long id;
 
+    @NotBlank(message = "Image cannot be blank")
     private String image;
+
+    @NotNull(message = "Date cannot be null")
     private LocalDate date;
+
+    @NotBlank(message = "Location cannot be blank")
     private String location;
 
     @ManyToOne
