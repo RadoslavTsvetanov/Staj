@@ -5,6 +5,36 @@ import { Canvas } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 import Earth from '../../../../public/Earth';
 
+const handleSignIn = async (event) => {
+    event.preventDefault();
+
+    const email = event.target.email.value;
+    const password = event.target.password.value;
+
+    try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/signin`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ email, password }),
+        });
+
+        if (response.ok) {
+            const result = await response.json();
+            console.log('Sign-in successful:', result);
+            // Handle successful sign-in (e.g., redirect to dashboard)
+        } else {
+            const error = await response.text();
+            console.error('Sign-in error:', error);
+            // Handle error (e.g., show an error message)
+        }
+    } catch (err) {
+        console.error('Network error:', err);
+        // Handle network error
+    }
+};
+
 export default function SignUpRoute() {
   return (
     <div className="relative flex flex-col justify-center py-12 sm:px-6 lg:px-8 bg-[#0e6cc4] w-full h-screen">
@@ -17,7 +47,7 @@ export default function SignUpRoute() {
       
       <div className="mt-4 sm:mx-auto sm:w-full sm:max-w-md z-10">
         <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
-          <form method="POST" action="#">
+          <form method="POST" action="#" onSubmit={handleSignIn}>
             <div>
               <Canvas style={{ height: '150px'}}>
                 <ambientLight intensity={1.5} />

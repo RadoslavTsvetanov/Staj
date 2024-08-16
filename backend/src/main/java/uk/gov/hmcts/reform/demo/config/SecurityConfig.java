@@ -45,8 +45,7 @@ public class SecurityConfig {
             .authorizeHttpRequests(request -> request
                 .requestMatchers(new AntPathRequestMatcher("/api/register/basic")).permitAll()
                 .requestMatchers(new AntPathRequestMatcher("/api/register/complete")).permitAll()
-                //.requestMatchers(new AntPathRequestMatcher("/api/login")).permitAll()
-                //.requestMatchers("/api/**").permitAll()
+                .requestMatchers(new AntPathRequestMatcher("/api/signin")).permitAll()
                 .anyRequest().hasRole("ADMIN")
             )
         ;

@@ -71,7 +71,7 @@ export default function SignUpRoute() {
   };
 
   return (
-    <div className="relative flex flex-col justify-center py-12 sm:px-6 lg:px-8 bg-[#0e6cc4] w-full h-full">
+    <div className="relative flex flex-col justify-center py-12 sm:px-6 lg:px-8 bg-[#0e6cc4] w-full h-screen">
       {/* Wave animation */}
       <div className='box'>
         <div className='wave -one'></div>
