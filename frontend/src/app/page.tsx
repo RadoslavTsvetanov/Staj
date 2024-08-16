@@ -2,10 +2,7 @@
 
 import React from 'react';
 import './styles.css';
-import Navbar from "../components/ui/navbar";
-import Earth from '../../public/Earth';
-import { Canvas } from '@react-three/fiber';
-import { OrbitControls } from '@react-three/drei';
+import {Navbar} from "../components/ui/navbar";
 
 const Landing = () => {
   return (
