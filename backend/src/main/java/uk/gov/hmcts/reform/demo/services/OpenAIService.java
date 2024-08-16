@@ -11,14 +11,13 @@ import java.util.List;
 public class OpenAIService {
 
     private static final String OPENAI_API_KEY = "###";
-
     public String getMatchedInterests(String customInterest, String[] predefinedInterests) {
         OkHttpClient client = new OkHttpClient();
 
         StringBuilder promptBuilder = new StringBuilder("The user has entered the custom interest '")
             .append(customInterest)
             .append("'. Please match it with one or more of the following predefined interests: ");
-        for (String interest : predefinedInterests) {
+        for(String interest : predefinedInterests) {
             promptBuilder.append(interest).append(", ");
         }
         promptBuilder.setLength(promptBuilder.length() - 2);
@@ -49,8 +48,8 @@ public class OpenAIService {
             .addHeader("Content-Type", "application/json")
             .build();
 
-        try (Response response = client.newCall(request).execute()) {
-            if (!response.isSuccessful()) {
+        try(Response response = client.newCall(request).execute()) {
+            if(!response.isSuccessful()) {
                 System.err.println("Unexpected code: " + response);
                 System.err.println("Response body: " + response.body().string());
                 throw new IOException("Unexpected code " + response);
@@ -81,8 +80,7 @@ public class OpenAIService {
 
         String matchedInterests = getMatchedInterests(customInterest, predefinedInterests);
 
-        if (matchedInterests != null) {
-            System.out.println("Matched Interests: " + matchedInterests);
+        if(matchedInterests != null) {
 
             String cleanedInterests = matchedInterests
                 .replaceAll("^-\\s*", "") // Remove leading hyphens and spaces
