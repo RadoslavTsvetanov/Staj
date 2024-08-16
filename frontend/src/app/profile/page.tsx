@@ -65,21 +65,19 @@ const AccountPage: NextPage = () => {
   const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
   const [showFoodSubInterests, setShowFoodSubInterests] = useState(false);
 
-  const toggleInterest = (event: React.MouseEvent<HTMLButtonElement>, interest: string) => {
-    event.preventDefault(); // Prevent form submission
-
-    if (selectedInterests.includes(interest)) {
+  const toggleInterest = (interest: string) => {
+      if (selectedInterests.includes(interest)) {
         setSelectedInterests(selectedInterests.filter((item) => item !== interest));
         if (interest === "Food") {
-            setShowFoodSubInterests(false);
-        }
-    } else {
+          setShowFoodSubInterests(false);
+      }
+      } else {
         setSelectedInterests([...selectedInterests, interest]);
         if (interest === "Food") {
-            setShowFoodSubInterests(true);
-        }
-    }
-};
+          setShowFoodSubInterests(true);
+      }
+      }
+    };
 
   return (
     <>
@@ -173,7 +171,7 @@ const AccountPage: NextPage = () => {
                     {interestsList.map((interest) => (
                         <button
                             key={interest}
-                            onClick={(event) => toggleInterest(event, interest)}
+                            onClick={() => toggleInterest(interest)}
                             className={`px-3 py-1 rounded-lg border 
                             ${selectedInterests.includes(interest) ? "bg-blue-300 text-white" : "bg-gray-200 text-gray-700"}
                             `}
@@ -184,7 +182,7 @@ const AccountPage: NextPage = () => {
                     {showFoodSubInterests && foodSubInterests.map((subInterest) => (
                         <button
                             key={subInterest}
-                            onClick={(event) => toggleInterest(event, subInterest)}
+                            onClick={() => toggleInterest(subInterest)}
                             className={`px-3 py-1 rounded-lg border 
                         ${selectedInterests.includes(subInterest) ? "bg-blue-300 text-white" : "bg-gray-200 text-gray-700"}
                         `}
