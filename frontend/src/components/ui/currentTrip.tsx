@@ -1,6 +1,6 @@
 import React from "react";
-import TripInfo from "./TripInfo";
-import PlanDetails from "./PlanDetails";
+import TripInfo from "./tripInfo";
+import PlanDetails from "./planDetails";
 
 function CurrentTripComp() {
   return (
