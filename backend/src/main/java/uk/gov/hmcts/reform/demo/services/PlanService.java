@@ -7,6 +7,7 @@ import uk.gov.hmcts.reform.demo.repositories.*;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 @Service
 public class PlanService {
@@ -66,6 +67,10 @@ public class PlanService {
         return planRepo.findById(id).orElseThrow(() -> new NoSuchElementException("Plan not found with id " + id));
     }
 
+    public Optional<Plan> findByName(String name) {
+        return planRepo.findByName(name);
+    }
+
     public List<Plan> findAll() {
         return planRepo.findAll();
     }
@@ -84,5 +89,27 @@ public class PlanService {
         }
 
         return planRepo.save(plan);
+    }
+
+    public List<Plan> findPlansByUsername(String username) {
+        return planRepo.findPlansByUsername(username);
+    }
+
+    public boolean isUserInPlan(Long planId, String username) {
+        Optional<Plan> planOptional = planRepo.findById(planId);
+        if (planOptional.isEmpty()) {
+            return false;
+        }
+        Plan plan = planOptional.get();
+        Optional<User> userOptional = Optional.ofNullable(userRepo.findByUsername(username));
+        return userOptional.map(user -> plan.getUsers().contains(user)).orElse(false);
+    }
+
+    public void removeUserFromAllPlans(Long userId) {
+        List<Plan> plans = planRepo.findAll();
+        for (Plan plan : plans) {
+            plan.getUsers().removeIf(user -> user.getId().equals(userId));
+            planRepo.save(plan);
+        }
     }
 }

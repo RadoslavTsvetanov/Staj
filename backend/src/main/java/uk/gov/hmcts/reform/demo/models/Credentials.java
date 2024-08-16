@@ -6,7 +6,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
 @Entity
-@Table(name = "credentials")
+@Table(name = "credentials", uniqueConstraints = @UniqueConstraint(columnNames = "email"))
 public class Credentials {
 
     @Id
@@ -20,6 +20,7 @@ public class Credentials {
 
     @NotBlank(message = "Email cannot be blank")
     @Email(message = "Email should be valid")
+    @Column(unique = true)
     private String email;
 
     public Long getId() {

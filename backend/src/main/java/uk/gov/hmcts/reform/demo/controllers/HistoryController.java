@@ -11,7 +11,7 @@ import uk.gov.hmcts.reform.demo.services.HistoryService;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/histories")
+@RequestMapping("/history")
 public class HistoryController {
 
     @Autowired

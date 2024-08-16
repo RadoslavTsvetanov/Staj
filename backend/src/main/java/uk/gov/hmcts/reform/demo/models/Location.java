@@ -1,6 +1,7 @@
 package uk.gov.hmcts.reform.demo.models;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 
 @Entity
 @Table(name = "location")
@@ -10,9 +11,19 @@ public class Location {
     @SequenceGenerator(name = "location_seq_gen", sequenceName = "location_seq", allocationSize = 1)
     private Long id;
 
+    @NotBlank(message = "Name cannot be empty")
+    @Size(max = 255, message = "Name should not exceed 255 characters")
     private String name;
+
+    @NotNull(message = "Age restriction cannot be null")
     private Boolean ageRestriction;
+
+    @NotBlank(message = "Type cannot be empty")
+    @Size(max = 50, message = "Type should not exceed 50 characters")
     private String type;
+
+    @Min(value = 0, message = "Cost must be between 0 and 4")
+    @Max(value = 4, message = "Cost must be between 0 and 4")
     private Integer cost;
 
     public Long getId() {

@@ -1,20 +1,32 @@
 package uk.gov.hmcts.reform.demo.models;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "plan")
+@Table(name = "plan", uniqueConstraints = @UniqueConstraint(columnNames = "name"))
 public class Plan {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "plan_seq_gen")
     @SequenceGenerator(name = "plan_seq_gen", sequenceName = "plan_seq", allocationSize = 1)
     private Long id;
 
+    @Min(value = 0, message = "Estimated cost must be between 0 and 4")
+    @Max(value = 4, message = "Estimated cost must be between 0 and 4")
     private Integer estCost;
+
+    @NotNull(message = "Budget cannot be null")
+    @Min(value = 0, message = "Budget must be between 0 and 4")
+    @Max(value = 4, message = "Budget must be between 0 and 4")
     private Integer budget;
+
+    @NotBlank(message = "Name cannot be empty")
     private String name;
 
     @OneToOne
@@ -41,7 +53,6 @@ public class Plan {
     )
     private Set<Location> locations = new HashSet<>();
 
-    // Getters and setters
     public History getHistory() {
         return history;
     }

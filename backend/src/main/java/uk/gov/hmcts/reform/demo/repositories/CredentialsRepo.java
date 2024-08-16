@@ -5,4 +5,5 @@ import uk.gov.hmcts.reform.demo.models.Credentials;
 
 public interface CredentialsRepo extends JpaRepository<Credentials, Long> {
     Credentials findByEmail(String email);
+    boolean existsByEmail(String email);
 }

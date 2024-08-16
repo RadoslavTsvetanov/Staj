@@ -1,0 +1,5 @@
+ALTER TABLE plan_users DROP CONSTRAINT fk_user;
+
+ALTER TABLE plan_users
+ADD CONSTRAINT fk_user
+FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;
