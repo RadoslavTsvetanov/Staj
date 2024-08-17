@@ -1,70 +1,43 @@
-"use client";
+import React, { useState } from 'react';
+import Image from 'next/image';
 
-import React, { useState, FormEvent, ChangeEvent } from 'react';
+const BudgetSelector = () => {
+  const [selectedBudget, setSelectedBudget] = useState(4);
+  const [isSelectedBudget, selectBudget] = useState(false);
 
-const RadioForm: React.FC = () => {
-  const [selectedValue, setSelectedValue] = useState<string>('');
-
-  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setSelectedValue(event.target.value);
+  const handleClick = (index: number) => {
+    setSelectedBudget(index);
+    selectBudget(true);
+    handleBudgetChange(index);
   };
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    alert(`Selected language: ${selectedValue}`);
+  const handleBudgetChange = (budget: number) => {
+    console.log('Selected Budget:', budget);
   };
 
   return (
-    <div>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="radio"
-          id="-"
-          name="budget"
-          value="-"
-          checked={selectedValue === '-'}
-          onChange={handleChange}
-        />
-        <label htmlFor="-">-</label><br />
-        <input
-          type="radio"
-          id="$"
-          name="budget"
-          value="$"
-          checked={selectedValue === '$'}
-          onChange={handleChange}
-        />
-        <label htmlFor="$">$</label><br />
-        <input
-          type="radio"
-          id="$$"
-          name="budget"
-          value="$$"
-          checked={selectedValue === '$$'}
-          onChange={handleChange}
-        />
-        <label htmlFor="$$">$$</label><br />
-        <input
-          type="radio"
-          id="$$$"
-          name="budget"
-          value="$$$"
-          checked={selectedValue === '$$$'}
-          onChange={handleChange}
-        />
-        <label htmlFor="$$$">$$$</label><br /><br />
-        <input
-          type="radio"
-          id="$$$$"
-          name="budget"
-          value="$$$$"
-          checked={selectedValue === '$$$$'}
-          onChange={handleChange}
-        />
-        <label htmlFor="$$$$">$$$$</label><br />
-      </form>
+    <div className="p-4 bg-blue-100 ">
+      <form>
+    <div className="flex items-center space-x-2">
+      <span className="text-lg">Budget</span>
+      <div className="flex">
+        {[1, 2, 3, 4].map((level) => (
+          <span
+            key={level}
+            className={`cursor-pointer text-2xl ${
+              selectedBudget >= level ? 'text-green-700' : 'text-gray-800'
+            }`}
+            onClick={() => handleClick(level)}
+          >
+            $
+          </span>
+        ))}
+      </div>
+      <Image src="/images/edit.png" alt="editB" onClick={()=>selectBudget(false)} width={20} height={20} />
+    </div>
+    </form>
     </div>
   );
 };
 
-export default RadioForm;
+export default BudgetSelector;

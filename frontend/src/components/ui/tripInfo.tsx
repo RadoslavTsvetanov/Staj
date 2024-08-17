@@ -1,5 +1,6 @@
 import React from 'react';
-import RadioForm from './Budget';
+import BudgetSelector from './Budget';
+
 
 const TripInfo: React.FC = () => {
   return (
@@ -14,14 +15,7 @@ const TripInfo: React.FC = () => {
               </span>
               <p>Burgas</p>
             </div>
-            <p className="mb-1">Budget</p>
-            <div className="flex space-x-1">
-        <span className="text-yellow-400">⭐</span>
-        <span className="text-yellow-400">⭐</span>
-        <span className="text-yellow-400">⭐</span>
-        <span className="text-gray-300">⭐</span>
-        <span className="text-gray-300">⭐</span>
-      </div>
+        <BudgetSelector/>
           </div>
   );
 };
