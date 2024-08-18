@@ -1,5 +1,6 @@
 import React from 'react';
 import BudgetSelector from './Budget';
+import DateRangeSelector from './Dates';
 
 
 const TripInfo: React.FC = () => {
@@ -8,7 +9,9 @@ const TripInfo: React.FC = () => {
             <h1 className="text-black text-xl font-bold mb-4 text-center">
               Current trip
             </h1>
-            <p className="mb-2">From: ___ To: ___ ___ days</p>
+            <div className="flex items-center justify-center">
+      <DateRangeSelector />
+    </div>
             <div className="flex items-center mb-2">
               <span role="img" aria-label="city" className="mr-2">
                 📍

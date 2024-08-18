@@ -22,7 +22,7 @@ const BudgetSelector = () => {
   };
 
   return (
-    <div className="pr-4 bg-blue-100 ">
+    <div className="p-4 bg-blue-100 rounded-lg shadow-md flex items-center space-x-2">
       <form>
     <div className="flex items-center space-x-2">
       <span className="text-lg">Budget</span>
