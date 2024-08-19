@@ -1,6 +1,5 @@
 package uk.gov.hmcts.reform.demo.config;
 
-import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -14,11 +13,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-
-import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -46,6 +40,7 @@ public class SecurityConfig {
                 .requestMatchers(new AntPathRequestMatcher("/api/register/basic")).permitAll()
                 .requestMatchers(new AntPathRequestMatcher("/api/register/complete")).permitAll()
                 .requestMatchers(new AntPathRequestMatcher("/api/signin")).permitAll()
+                .requestMatchers(new AntPathRequestMatcher("/auth/login")).permitAll()
                 .anyRequest().hasRole("ADMIN")
             )
         ;
