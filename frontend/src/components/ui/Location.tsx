@@ -11,7 +11,7 @@ const Location: React.FC<LocationProps> = ({ location }) => {
             <div className="flex-shrink-0">
                 <Image src="/images/map.png" alt="mapIcon" width={35} height={35} />
             </div>
-            <p className="text-gray-800 text-lg">{location}</p>
+            <p className="text-gray-800 text-lg truncate">{location}</p>
         </div>
     );
 }

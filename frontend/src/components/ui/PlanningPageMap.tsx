@@ -36,7 +36,7 @@ interface PlanningPageMapProps {
         .then((response) => {
           if (response.results[0]) {
             address = response.results[0].formatted_address;
-            console.log(address);
+            console.log(response);
             if (onAddressChange) {
               onAddressChange(address);
             }
