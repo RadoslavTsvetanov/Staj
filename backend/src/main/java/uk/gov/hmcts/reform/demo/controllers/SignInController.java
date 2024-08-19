@@ -7,9 +7,10 @@ import uk.gov.hmcts.reform.demo.models.Credentials;
 import uk.gov.hmcts.reform.demo.models.User;
 import uk.gov.hmcts.reform.demo.repositories.CredentialsRepo;
 import uk.gov.hmcts.reform.demo.repositories.UserRepo;
+import uk.gov.hmcts.reform.demo.services.AuthService;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/auth")
 public class SignInController {
 
     @Autowired
@@ -17,6 +18,9 @@ public class SignInController {
 
     @Autowired
     private UserRepo userRepo;
+
+    @Autowired
+    private AuthService auth;
 
     @PostMapping("/signin")
     public ResponseEntity<?> signIn(@RequestBody SignInRequest request) {
@@ -45,7 +49,16 @@ public class SignInController {
             return ResponseEntity.status(404).body("User not found");
         }
 
-        return ResponseEntity.ok("Sign-in successful. Welcome, " + user.getUsername() + "!");
+        String token = auth.issueToken(user.getUsername());
+        return ResponseEntity.ok("Sign-in successful. Welcome, " + user.getUsername() + "! Your token: " + token);
+    }
+
+    @PostMapping("/check")
+    public ResponseEntity<?> checkToken(@RequestBody String token) {
+        if (auth.checkIfTokenExists(token)) {
+            return ResponseEntity.ok("Token is valid");
+        }
+        return ResponseEntity.status(401).body("Invalid token");
     }
 
     public static class SignInRequest {
