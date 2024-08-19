@@ -12,7 +12,7 @@ export default function PlanningPage() {
     const lng = parseFloat(searchParams.get('lng') ?? '0');
     
     const positionMarker = { lat, lng };
-
+    
     return (
         <div className="relative h-[100vh] w-full">
             <Map className="h-full w-full"> 

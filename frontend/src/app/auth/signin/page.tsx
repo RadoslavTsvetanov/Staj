@@ -4,6 +4,7 @@ import React from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 import Earth from '../../../../public/Earth';
+import { cookies } from '@/lib/utils';
 
 const handleSignIn = async (event) => {
     event.preventDefault();
@@ -20,13 +21,12 @@ const handleSignIn = async (event) => {
             body: JSON.stringify({ email, password }),
         });
 
-        if (response.ok) {
-            const result = await response.json();
-            console.log('Sign-in successful:', result);
+      if (response) {
+        const token = await response.text();
+        cookies.authToken.set(token)
+            console.log('Sign-in successful:',token) 
             // Handle successful sign-in (e.g., redirect to dashboard)
         } else {
-            const error = await response.text();
-            console.error('Sign-in error:', error);
             // Handle error (e.g., show an error message)
         }
     } catch (err) {
@@ -119,7 +119,7 @@ export default function SignUpRoute() {
             <div className="mt-4 flex items-center justify-between">
               <div className="flex items-center">
                 <label className="ml-2 block text-sm text-gray-600">
-                  Don't have an account? {''}
+                  Dont have an account? {''}
                   <a
                   href="./signup"
                   className="font-medium text-indigo-600 hover:text-indigo-500"

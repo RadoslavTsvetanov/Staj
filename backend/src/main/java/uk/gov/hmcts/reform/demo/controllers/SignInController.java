@@ -50,7 +50,7 @@ public class SignInController {
         }
 
         String token = auth.issueToken(user.getUsername());
-        return ResponseEntity.ok("Sign-in successful. Welcome, " + user.getUsername() + "! Your token: " + token);
+        return ResponseEntity.ok( token);
     }
 
     @PostMapping("/check")
