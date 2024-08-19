@@ -1,5 +1,6 @@
 "use client";
-import { GoogleMap, useJsApiLoader, InfoWindow} from "@react-google-maps/api";
+
+import { GoogleMap, useJsApiLoader } from "@react-google-maps/api";
 import { useState, useEffect } from 'react';
 
 const containerStyle = {
@@ -20,14 +21,15 @@ const mapOptions = {
 interface MapProps {
   children?: React.ReactNode;
   className?: string;
-  center:  {
+  center: {
     lat: number,
     lng: number,
   };
+  onMapLoad?: (loaded: boolean) => void; 
 }
 
-const Map: React.FC<MapProps> = ({ children ,center}) => {
-  const [infoWindowText, setInfoWindowText] = useState<string | null>(null);
+const Map: React.FC<MapProps> = ({ children, center, onMapLoad }) => {
+  const [isMapLoaded, setIsMapLoaded] = useState<boolean>(false);
 
   const { isLoaded } = useJsApiLoader({
     id: "google-map-script",
@@ -36,39 +38,34 @@ const Map: React.FC<MapProps> = ({ children ,center}) => {
   });
 
   useEffect(() => {
-    if (isLoaded && center.lat && center.lng) {
-      const geocoder = new google.maps.Geocoder();
-
-      geocoder
-        .geocode({ location: { lat: center.lat, lng: center.lng } })
-        .then((response) => {
-          if (response.results[0]) {
-            setInfoWindowText(response.results[0].formatted_address);
-          } else {
-            alert("No results found");
-          }
-        })
-        .catch((e) => alert("Geocoder failed due to: " + e));
+    if (isLoaded) {
+      setIsMapLoaded(true);
+      if (onMapLoad) {
+        onMapLoad(true); 
+      }
+    } else {
+      setIsMapLoaded(false);
+      if (onMapLoad) {
+        onMapLoad(false); 
+      }
     }
-  }, [isLoaded, center.lat, center.lng]);
+  }, [isLoaded, onMapLoad]);
 
-  return isLoaded ? (
-    <GoogleMap
-      mapContainerStyle={containerStyle}
-      options={mapOptions}
-      center={center}
-      zoom={10}
-    >
-    {children}
-    {infoWindowText && (
-        <InfoWindow position={center}>
-          <div>{infoWindowText}</div>
-        </InfoWindow>
+  return (
+    <>
+      {isMapLoaded ? (
+        <GoogleMap
+          mapContainerStyle={containerStyle}
+          options={mapOptions}
+          center={center}
+          zoom={10}
+        >
+          {children}
+        </GoogleMap>
+      ) : (
+        <div>Loading map...</div>
       )}
-
-    </GoogleMap>
-  ) : (
-    <></>
+    </>
   );
 }
 
