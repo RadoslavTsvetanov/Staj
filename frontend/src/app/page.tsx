@@ -5,11 +5,14 @@ import './styles.css';
 import { NavbarLanding } from "../components/ui/NavbarLanding";
 import { Model } from '../../public/Landing';
 import { Canvas } from "@react-three/fiber";
+import Cookies from 'js-cookie';
 import { OrbitControls } from "@react-three/drei";
 
 const Landing = () => {
   useEffect(() => {
-  console.log("AAA", cookies.authToken.get())
+  //console.log("AAA", cookies.authToken.get())
+  const authToken = Cookies.get('authToken'); // Access the cookie
+  console.log("AAA", authToken);
 },[])
   return (
     <div className="relative flex flex-col justify-center py-12 sm:px-6 lg:px-8 bg-[#0e6cc4] w-full h-screen overflow-hidden">
