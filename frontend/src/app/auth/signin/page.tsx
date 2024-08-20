@@ -5,37 +5,44 @@ import { Canvas } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 import Earth from '../../../../public/Earth';
 import { cookies } from '@/lib/utils';
+import { useRouter } from 'next/navigation';
 
-const handleSignIn = async (event) => {
+export default function SignUpRoute() {
+  const router = useRouter(); // Use the hook inside the component
+
+  const handleSignIn = async (event) => {
     event.preventDefault();
 
     const email = event.target.email.value;
     const password = event.target.password.value;
 
     try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/auth/signin`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ email, password }),
-        });
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/auth/signin`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
 
-      if (response) {
-        const token = await response.text();
-        cookies.authToken.set(token)
-            console.log('Sign-in successful:',token) 
-            // Handle successful sign-in (e.g., redirect to dashboard)
-        } else {
-            // Handle error (e.g., show an error message)
-        }
+      if (!response.ok) {
+        const errorMessage = await response.text();
+        console.error('Sign-in failed:', errorMessage);
+        alert('Failed to sign in. Please check your credentials.');
+        return;
+      }
+
+      const token = await response.text();
+      cookies.authToken.set(token);
+      console.log('Sign-in successful:', token);
+
+      router.push('../../home');
     } catch (err) {
-        console.error('Network error:', err);
-        // Handle network error
+      console.error('Network error:', err);
+      alert('Network error. Please try again later.');
     }
-};
+  };
 
-export default function SignUpRoute() {
   return (
     <div className="relative flex flex-col justify-center py-12 sm:px-6 lg:px-8 bg-[#0e6cc4] w-full h-screen">
       {/* Wave animation */}
@@ -119,7 +126,7 @@ export default function SignUpRoute() {
             <div className="mt-4 flex items-center justify-between">
               <div className="flex items-center">
                 <label className="ml-2 block text-sm text-gray-600">
-                  Dont have an account? {''}
+                  Don't have an account? {''}
                   <a
                   href="./signup"
                   className="font-medium text-indigo-600 hover:text-indigo-500"

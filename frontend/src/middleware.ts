@@ -1,20 +1,25 @@
-import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
+import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
 
 export function middleware(request: NextRequest) {
+    const url = new URL(request.url);
 
-    if (request.url.includes('auth')) { 
-        return
-    }
-    const cookie = request.cookies.get("authToken")
-    console.log(request.cookies)
+    // Allow access to specific paths without authentication
+    const publicPaths = ['/auth/signin', '/auth/signup', '/', '/auth/signup/info']; // The root path for the landing page
 
-    const authHeader = cookie 
-    if (authHeader === undefined || authHeader === null) {
-        console.log(authHeader)
-      return NextResponse.redirect(new URL('/auth/signin', request.url))
+    // Check if the request URL is in the list of public paths
+    if (publicPaths.some(path => url.pathname.startsWith(path))) {
+        return NextResponse.next();
     }
-    console.log("kokoko,kkokokok")
-    
-    
+
+    // Check for authentication token
+    const authToken = request.cookies.get('authToken');
+
+    if (!authToken) {
+        // Redirect to sign-in page if the token is not present
+        return NextResponse.redirect(new URL('/auth/signin', request.url));
+    }
+
+    // If authenticated, allow the request to continue
+    return NextResponse.next();
 }

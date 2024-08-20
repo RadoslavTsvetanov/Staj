@@ -1,5 +1,6 @@
 package uk.gov.hmcts.reform.demo.interceptors;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -12,7 +13,6 @@ import org.slf4j.LoggerFactory;
 public class AuthInterceptor implements HandlerInterceptor {
 
     private static final Logger logger = LoggerFactory.getLogger(AuthInterceptor.class);
-
     private final AuthService auth;
 
     @Autowired
@@ -20,23 +20,18 @@ public class AuthInterceptor implements HandlerInterceptor {
         this.auth = auth;
     }
 
-    public Boolean checkIfRequestRequiresAuthentication(String url){
-        if(url.contains("auth")){ // a bit contradictory but it is like that since auth/login shouldn't require auth
-            return false;
-        }
-        return true;
+    private boolean checkIfRequestRequiresAuthentication(String url) {
+        return !url.contains("auth");
     }
 
-
     @Override
-    public boolean preHandle(jakarta.servlet.http.HttpServletRequest request, jakarta.servlet.http.HttpServletResponse response, Object handler) throws Exception {
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         String token = request.getHeader("Authorization");
 
-        System.out.println("llllllllllllllllllllllllllllllllllllllllll"+" " + token);
-        System.out.println("pppppp"+request.getRequestURL().toString());
-        if(!checkIfRequestRequiresAuthentication(request.getRequestURL().toString())){ // TODO: make a better func name
+        if (!checkIfRequestRequiresAuthentication(request.getRequestURL().toString())) {
             return true;
         }
+
         if (token != null && token.startsWith("Bearer ")) {
             token = token.substring(7); // Remove "Bearer " prefix
         }
@@ -45,9 +40,9 @@ public class AuthInterceptor implements HandlerInterceptor {
             logger.warn("Unauthorized access attempt: Invalid or missing token");
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.getWriter().write("Unauthorized: Invalid or missing token");
-            return false; // Prevent the request from reaching the controller
+            return false;
         }
 
-        return true; // Proceed with the request
+        return true;
     }
 }

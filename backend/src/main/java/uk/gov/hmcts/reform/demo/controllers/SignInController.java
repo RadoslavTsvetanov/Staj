@@ -27,19 +27,9 @@ public class SignInController {
         String email = request.getEmail();
         String password = request.getPassword();
 
-        // Log incoming request
-        System.out.println("Attempting sign in with email: " + email);
-
         Credentials credentials = credentialsRepo.findByEmail(email);
 
-        if (credentials == null) {
-            return ResponseEntity.status(401).body("Invalid email or password");
-        }
-
-        // Log retrieved credentials
-        System.out.println("Retrieved credentials with email: " + credentials.getEmail());
-
-        if (!credentials.getPassword().equals(password)) {
+        if (credentials == null || !credentials.getPassword().equals(password)) {
             return ResponseEntity.status(401).body("Invalid email or password");
         }
 
@@ -50,7 +40,7 @@ public class SignInController {
         }
 
         String token = auth.issueToken(user.getUsername());
-        return ResponseEntity.ok( token);
+        return ResponseEntity.ok(token);
     }
 
     @PostMapping("/check")

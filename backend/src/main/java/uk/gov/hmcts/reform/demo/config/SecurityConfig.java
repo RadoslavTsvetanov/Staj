@@ -37,10 +37,9 @@ public class SecurityConfig {
             .rememberMe(Customizer.withDefaults())
             .csrf(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests(request -> request
-                .requestMatchers(new AntPathRequestMatcher("/api/register/basic")).permitAll()
-                .requestMatchers(new AntPathRequestMatcher("/api/register/complete")).permitAll()
+                .requestMatchers(new AntPathRequestMatcher("/api/auth/register/basic")).permitAll()
+                .requestMatchers(new AntPathRequestMatcher("/api/auth/register/complete")).permitAll()
                 .requestMatchers(new AntPathRequestMatcher("/api/auth/signin")).permitAll()
-                .requestMatchers(new AntPathRequestMatcher("/api/auth/login")).permitAll()
                 .anyRequest().hasRole("ADMIN")
             )
         ;

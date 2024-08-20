@@ -7,7 +7,7 @@ import { cookies } from '@/lib/utils';
 
 const Landing = () => {
   useEffect(() => {
-  console.log(cookies.authToken.get())
+  console.log("AAA", cookies.authToken.get())
 },[])
   return (
     <div className="relative flex flex-col justify-center py-12 sm:px-6 lg:px-8 bg-[#0e6cc4] w-full h-screen">
