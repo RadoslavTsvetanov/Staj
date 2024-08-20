@@ -8,6 +8,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import uk.gov.hmcts.reform.demo.models.DateWindow;
+import uk.gov.hmcts.reform.demo.models.Location;
 import uk.gov.hmcts.reform.demo.models.Plan;
 import uk.gov.hmcts.reform.demo.models.User;
 import uk.gov.hmcts.reform.demo.services.LocationService;

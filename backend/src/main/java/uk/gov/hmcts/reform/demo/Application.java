@@ -11,19 +11,11 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import uk.gov.hmcts.reform.demo.services.OpenAIService;
 
-@SpringBootApplication(scanBasePackages = {"uk.gov.hmcts.reform.demo" })
+@SpringBootApplication(scanBasePackages = {"uk.gov.hmcts.reform.demo"})
 @EnableJpaRepositories(basePackages = "uk.gov.hmcts.reform.demo.repositories")
 @EntityScan(basePackages = "uk.gov.hmcts.reform.demo")
-public class Application {
-//    @Bean
-//    public WebMvcConfigurer corsConfigurer() {
-//        return new WebMvcConfigurer() {
-//            @Override
-//            public void addCorsMappings(CorsRegistry registry) {
-//                registry.addMapping("/*").allowedOrigins("*");
-//            }
-//        };
-//    }
+public class Application implements CommandLineRunner { // Implement CommandLineRunner
+
     @Bean
     public WebMvcConfigurer corsConfigurer() {
         return new WebMvcConfigurer() {
@@ -33,10 +25,11 @@ public class Application {
                     .allowedOrigins("*") // Restrict to specific origin
                     .allowedMethods("*") // Specify allowed methods
                     .allowedHeaders("*") // Allow all headers
-                    //.allowCredentials(true) // Allow credentials like cookies
+                //.allowCredentials(true) // Allow credentials like cookies
                 ;
             }
         };
+    }
 
     @Autowired
     private OpenAIService openAIService;
@@ -46,16 +39,7 @@ public class Application {
     }
 
     @Override
-    public void run(String... args) throws Exception {
-        openAIService.runTest();
+    public void run(String... args) throws Exception { // Override run method from CommandLineRunner
+        //openAIService.runTest();
     }
-
-
-    }
-//public class Application {
-
- //   public static void main(final String[] args) {
-   //     SpringApplication.run(Application.class, args);
-   // }
-//}
-
+}
