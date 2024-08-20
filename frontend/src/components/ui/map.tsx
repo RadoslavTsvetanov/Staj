@@ -32,6 +32,7 @@ interface MapProps {
 const Map: React.FC<MapProps> = ({ children, center, onMapLoad,onClick }) => {
   const [isMapLoaded, setIsMapLoaded] = useState<boolean>(false);
 
+
   const { isLoaded } = useJsApiLoader({
     id: "google-map-script",
     googleMapsApiKey: process.env.NEXT_PUBLIC_MAPS_API_KEY as string,
