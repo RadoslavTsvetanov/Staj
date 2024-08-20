@@ -33,6 +33,8 @@ const foodSubInterests = [
 const InfoRoute: React.FC = () => {
     const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
     const [showFoodSubInterests, setShowFoodSubInterests] = useState(false);
+    const [showOtherInput, setShowOtherInput] = useState(false);
+    const [otherInterest, setOtherInterest] = useState('');
     const [name, setName] = useState('');
     const [dateOfBirth, setDateOfBirth] = useState('');
     const [error, setError] = useState('');
@@ -56,6 +58,18 @@ const InfoRoute: React.FC = () => {
         }
     };
 
+    const handleOtherInterest = (event: React.FormEvent<HTMLInputElement>) => {
+        setOtherInterest(event.currentTarget.value);
+    }
+
+    const addOtherInterest = () => {
+        if(otherInterest) {
+            setSelectedInterests([...selectedInterests, otherInterest]);
+            setShowOtherInput(false);
+            setOtherInterest('');
+        }
+    };
+
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         try {
@@ -74,7 +88,7 @@ const InfoRoute: React.FC = () => {
 
             if (response.ok) {
               alert('Registration complete');
-              router.push('/home');
+              router.push('../../signin');
             } else {
               const data = await response.text();
               setError(data);
@@ -159,6 +173,23 @@ const InfoRoute: React.FC = () => {
                                         {subInterest}
                                     </button>
                                 ))}
+                                {showOtherInput ? (
+                                    <input
+                                        type="text"
+                                        value={otherInterest}
+                                        onChange={handleOtherInterest}
+                                        onBlur={addOtherInterest}
+                                        className='px-3 py-1 rounded-lg border bg-gray-200 text-gray-700'
+                                        placeholder="Your interest"
+                                        autoFocus
+                                    />
+                                ) : (
+                                <button
+                                    onClick={() => setShowOtherInput(true)}
+                                    className='px-3 py-1 rounded-lg border bg-gray-200 text-gray-700'>
+                                    Other
+                                </button>
+                                )}
                             </div>
                         </div>
 
