@@ -17,13 +17,10 @@ export const NavbarLanding = () => {
                             <Earth />
                             <OrbitControls />
                         </Canvas>
-                        Project
+                        Staj
                     </a>
                 </div>
                 <div>
-                    <Link href="../../app/about" className="ml-8 hover:text-gray-300">
-                        About
-                    </Link>
                     <Link href="#contacts" className="ml-8 hover:text-gray-300">
                         Contacts
                     </Link>
