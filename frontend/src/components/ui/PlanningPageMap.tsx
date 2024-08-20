@@ -19,12 +19,24 @@ interface PlanningPageMapProps {
   let lat = parseFloat(searchParams.get("lat") ?? "0");
   let lng = parseFloat(searchParams.get("lng") ?? "0");
 
-  const positionMarker = { lat, lng };
+  const [positionMarker,setPositionMarker] =useState ({ lat, lng });
   const center = { lat, lng };
 
   const handleMapLoad = useCallback((loaded: boolean) => {
     setMapLoaded(loaded);
   }, []);
+
+  function handleDragEnd(event: google.maps.MapMouseEvent) 
+  {
+    if (event.latLng) {
+      let lat = event.latLng.lat();
+      let lng = event.latLng.lng();
+      console.log("The final lat", lat);
+      console.log("The final lng", lng);
+      setPositionMarker({lat, lng});
+      console.log(positionMarker);
+  }
+  }
 
   useEffect(() => {
     if (mapLoaded && lat && lng) {
@@ -50,9 +62,9 @@ interface PlanningPageMapProps {
 
   return (
     <div className="relative h-screen w-full">
-      <Map className="h-full w-full" center={center} onMapLoad={handleMapLoad}>
+      <Map className="h-full w-full" center={{lat: center.lat,lng: center.lng}} onMapLoad={handleMapLoad}>
         <Region center={positionMarker} radius={radius} />
-        <MarkerPin positionMarker={positionMarker} />
+        <MarkerPin positionMarker={positionMarker} draggable={true} onDragEnd={handleDragEnd}/>
       </Map>
       <div className="absolute bottom-10 left-1/4 transform -translate-x-1/2">
         <Slider radius={radius} setRadius={setRadius} />

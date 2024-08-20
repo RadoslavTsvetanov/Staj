@@ -9,7 +9,7 @@ const containerStyle = {
 };
 
 const mapOptions = {
-  zoom: 17,
+  zoom: 15,
   mapId: "MY_NEXTJS_MAP_ID",
   mapTypeControl: false,
   zoomControl: false,
@@ -26,9 +26,10 @@ interface MapProps {
     lng: number,
   };
   onMapLoad?: (loaded: boolean) => void; 
+  onClick?: (event: any) => void;
 }
 
-const Map: React.FC<MapProps> = ({ children, center, onMapLoad }) => {
+const Map: React.FC<MapProps> = ({ children, center, onMapLoad,onClick }) => {
   const [isMapLoaded, setIsMapLoaded] = useState<boolean>(false);
 
   const { isLoaded } = useJsApiLoader({
@@ -58,7 +59,7 @@ const Map: React.FC<MapProps> = ({ children, center, onMapLoad }) => {
           mapContainerStyle={containerStyle}
           options={mapOptions}
           center={center}
-          zoom={10}
+          onClick={onClick}
         >
           {children}
         </GoogleMap>

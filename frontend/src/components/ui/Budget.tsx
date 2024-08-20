@@ -2,13 +2,11 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 
 const BudgetSelector = () => {
-  const [selectedBudget, setSelectedBudget] = useState(4);
-  const [isSelectedBudget, selectBudget] = useState(false);
+  const [selectedBudget, setSelectedBudget] = useState(0);
+
 
   const handleClick = (index: number) => {
-    if (isSelectedBudget) return;
     setSelectedBudget(index);
-    selectBudget(true);
     handleBudgetChange(index);
   };
 
@@ -16,10 +14,10 @@ const BudgetSelector = () => {
     console.log('Selected Budget:', budget);
   };
 
-  const handleEditClick = () => {
-    selectBudget(false); 
-    setSelectedBudget(4);
-  };
+  // const handleEditClick = () => {
+  //   selectBudget(false); 
+  //   setSelectedBudget(4);
+  // };
 
   return (
     <div className="p-4 bg-blue-100 rounded-lg shadow-md flex items-center space-x-2">
@@ -31,15 +29,15 @@ const BudgetSelector = () => {
               <span
                 key={level}
                 className={`cursor-pointer text-2xl ${
-                  selectedBudget >= level ? 'text-green-700' : 'text-gray-800'
-                } ${isSelectedBudget && 'cursor-not-allowed'}`} 
+                  selectedBudget >= level ? 'text-yellow-500' : 'text-gray-800'
+                }`} 
                 onClick={() => handleClick(level)}
               >
                 $
               </span>
             ))}
           </div>
-      <Image src="/images/edit.png" alt="editB" onClick={handleEditClick} width={20} height={20} />
+      {/* <Image src="/images/edit.png" alt="editB" onClick={handleEditClick} width={20} height={20} /> */}
     </div>
     </form>
     </div>

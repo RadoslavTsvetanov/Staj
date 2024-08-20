@@ -14,7 +14,7 @@ function HomePageMap() {
   const [isSelectedLocation, setSelected] = useState(false);
   const [Location, setLocation] = useState({lat:43.553185075739556,lng:-79.42145117539064});
 
-  function MarkerFinishDrag(event: google.maps.MapMouseEvent) {
+  function MarkerFinish(event: google.maps.MapMouseEvent) {
     if (event.latLng) {
         let lat = event.latLng.lat();
         let lng = event.latLng.lng();
@@ -25,14 +25,28 @@ function HomePageMap() {
         setLocation({ lat, lng });
     }
 }
+
+  // function handleOnClick(event)
+  // {
+  //   if (event.latLng) {
+  //     let lat = event.latLng.lat();
+  //     let lng = event.latLng.lng();
+  //     console.log("The final lat", lat);
+  //     console.log("The final lng", lng);
+  //     setSelected(true);
+  //     console.log(isSelectedLocation);
+  //     setLocation({ lat, lng });
+  // }
+
+  // }
   
   return (
     <div className="relative w-full h-full">
-                <Map center={center}>
+                <Map center={center} onClick={MarkerFinish}>
                     <MarkerPin
                         positionMarker={Location}
                         draggable={true}
-                        onDragEnd={MarkerFinishDrag}
+                        onDragEnd={MarkerFinish}
                     />
                 </Map>
                 {isSelectedLocation && (
