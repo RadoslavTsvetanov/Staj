@@ -6,7 +6,7 @@ import Image from 'next/image';
 import { useState, useEffect } from 'react';
 import  Charles  from "./charles-leclerc-ferrari.jpg";
 import LArrow from "./left.png";
-import { Popup } from "../../components/ui/Popup";
+//import { Popup } from "../../components/ui/Popup";
 import axios from "axios";
 
 const interestsList = [
@@ -204,7 +204,7 @@ const AccountPage: NextPage = () => {
           </form>
         </div>
       </div>
-      {isPopupVisible && <Popup togglePopup={togglePopup} />}
+      {/* {isPopupVisible && <Popup togglePopup={togglePopup} />} */}
     </>
   );
 };
