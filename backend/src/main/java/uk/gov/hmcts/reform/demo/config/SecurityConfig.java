@@ -45,7 +45,6 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.PUT, "/plans/{planId}/date-window").hasRole("USER")
                 .requestMatchers(HttpMethod.POST, "/history/{historyId}/memories").hasRole("USER")
                 .requestMatchers(HttpMethod.GET, "/history/{id}").hasRole("USER")
-                .requestMatchers(HttpMethod.POST, "/plans").hasRole("USER")
                 .requestMatchers(HttpMethod.DELETE, "/users/{userId}").hasRole("USER")
 
             )
@@ -62,6 +61,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.POST, "/user-access/profile/update").permitAll()
                 .requestMatchers(HttpMethod.GET, "/user-access/profile").permitAll()
                 .requestMatchers(HttpMethod.GET, "/user-access/plans").permitAll()
+                .requestMatchers(HttpMethod.POST, "/plans").permitAll()
                 .anyRequest().hasRole("ADMIN")
             )
         ;

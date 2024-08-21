@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import uk.gov.hmcts.reform.demo.models.*;
 import uk.gov.hmcts.reform.demo.repositories.*;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -111,5 +112,17 @@ public class PlanService {
             plan.getUsers().removeIf(user -> user.getId().equals(userId));
             planRepo.save(plan);
         }
+    }
+
+    public DateWindow findDateWindowByDates(LocalDate startDate, LocalDate endDate) {
+        return dateWindowRepo.findByStartDateAndEndDate(startDate, endDate);
+    }
+
+    public DateWindow saveDateWindow(DateWindow dateWindow) {
+        return dateWindowRepo.save(dateWindow);
+    }
+
+    public Optional<DateWindow> findDateWindowById(Long dateWindowId) {
+        return dateWindowRepo.findById(dateWindowId);
     }
 }
