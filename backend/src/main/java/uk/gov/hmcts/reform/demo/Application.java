@@ -37,7 +37,7 @@ public class Application {
         SpringApplication.run(Application.class, args);
     }
 
-    @Override
+    //@Override
     public void run(String... args) throws Exception { // Override run method from CommandLineRunner
         //openAIService.runTest();
     }

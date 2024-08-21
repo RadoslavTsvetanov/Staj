@@ -10,7 +10,9 @@ import java.util.List;
 @Service
 public class OpenAIService {
 
-    private static final String OPENAI_API_KEY = "###";
+    private static final String OPENAI_API_KEY =
+        "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";
+
     public String getMatchedInterests(String customInterest, String[] predefinedInterests) {
         OkHttpClient client = new OkHttpClient();
 
