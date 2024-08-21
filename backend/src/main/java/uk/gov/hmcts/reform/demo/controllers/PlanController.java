@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import uk.gov.hmcts.reform.demo.models.DateWindow;
@@ -32,15 +33,23 @@ public class PlanController {
     @Autowired
     private LocationService locationService;
 
+    private String getUsernameFromAuthentication() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return authentication != null ? authentication.getName() : null;
+    }
+
     @PostMapping
-    public ResponseEntity<Plan> createPlan(@Valid @RequestBody Plan plan, Authentication authentication) {
+    public ResponseEntity<Plan> createPlan(@Valid @RequestBody Plan plan) {
         if (planService.findByName(plan.getName()).isPresent()) {
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
 
-        String username = authentication.getName();
-        Optional<User> userOptional = userService.findByUsername(username);
+        String username = getUsernameFromAuthentication();
+        if (username == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
 
+        Optional<User> userOptional = userService.findByUsername(username);
         if (userOptional.isEmpty()) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
@@ -49,7 +58,6 @@ public class PlanController {
         plan.getUsers().add(currentUser);
 
         Plan savedPlan = planService.save(plan);
-
         return ResponseEntity.status(HttpStatus.CREATED).body(savedPlan);
     }
 
@@ -69,10 +77,13 @@ public class PlanController {
     }
 
     @PostMapping("/{planId}/users")
-    public ResponseEntity<String> addUserToPlan(@PathVariable Long planId, @RequestParam String username, Authentication authentication) {
-        String currentUsername = authentication.getName();
-        Optional<User> currentUser = userService.findByUsername(currentUsername);
+    public ResponseEntity<String> addUserToPlan(@PathVariable Long planId, @RequestParam String username) {
+        String currentUsername = getUsernameFromAuthentication();
+        if (currentUsername == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Current user not found.");
+        }
 
+        Optional<User> currentUser = userService.findByUsername(currentUsername);
         if (currentUser.isEmpty()) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Current user not found.");
         }
