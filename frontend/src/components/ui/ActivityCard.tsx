@@ -11,7 +11,7 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ name, imageUrl }) => {
     <div className="bg-teal-300 rounded-lg p-4 mb-4 shadow-md">
       <div className="flex items-center justify-between">
         <div className="flex items-center">
-          <Image src={imageUrl} alt={name} width={24} height={24} />
+          <Image src="/images/gps.png" alt="LocationIcon" width={24} height={24} />
           <span className="ml-2 text-lg font-semibold">{name}</span>
         </div>
         <div className="flex items-center space-x-2">
