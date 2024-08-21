@@ -13,25 +13,16 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @EnableJpaRepositories(basePackages = "uk.gov.hmcts.reform.demo.repositories")
 @EntityScan(basePackages = "uk.gov.hmcts.reform.demo")
 public class Application {
-//    @Bean
-//    public WebMvcConfigurer corsConfigurer() {
-//        return new WebMvcConfigurer() {
-//            @Override
-//            public void addCorsMappings(CorsRegistry registry) {
-//                registry.addMapping("/*").allowedOrigins("*");
-//            }
-//        };
-//    }
     @Bean
     public WebMvcConfigurer corsConfigurer() {
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/api/**")
+                registry.addMapping("/**")
                     .allowedOrigins("*") // Restrict to specific origin
                     .allowedMethods("*") // Specify allowed methods
                     .allowedHeaders("*") // Allow all headers
-                    //.allowCredentials(true) // Allow credentials like cookies
+                //.allowCredentials(true) // Allow credentials like cookies
                 ;
             }
         };

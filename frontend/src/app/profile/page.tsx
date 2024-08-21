@@ -4,209 +4,272 @@ import { NextPage } from 'next';
 import Head from 'next/head';
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
-import  Charles  from "./charles-leclerc-ferrari.jpg";
+import axios from 'axios';
+import Charles from "./charles-leclerc-ferrari.jpg";
 import LArrow from "./left.png";
 import { Popup } from "../../components/ui/Popup";
-import axios from "axios";
+import { useRouter } from 'next/navigation';
+import { cookies } from '../../lib/utils';
 
 const interestsList = [
-    "Art",
-    "Sports",
-    "Books",
-    "Education",
-    "Entertainment",
-    "Hiking",
-    "History",
-    "Movies",
-    "Theater",
-    "Animals",
-    "Shopping",
-    "Relax",
-    "Religion",
-    "Flora",
-    "Food"
-]
+    "Art", "Sports", "Books", "Education", "Entertainment", "Hiking",
+    "History", "Movies", "Theater", "Animals", "Shopping", "Relax",
+    "Religion", "Flora", "Food"
+];
 
 const foodSubInterests = [
-    "Cafe",
-    "Vegan",
-    "Fast food",
-    "Bar",
-    "Bakery",
-    "Deserts"
-]
+    "Cafe", "Vegan", "Fast food", "Bar", "Bakery", "Desserts"
+];
 
 const AccountPage: NextPage = () => {
-  const [name, setName] = useState('');
-  const [username, setUsername] = useState('');
-  const [email, setEmail] = useState('');
-  const [dob, setDob] = useState('');
-  
-  const [isPopupVisible, setIsPopupVisible] = useState(false);
+    const [name, setName] = useState<string>('');
+    const [username, setUsername] = useState<string>('');
+    const [email, setEmail] = useState<string>('');
+    const [dob, setDob] = useState<string>('');
+    const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
+    const [showFoodSubInterests, setShowFoodSubInterests] = useState<boolean>(false);
+    const [isPopupVisible, setIsPopupVisible] = useState<boolean>(false);
+    const [password, setPassword] = useState<string>('');
+    const router = useRouter();
 
-  useEffect(() => {
-    const getName = () => {
-        // const data = axios.get()
-    }
-  }, [])
+    useEffect(() => {
+        const fetchUserData = async () => {
+            try {
+                const token = cookies.authToken.get();
+                const profileResponse = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/user-access/profile`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                const userData = profileResponse.data;
 
-  const handleDelete = () => {
-    setIsPopupVisible(true);
-  };
+                setName(userData.name || '');
+                setUsername(userData.username || '');
+                setEmail(userData.credentials?.email || '');
+                setDob(userData.dateOfBirth || '');
+                setPassword(userData.credentials?.password || '');
 
-  const handleSave = () => {
-    //handle save
-  };
+                if (userData.preferences && userData.preferences.interests) {
+                    setSelectedInterests(userData.preferences.interests);
+                    setShowFoodSubInterests(userData.preferences.interests.includes('Food'));
+                } else {
+                    setSelectedInterests([]);
+                    setShowFoodSubInterests(false);
+                }
+            } catch (error) {
+                console.error('Error fetching user data:', error);
+                alert('Failed to fetch user data. Please try again.');
+            }
+        };
 
-  const togglePopup = () => {
-    setIsPopupVisible(!isPopupVisible);
-  };
+        fetchUserData();
+    }, []);
 
-  const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
-  const [showFoodSubInterests, setShowFoodSubInterests] = useState(false);
-
-  const toggleInterest = (event: React.MouseEvent<HTMLButtonElement>, interest: string) => {
-    event.preventDefault(); // Prevent form submission
-
-    if (selectedInterests.includes(interest)) {
-        setSelectedInterests(selectedInterests.filter((item) => item !== interest));
-        if (interest === "Food") {
-            setShowFoodSubInterests(false);
+    const handleSave = async () => {
+        try {
+            const token = cookies.authToken.get(); // Assuming you're storing the JWT token in cookies
+    
+            const response = await axios.post(
+                `${process.env.NEXT_PUBLIC_API_BASE_URL}/user-access/profile/update`,
+                {
+                    name,
+                    username,
+                    dateOfBirth: dob,
+                    credentials: {
+                        email,
+                        password
+                    },
+                    preferences: {
+                        interests: selectedInterests,
+                    },
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+    
+            if (response.status === 200) {
+                console.log('User updated successfully:', response.data);
+            } else {
+                console.error('Failed to update user:', response.status);
+            }
+        } catch (error) {
+            console.error('An error occurred:', error);
         }
-    } else {
-        setSelectedInterests([...selectedInterests, interest]);
-        if (interest === "Food") {
-            setShowFoodSubInterests(true);
+    };
+
+    const handleDelete = () => {
+        setIsPopupVisible(true);
+    };
+
+    const handleConfirmDelete = async () => {
+        try {
+            const token = cookies.authToken.get();
+            await axios.delete(`${process.env.NEXT_PUBLIC_API_BASE_URL}/user-access/profile`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            alert('Profile deleted successfully!');
+            router.push('/login');
+        } catch (error) {
+            console.error('Error deleting profile:', error);
+            alert('Failed to delete profile. Please try again.');
+        } finally {
+            setIsPopupVisible(false);
         }
-    }
-};
+    };
 
-  return (
-    <>
-      <Head>
-        <title>Your profile</title>
-        <meta name="description" content="Your account page" />
-      </Head>
+    const togglePopup = () => {
+        setIsPopupVisible(!isPopupVisible);
+    };
 
-      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-        <div className="w-full max-w-md bg-white shadow-md rounded-lg p-6">
-          <div className="flex items-center justify-center mb-4 relative">
-            <div className="absolute left-0 max-w-7">
-              <Image
-                src={LArrow}
-                alt="Left arrow"
-                onClick={() => history.back()}
-                className='cursor-pointer'
-              />
-            </div>
-            <h1 className="text-2xl font-semibold text-gray-700">
-              My profile
-            </h1>
-            <div className='absolute right-0'>
-              <button
-                className="text-white-500 bg-green-300 rounded-md px-3 py-1 hover:text-white-700 hover:bg-green-500"
-                onClick={handleSave}
-                type="submit"
-              >
-                Save
-              </button>
-            </div>
-          </div>
+    const toggleInterest = (event: React.MouseEvent<HTMLButtonElement>, interest: string) => {
+        event.preventDefault();
 
-          <div className="flex items-center float-left mb-4">
-            <Image
-              src={Charles}
-              alt="Profile Picture"
-              width={90}
-              height={90}
-              className="rounded-full"
-            />
-          </div>
-          <form className="space-y-4">
-            <div>
-              <label htmlFor="name" className="block text-sm font-medium text-gray-600">Name</label>
-              <input
-                type="text"
-                id="name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="mt-1 block px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-indigo-500"
-              />
-            </div>
-            <div className='flex space-x-4'>
-              <div className='w-1/2'>
-              <label htmlFor="username" className="block text-sm font-medium text-gray-600">Username</label>
-              <input
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-indigo-500"
-                type="text"
-                id="username"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-              />
-              </div>
-              <div className='w-1/2'>
-                <label className="block text-sm font-medium text-gray-700" htmlFor="dob">Date of Birth</label>
-                <input
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-indigo-500"
-                  type="date"
-                  name="dob"
-                  id="dob"
-                  onChange={(e) => setDob(e.target.value)}
-                />
-              </div>
-            </div>
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-600">Email</label>
-              <input
-                type="email"
-                id="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-indigo-500"
-              />
-            </div>
-            <div className="mt-4">
-                <label className='block text-sm font-medium text-gray-700'>
-                    Interests
-                </label>
-                <div className="appearance-none w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm flex flex-wrap gap-2">
-                    {interestsList.map((interest) => (
-                        <button
-                            key={interest}
-                            onClick={(event) => toggleInterest(event, interest)}
-                            className={`px-3 py-1 rounded-lg border 
-                            ${selectedInterests.includes(interest) ? "bg-blue-300 text-white" : "bg-gray-200 text-gray-700"}
-                            `}
-                        >
-                            {interest}
-                        </button>
-                    ))}
-                    {showFoodSubInterests && foodSubInterests.map((subInterest) => (
-                        <button
-                            key={subInterest}
-                            onClick={(event) => toggleInterest(event, subInterest)}
-                            className={`px-3 py-1 rounded-lg border 
-                        ${selectedInterests.includes(subInterest) ? "bg-blue-300 text-white" : "bg-gray-200 text-gray-700"}
-                        `}
-                        >
-                            {subInterest}
-                        </button>
-                    ))}
+        if (selectedInterests.includes(interest)) {
+            setSelectedInterests(selectedInterests.filter((item) => item !== interest));
+            if (interest === "Food") {
+                setShowFoodSubInterests(false);
+            }
+        } else {
+            setSelectedInterests([...selectedInterests, interest]);
+            if (interest === "Food") {
+                setShowFoodSubInterests(true);
+            }
+        }
+    };
+
+    return (
+        <>
+            <Head>
+                <title>Your profile</title>
+                <meta name="description" content="Your account page" />
+            </Head>
+
+            <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+                <div className="w-full max-w-md bg-white shadow-md rounded-lg p-6">
+                    <div className="flex items-center justify-center mb-4 relative">
+                        <div className="absolute left-0 max-w-7">
+                            <Image
+                                src={LArrow}
+                                alt="Left arrow"
+                                onClick={() => router.back()}
+                                className='cursor-pointer'
+                            />
+                        </div>
+                        <h1 className="text-2xl font-semibold text-gray-700">
+                            My profile
+                        </h1>
+                        <div className='absolute right-0'>
+                            <button
+                                className="text-white-500 bg-green-300 rounded-md px-3 py-1 hover:text-white-700 hover:bg-green-500"
+                                onClick={handleSave}
+                                type="button"
+                            >
+                                Save
+                            </button>
+                        </div>
+                    </div>
+
+                    <div className="flex items-center float-left mb-4">
+                        <Image
+                            src={Charles}
+                            alt="Profile Picture"
+                            width={90}
+                            height={90}
+                            className="rounded-full"
+                        />
+                    </div>
+                    <form className="space-y-4">
+                        <div>
+                            <label htmlFor="name" className="block text-sm font-medium text-gray-600">Name</label>
+                            <input
+                                type="text"
+                                id="name"
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
+                                className="mt-1 block px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                            />
+                        </div>
+                        <div className='flex space-x-4'>
+                            <div className='w-1/2'>
+                                <label htmlFor="username" className="block text-sm font-medium text-gray-600">Username</label>
+                                <input
+                                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                                    type="text"
+                                    id="username"
+                                    value={username}
+                                    onChange={(e) => setUsername(e.target.value)}
+                                />
+                            </div>
+                            <div className='w-1/2'>
+                                <label className="block text-sm font-medium text-gray-700" htmlFor="dob">Date of Birth</label>
+                                <input
+                                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                                    type="date"
+                                    name="dob"
+                                    id="dob"
+                                    value={dob}
+                                    onChange={(e) => setDob(e.target.value)}
+                                />
+                            </div>
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-600">Interests</label>
+                            <div className="flex flex-wrap gap-2">
+                                {interestsList.map((interest) => (
+                                    <button
+                                        key={interest}
+                                        onClick={(e) => toggleInterest(e, interest)}
+                                        className={`px-4 py-2 rounded-md ${
+                                            selectedInterests.includes(interest) ? 'bg-blue-500 text-white' : 'bg-gray-200'
+                                        }`}
+                                    >
+                                        {interest}
+                                    </button>
+                                ))}
+                            </div>
+                            {showFoodSubInterests && (
+                                <div className="mt-4">
+                                    <label className="block text-sm font-medium text-gray-600">Food Sub-Interests</label>
+                                    <div className="flex flex-wrap gap-2">
+                                        {foodSubInterests.map((subInterest) => (
+                                            <button
+                                                key={subInterest}
+                                                onClick={(e) => toggleInterest(e, subInterest)}
+                                                className={`px-4 py-2 rounded-md ${
+                                                    selectedInterests.includes(subInterest) ? 'bg-blue-500 text-white' : 'bg-gray-200'
+                                                }`}
+                                            >
+                                                {subInterest}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    </form>
+
+                    <button
+                        onClick={handleDelete}
+                        className="mt-4 bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600"
+                    >
+                        Delete Account
+                    </button>
+
+                    <Popup
+                        visible={isPopupVisible}
+                        togglePopup={togglePopup}
+                        onConfirm={handleConfirmDelete}
+                        message="Are you sure you want to delete your profile? This action cannot be undone."
+                    />
                 </div>
             </div>
-            <button
-              type="button"
-              onClick={handleDelete}
-              className="w-full bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500"
-            >
-              Delete profile
-            </button>
-          </form>
-        </div>
-      </div>
-      {isPopupVisible && <Popup togglePopup={togglePopup} />}
-    </>
-  );
+        </>
+    );
 };
 
 export default AccountPage;
