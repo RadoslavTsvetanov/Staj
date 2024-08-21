@@ -113,4 +113,20 @@ public class UserService {
         userRepo.save(user);
         return user;
     }
+
+    public Credentials saveCredentials(Credentials credentials) {
+        return credentialsRepo.save(credentials);
+    }
+
+    public boolean checkIfEmailExists(String email) {
+        return credentialsRepo.existsByEmail(email);
+    }
+
+    public Credentials updateCredentials(Credentials credentials) {
+        if (credentials.getId() == null) {
+            throw new IllegalArgumentException("Credentials ID cannot be null");
+        }
+
+        return credentialsRepo.save(credentials);
+    }
 }
