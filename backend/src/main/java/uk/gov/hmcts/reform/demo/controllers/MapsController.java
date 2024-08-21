@@ -7,8 +7,7 @@ import uk.gov.hmcts.reform.demo.services.GoogleApi;
 import uk.gov.hmcts.reform.demo.types.NearbyPlacesResponse;
 import uk.gov.hmcts.reform.demo.utils.Utils;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
@@ -50,6 +49,8 @@ public class MapsController {
     }
 
 
+
+
     private Boolean shouldPlaceBeDiscarded(uk.gov.hmcts.reform.demo.types.NearbyPlacesResponse.Result place){ // to filter by some global filter which is universal, for example we dont need to return places that are permamently closed
         if(place.permanently_closed){
             return true;
@@ -74,7 +75,8 @@ public class MapsController {
             List<uk.gov.hmcts.reform.demo.types.NearbyPlacesResponse.Result> filteredInteresstOnlyConatiningPlacesThatMAtchSelectedInterersts =
                 res.stream()
                     .filter(place -> !shouldPlaceBeDiscarded(place))
-                    .collect(Collectors.toList());            return ResponseEntity.ok(u.JsonStringify(res));
+                    .collect(Collectors.toList());
+            return ResponseEntity.ok(u.JsonStringify(res));
         } catch (Exception e) {
             return ResponseEntity.ofNullable("not found or internal error idk, check code");
         }
