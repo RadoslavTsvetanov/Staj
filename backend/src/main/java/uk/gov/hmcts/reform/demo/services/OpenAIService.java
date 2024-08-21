@@ -77,29 +77,22 @@ public class OpenAIService {
         }
     }
 
-    public String getDestinationsForInterestAndTypes(String customInterest, String matchedInterests) {
+    public String getSpecificTypesForCustomInterest(String customInterest, String matchedInterests) {
         StringBuilder promptBuilder = new StringBuilder("The user has a specific interest in '")
             .append(customInterest)
             .append("'. Given the following matched interests: ");
 
-        Dictionary<String, List<String>> apiTypesDict = ApiTypes.getCustomApiTypesToGoogleApiTypesDict();
-
-        String[] interestsArray = matchedInterests.split("\\s*,\\s*");
-        int limit = Math.min(interestsArray.length, 2); // the two most compatible categories
+        List<String> matchedInterestsList = Arrays.asList(matchedInterests.split("\\s*,\\s*"));
+        int limit = Math.min(matchedInterestsList.size(), 2); // Limit to top 2 interests
 
         for (int i = 0; i < limit; i++) {
-            String interest = interestsArray[i].trim();
+            String interest = matchedInterestsList.get(i).trim();
             promptBuilder.append(interest).append(", ");
-            List<String> types = apiTypesDict.get(interest);
-
-            if (types != null && !types.isEmpty()) {
-                promptBuilder.append(" with types: ").append(String.join(", ", types)).append("; ");
-            }
         }
-
+        promptBuilder.setLength(promptBuilder.length() - 2);
         promptBuilder.append("Please list specific destinations or activities that are related to '")
             .append(customInterest)
-            .append("' within these matched interests.");
+            .append("'.");
 
         JsonObject json = new JsonObject();
         json.addProperty("model", "gpt-3.5-turbo");
@@ -154,7 +147,7 @@ public class OpenAIService {
                 {"Food", "Art", "Sport", "Books", "Education", "Entertainment", "History",
                 "Hiking", "Movies", "Theater", "Animals", "Shopping", "Relax", "Religion", "Flora"};
 
-        String customInterest = "Piano"; // vzima se ot user-a
+        String customInterest = "Libraries";
 
         String matchedInterests = getMatchedInterests(customInterest, predefinedInterests);
 
@@ -173,8 +166,9 @@ public class OpenAIService {
                     System.out.println("Interest " + (i + 1) + ": " + interest);
                 }
             }
-            String destinations = getDestinationsForInterestAndTypes(customInterest, cleanedInterests);
-            System.out.println("Suggested Destinations: " + destinations);
+            String specificTypes = getSpecificTypesForCustomInterest(customInterest, cleanedInterests);
+            System.out.println("Specific Types for " + customInterest + ": " + specificTypes);
+
         } else {
             System.out.println("Failed to match interests.");
         }
