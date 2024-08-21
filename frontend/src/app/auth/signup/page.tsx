@@ -42,7 +42,7 @@ export default function SignUpRoute() {
     console.log(username, " ", email, " ", password);
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/register/basic`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/auth/register/basic`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
@@ -71,7 +71,7 @@ export default function SignUpRoute() {
   };
 
   return (
-    <div className="relative flex flex-col justify-center py-12 sm:px-6 lg:px-8 bg-[#0e6cc4] w-full h-full">
+    <div className="relative flex flex-col justify-center py-12 sm:px-6 lg:px-8 bg-[#0e6cc4] w-full h-screen">
       {/* Wave animation */}
       <div className='box'>
         <div className='wave -one'></div>
