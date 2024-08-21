@@ -101,6 +101,7 @@ public class MemoryContoller {
             }
 
             String filename = file.getOriginalFilename();
+            assert filename != null;
             Path filePath = uploadPath.resolve(filename);
             Files.write(filePath, file.getBytes());
 
