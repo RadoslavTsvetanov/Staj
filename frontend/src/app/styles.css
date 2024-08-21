@@ -13,3 +13,27 @@ svg {
     background-color: #314b5e;
     background-image: linear-gradient(to bottom, #81b0d1, rgba(48, 71, 88, 0.86));
 }
+/* Hide the default scrollbar */
+.bg-white::-webkit-scrollbar {
+    width: 8px; /* Width of the custom scrollbar */
+}
+
+.bg-white::-webkit-scrollbar-track {
+    background: transparent; /* Background of the scrollbar track */
+}
+
+.bg-white::-webkit-scrollbar-thumb {
+    background-color: rgba(14, 108, 196, 0.7); /* Color of the scrollbar thumb */
+    border-radius: 20px; /* Round the scrollbar thumb */
+    border: 2px solid transparent; /* Adds padding inside the thumb */
+}
+
+.bg-white::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(14, 108, 196, 0.9); /* Darker color on hover */
+}
+
+/* For Firefox */
+.bg-white {
+    scrollbar-width: thin; /* Makes the scrollbar thinner */
+    scrollbar-color: rgba(14, 108, 196, 0.7) transparent; /* Scrollbar thumb color and track color */
+}
