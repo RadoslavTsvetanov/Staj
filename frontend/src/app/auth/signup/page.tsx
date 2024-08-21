@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState } from 'react';
-import { useRouter } from 'next/navigation'; // Import useRouter from next/navigation
+import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 import Earth from '../../../../public/Earth';
@@ -14,6 +14,16 @@ export default function SignUpRoute() {
   const [error, setError] = useState('');
 
   const router = useRouter();
+
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    document.documentElement.style.overflow = 'hidden';
+
+    return () => {
+      document.body.style.overflow = '';
+      document.documentElement.style.overflow = '';
+    };
+  }, []);
 
   const handleUsernameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setUsername(event.target.value);
@@ -72,7 +82,6 @@ export default function SignUpRoute() {
 
   return (
     <div className="relative flex flex-col justify-center py-12 sm:px-6 lg:px-8 bg-[#0e6cc4] w-full h-full">
-      {/* Wave animation */}
       <div className='box'>
         <div className='wave -one'></div>
         <div className='wave -two'></div>
