@@ -5,7 +5,7 @@ import Image from "next/image";
 import Logo from './Logo';
 import DropMenu from "./DropDownMenu";
 
-const Navbar = () => {
+const NavbarHome = () => {
     const [isHovered, setIsHovered]=useState(false);
 
         return (
@@ -34,4 +34,4 @@ const Navbar = () => {
     );
 };
 
-export default Navbar;
+export default NavbarHome;
