@@ -21,4 +21,8 @@ public class ApiTypes {
         put("Religion", Arrays.asList("church", "mosque", "hindu_temple", "synagogue"));
         put("Flora", Arrays.asList("national_park", "florist"));
     }};
+
+    public static Dictionary<String, List<String>> getCustomApiTypesToGoogleApiTypesDict() {
+        return CustomApiTypesToGoogleApiTypesDict;
+    }
 }

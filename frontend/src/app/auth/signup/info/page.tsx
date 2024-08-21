@@ -88,7 +88,7 @@ const InfoRoute: React.FC = () => {
 
             if (response.ok) {
               alert('Registration complete');
-              router.push('../../signin');
+              router.push('../signin');
             } else {
               const data = await response.text();
               setError(data);
