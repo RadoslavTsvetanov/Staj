@@ -82,6 +82,11 @@ public class UserService {
                                        .orElseThrow(() -> new UsernameNotFoundException("Username " + username + " not found")));
     }
 
+    public int checkIfUsernameExists(String username) {
+        Optional<User> userOpt = Optional.ofNullable(userRepo.findByUsername(username));
+        return userOpt.isPresent() ? 1 : 0;
+    }
+
     public Preferences savePreferences(Preferences preferences) {
         return preferencesRepo.save(preferences);
     }
@@ -102,5 +107,26 @@ public class UserService {
     public void deleteUser(Long id) {
         planService.removeUserFromAllPlans(id);
         userRepo.deleteById(id);
+    }
+
+    public User save(User user) {
+        userRepo.save(user);
+        return user;
+    }
+
+    public Credentials saveCredentials(Credentials credentials) {
+        return credentialsRepo.save(credentials);
+    }
+
+    public boolean checkIfEmailExists(String email) {
+        return credentialsRepo.existsByEmail(email);
+    }
+
+    public Credentials updateCredentials(Credentials credentials) {
+        if (credentials.getId() == null) {
+            throw new IllegalArgumentException("Credentials ID cannot be null");
+        }
+
+        return credentialsRepo.save(credentials);
     }
 }

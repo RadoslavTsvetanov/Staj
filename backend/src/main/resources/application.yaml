@@ -2,6 +2,9 @@ server:
   port: 4550
   shutdown: "graceful"
 
+jwt:
+  secret: "s3cR3tK3y!@#2024Ex@mpleWithL0ngString"
+
 # If you use a database then uncomment the `group:, readiness: and include: "db"` lines in the health probes and uncomment the datasource section
 management:
   endpoint:
