@@ -27,11 +27,11 @@ public class User {
     @Size(min = 2, max = 40, message = "Name must be between 2 and 40 characters")
     private String name;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "credentials_id", referencedColumnName = "id")
     private Credentials credentials;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "preferences_id", referencedColumnName = "id")
     private Preferences preferences;
 

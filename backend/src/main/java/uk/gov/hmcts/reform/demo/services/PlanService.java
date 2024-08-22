@@ -28,6 +28,12 @@ public class PlanService {
     @Autowired
     private HistoryRepo historyRepo;
 
+    @Autowired
+    private PlaceService placeService;
+
+    @Autowired
+    private PlaceLocationService placeLocationService;
+
     public Plan save(Plan plan) {
         History history = new History();
         historyRepo.save(history); // Save the history to get the generated ID
@@ -36,30 +42,35 @@ public class PlanService {
         return planRepo.save(plan);
     }
 
-    public Plan addUserToPlan(Long planId, String username) {
+    public Plan addPlacesToPlan(Long planId, List<String> placeNames) {
         Plan plan = planRepo.findById(planId)
             .orElseThrow(() -> new NoSuchElementException("Plan not found with id " + planId));
 
-        User user = userRepo.findByUsername(username);
-        if (user == null) {
-            throw new NoSuchElementException("User not found with username " + username);
+        for (String placeName : placeNames) {
+            Place place = new Place();
+            place.setName(placeName); // Set the place name
+            placeService.addPlaceToPlan(planId, place);
         }
 
-        plan.getUsers().add(user);
         return planRepo.save(plan);
     }
 
-    public Plan addLocationsToPlan(Long planId, List<String> locationNames) {
+    public Plan addLocationsToPlace(Long planId, Long placeId, List<String> locationNames) {
         Plan plan = planRepo.findById(planId)
             .orElseThrow(() -> new NoSuchElementException("Plan not found with id " + planId));
 
-        for (String name : locationNames) {
-            Location location = locationRepo.findByName(name);
-            if (location == null) {
-                throw new NoSuchElementException("Location not found with name " + name);
-            }
-            plan.getLocations().add(location);
+        Place place = placeService.findById(placeId);
+
+        List<Location> locations = locationNames.stream()
+            .map(locationName -> locationRepo.findByName(locationName))
+            .filter(location -> location != null)
+            .toList();
+
+        if (locations.size() != locationNames.size()) {
+            throw new NoSuchElementException("One or more locations not found");
         }
+
+        placeLocationService.addLocationsToPlace(placeId, locations.stream().map(Location::getId).toList());
 
         return planRepo.save(plan);
     }
@@ -93,7 +104,7 @@ public class PlanService {
     }
 
     public List<Plan> findPlansByUsername(String username) {
-        return planRepo.findPlansByUsername(username);
+        return planRepo.findAllByUsernamesContaining(username);
     }
 
     public boolean isUserInPlan(Long planId, String username) {
@@ -102,15 +113,16 @@ public class PlanService {
             return false;
         }
         Plan plan = planOptional.get();
-        Optional<User> userOptional = Optional.ofNullable(userRepo.findByUsername(username));
-        return userOptional.map(user -> plan.getUsers().contains(user)).orElse(false);
+        return plan.getUsernames().contains(username);
     }
 
-    public void removeUserFromAllPlans(Long userId) {
+    public void removeUserFromAllPlans(String username) {
         List<Plan> plans = planRepo.findAll();
         for (Plan plan : plans) {
-            plan.getUsers().removeIf(user -> user.getId().equals(userId));
-            planRepo.save(plan);
+            if (plan.getUsernames().contains(username)) {
+                plan.removeUsername(username);
+                planRepo.save(plan);
+            }
         }
     }
 
@@ -124,5 +136,14 @@ public class PlanService {
 
     public Optional<DateWindow> findDateWindowById(Long dateWindowId) {
         return dateWindowRepo.findById(dateWindowId);
+    }
+
+    public void addUserToPlan(Long planId, String username) {
+        Optional<Plan> planOptional = planRepo.findById(planId);
+        if (planOptional.isPresent()) {
+            Plan plan = planOptional.get();
+            plan.addUsername(username);
+            planRepo.save(plan);
+        }
     }
 }

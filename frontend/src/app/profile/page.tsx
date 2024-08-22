@@ -67,39 +67,59 @@ const AccountPage: NextPage = () => {
 
     const handleSave = async () => {
         try {
-            const token = cookies.authToken.get(); // Assuming you're storing the JWT token in cookies
+            const token = cookies.authToken.get();
+            if (!token) {
+                throw new Error("No auth token found.");
+            }
     
-            const response = await axios.post(
+            const updatedUser = {
+                name,
+                username,
+                dateOfBirth: dob,
+                preferences: {
+                    interests: selectedInterests
+                },
+                credentials: {
+                    email,
+                    password
+                }
+            };
+    
+            const response = await fetch(
                 `${process.env.NEXT_PUBLIC_API_BASE_URL}/user-access/profile/update`,
                 {
-                    name,
-                    username,
-                    dateOfBirth: dob,
-                    credentials: {
-                        email,
-                        password
-                    },
-                    preferences: {
-                        interests: selectedInterests,
-                    },
-                },
-                {
+                    method: 'POST',
                     headers: {
-                        Authorization: `Bearer ${token}`,
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
                     },
+                    body: JSON.stringify(updatedUser)
                 }
             );
     
-            if (response.status === 200) {
-                console.log('User updated successfully:', response.data);
-            } else {
-                console.error('Failed to update user:', response.status);
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`Failed to update profile: ${errorText}`);
             }
+    
+            const updatedUserData = await response.json();
+            console.log('Updated user data:', updatedUserData);
+    
+            // Update auth token in cookies if provided
+            const newToken = response.headers.get('Authorization')?.replace('Bearer ', '');
+            if (newToken) {
+                cookies.authToken.set(newToken);
+                console.log('New token:', newToken);
+            }
+    
+            alert('Profile updated successfully!');
         } catch (error) {
-            console.error('An error occurred:', error);
+            console.error('Error updating user profile:', error);
+            alert('Failed to update profile. Please try again.');
         }
     };
-
+      
+    
     const handleDelete = () => {
         setIsPopupVisible(true);
     };
@@ -107,13 +127,26 @@ const AccountPage: NextPage = () => {
     const handleConfirmDelete = async () => {
         try {
             const token = cookies.authToken.get();
-            await axios.delete(`${process.env.NEXT_PUBLIC_API_BASE_URL}/user-access/profile`, {
+            if (!token) {
+                throw new Error("No auth token found.");
+            }
+    
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/users/profile/delete`, {
+                method: 'DELETE',
                 headers: {
-                    'Authorization': `Bearer ${token}`
-                }
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
             });
+    
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`Failed to delete profile: ${errorText}`);
+            }
+    
             alert('Profile deleted successfully!');
-            router.push('/login');
+            cookies.authToken.delete();
+            router.push('../auth/signup'); 
         } catch (error) {
             console.error('Error deleting profile:', error);
             alert('Failed to delete profile. Please try again.');
@@ -121,6 +154,7 @@ const AccountPage: NextPage = () => {
             setIsPopupVisible(false);
         }
     };
+    
 
     const togglePopup = () => {
         setIsPopupVisible(!isPopupVisible);

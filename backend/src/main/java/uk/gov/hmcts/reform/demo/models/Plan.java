@@ -6,7 +6,9 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -37,21 +39,13 @@ public class Plan {
     @JoinColumn(name = "history_id", referencedColumnName = "id")
     private History history;
 
-    @ManyToMany
-    @JoinTable(
-        name = "plan_users",
-        joinColumns = @JoinColumn(name = "plan_id"),
-        inverseJoinColumns = @JoinColumn(name = "user_id")
-    )
-    private Set<User> users = new HashSet<>();
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "plan_usernames", joinColumns = @JoinColumn(name = "plan_id"))
+    @Column(name = "username")
+    private Set<String> usernames = new HashSet<>();
 
-    @ManyToMany
-    @JoinTable(
-        name = "plan_locations",
-        joinColumns = @JoinColumn(name = "plan_id"),
-        inverseJoinColumns = @JoinColumn(name = "location_id")
-    )
-    private Set<Location> locations = new HashSet<>();
+    @OneToMany(mappedBy = "plan", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Place> places = new ArrayList<>();
 
     public History getHistory() {
         return history;
@@ -97,19 +91,28 @@ public class Plan {
         this.dateWindow = dateWindow;
     }
 
-    public Set<User> getUsers() {
-        return users;
+    public Set<String> getUsernames() {
+        return usernames;
     }
 
-    public void setUsers(Set<User> users) {
-        this.users = users;
+    public void setUsernames(Set<String> usernames) {
+        this.usernames = usernames;
     }
 
-    public Set<Location> getLocations() {
-        return locations;
+    public void addUsername(String username) {
+        this.usernames.add(username);
     }
 
-    public void setLocations(Set<Location> locations) {
-        this.locations = locations;
+    // Method to remove a username from the plan
+    public void removeUsername(String username) {
+        this.usernames.remove(username);
+    }
+
+    public List<Place> getPlaces() {
+        return places;
+    }
+
+    public void setPlaces(List<Place> places) {
+        this.places = places;
     }
 }
