@@ -6,7 +6,8 @@ import java.util.Hashtable;
 import java.util.List;
 
 public class ApiTypes {
-    private static Dictionary<String, List<String>> CustomApiTypesToGoogleApiTypesDict = new Hashtable<String, List<String>>() {{
+
+    private static final Dictionary<String, List<String>> CustomApiTypesToGoogleApiTypesDict = new Hashtable<String, List<String>>() {{
         put("Sport", Arrays.asList("bowling_alley", "sporting_goods_store", "gym", "golf_course", "fitness_centre", "athletic_field", "stadium", "sports_club", "sports_complex", "swimming_pool"));
         put("Books", Arrays.asList("library", "bookstore"));
         put("Education", Arrays.asList("museum", "library", "university"));
@@ -24,5 +25,9 @@ public class ApiTypes {
 
     public static Dictionary<String, List<String>> getCustomApiTypesToGoogleApiTypesDict() {
         return CustomApiTypesToGoogleApiTypesDict;
+    }
+
+    public static List<String> getTypesForInterest(String interest) {
+        return CustomApiTypesToGoogleApiTypesDict.get(interest);
     }
 }

@@ -7,15 +7,14 @@ import okhttp3.*;
 import com.google.gson.*;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Dictionary;
 import java.util.List;
 
 @Service
 public class OpenAIService {
 
     private static final String OPENAI_API_KEY =
-        "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";
-
+        "###";
+    
     private final OkHttpClient client = new OkHttpClient();
 
     public String getMatchedInterests(String customInterest, String[] predefinedInterests) {
@@ -80,19 +79,28 @@ public class OpenAIService {
     public String getSpecificTypesForCustomInterest(String customInterest, String matchedInterests) {
         StringBuilder promptBuilder = new StringBuilder("The user has a specific interest in '")
             .append(customInterest)
-            .append("'. Given the following matched interests: ");
+            .append("'. Given the following matched interests: ")
+            .append(matchedInterests)
+            .append(". Please list the relevant types based on the following types: ");
 
         List<String> matchedInterestsList = Arrays.asList(matchedInterests.split("\\s*,\\s*"));
-        int limit = Math.min(matchedInterestsList.size(), 2); // Limit to top 2 interests
+        int limit = Math.min(matchedInterestsList.size(), 2);
 
         for (int i = 0; i < limit; i++) {
             String interest = matchedInterestsList.get(i).trim();
-            promptBuilder.append(interest).append(", ");
+            List<String> typesForInterest = ApiTypes.getTypesForInterest(interest);
+            if (typesForInterest != null) {
+                for (String type : typesForInterest) {
+                    promptBuilder.append(type).append(", ");
+                }
+            }
         }
-        promptBuilder.setLength(promptBuilder.length() - 2);
-        promptBuilder.append("Please list specific destinations or activities that are related to '")
-            .append(customInterest)
-            .append("'.");
+
+        if (promptBuilder.length() > 0) {
+            promptBuilder.setLength(promptBuilder.length() - 2);
+        }
+
+        promptBuilder.append(". Provide only the most relevant types for the custom interest in the format: \"type1\", \"type2\", \"type3\".");
 
         JsonObject json = new JsonObject();
         json.addProperty("model", "gpt-3.5-turbo");
@@ -160,15 +168,15 @@ public class OpenAIService {
 
             List<String> interests = Arrays.asList(cleanedInterests.split("\\s*,\\s*"));
 
-            for(int i = 0; i < interests.size(); i++) {
+            for (int i = 0; i < interests.size(); i++) {
                 String interest = interests.get(i).trim();
-                if(!interest.isEmpty()) {
+                if (!interest.isEmpty()) {
                     System.out.println("Interest " + (i + 1) + ": " + interest);
                 }
             }
+
             String specificTypes = getSpecificTypesForCustomInterest(customInterest, cleanedInterests);
             System.out.println("Specific Types for " + customInterest + ": " + specificTypes);
-
         } else {
             System.out.println("Failed to match interests.");
         }

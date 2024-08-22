@@ -14,10 +14,12 @@ import uk.gov.hmcts.reform.demo.services.OpenAIService;
 @SpringBootApplication(scanBasePackages = {"uk.gov.hmcts.reform.demo"})
 @EnableJpaRepositories(basePackages = "uk.gov.hmcts.reform.demo.repositories")
 @EntityScan(basePackages = "uk.gov.hmcts.reform.demo")
-public class Application {
+
+public class Application implements CommandLineRunner {
     @Bean
     public WebMvcConfigurer corsConfigurer() {
         return new WebMvcConfigurer() {
+
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
@@ -37,8 +39,8 @@ public class Application {
         SpringApplication.run(Application.class, args);
     }
 
-    //@Override
-    public void run(String... args) throws Exception { // Override run method from CommandLineRunner
-        //openAIService.runTest();
+    @Override
+    public void run(String... args) throws Exception {
+        openAIService.runTest();
     }
 }
