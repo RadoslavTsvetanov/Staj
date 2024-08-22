@@ -6,7 +6,9 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -42,13 +44,8 @@ public class Plan {
     @Column(name = "username")
     private Set<String> usernames = new HashSet<>();
 
-    @ManyToMany
-    @JoinTable(
-        name = "plan_locations",
-        joinColumns = @JoinColumn(name = "plan_id"),
-        inverseJoinColumns = @JoinColumn(name = "location_id")
-    )
-    private Set<Location> locations = new HashSet<>();
+    @OneToMany(mappedBy = "plan", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Place> places = new ArrayList<>();
 
     public History getHistory() {
         return history;
@@ -111,11 +108,11 @@ public class Plan {
         this.usernames.remove(username);
     }
 
-    public Set<Location> getLocations() {
-        return locations;
+    public List<Place> getPlaces() {
+        return places;
     }
 
-    public void setLocations(Set<Location> locations) {
-        this.locations = locations;
+    public void setPlaces(List<Place> places) {
+        this.places = places;
     }
 }

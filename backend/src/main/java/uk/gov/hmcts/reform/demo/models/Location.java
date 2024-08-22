@@ -26,6 +26,10 @@ public class Location {
     @Max(value = 4, message = "Cost must be between 0 and 4")
     private Integer cost;
 
+    @Min(value = 0, message = "Cost must be between 1 and 28")
+    @Max(value = 28, message = "Cost must be between 1 and 28")
+    private Integer day;
+
     public Long getId() {
         return id;
     }
@@ -64,5 +68,13 @@ public class Location {
 
     public void setCost(Integer cost) {
         this.cost = cost;
+    }
+
+    public @Min(value = 0, message = "Cost must be between 1 and 28") @Max(value = 28, message = "Cost must be between 1 and 28") Integer getDay() {
+        return day;
+    }
+
+    public void setDay(@Min(value = 0, message = "Cost must be between 1 and 28") @Max(value = 28, message = "Cost must be between 1 and 28") Integer day) {
+        this.day = day;
     }
 }
