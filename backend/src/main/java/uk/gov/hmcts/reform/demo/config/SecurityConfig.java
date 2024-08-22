@@ -41,7 +41,6 @@ public class SecurityConfig {
         http.authorizeHttpRequests(authorize -> authorize
                 .requestMatchers(HttpMethod.GET, "/users/search").hasRole("USER")
                 .requestMatchers(HttpMethod.POST, "/memory/upload").hasRole("USER")
-                .requestMatchers(HttpMethod.POST, "/plans/{planId}/users").hasRole("USER")
                 .requestMatchers(HttpMethod.PUT, "/plans/{planId}/date-window").hasRole("USER")
                 .requestMatchers(HttpMethod.POST, "/history/{historyId}/memories").hasRole("USER")
                 .requestMatchers(HttpMethod.GET, "/history/{id}").hasRole("USER")
@@ -57,11 +56,12 @@ public class SecurityConfig {
                 .requestMatchers(new AntPathRequestMatcher("/api/auth/register/basic")).permitAll()
                 .requestMatchers(new AntPathRequestMatcher("/api/auth/register/complete")).permitAll()
                 .requestMatchers(new AntPathRequestMatcher("/api/auth/signin")).permitAll()
-                //.requestMatchers(new AntPathRequestMatcher("/user-access/**")).permitAll()
                 .requestMatchers(HttpMethod.POST, "/user-access/profile/update").permitAll()
                 .requestMatchers(HttpMethod.GET, "/user-access/profile").permitAll()
                 .requestMatchers(HttpMethod.GET, "/user-access/plans").permitAll()
                 .requestMatchers(HttpMethod.POST, "/plans").permitAll()
+                .requestMatchers(HttpMethod.DELETE, "/users/profile/delete").permitAll()
+                .requestMatchers(HttpMethod.POST, "/plans/{planId}/users").permitAll()
                 .anyRequest().hasRole("ADMIN")
             )
         ;
