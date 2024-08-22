@@ -7,34 +7,6 @@ import Plan from "@/components/ui/plan";
 
 export default function HomePage() {
 
-//   const handlePlans = async (event) => {
-//   try {
-//     const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/user-access/plans`, {
-//       method: 'GET',
-//       headers: {
-//         'Content-Type': 'application/json',
-//       },
-//       body: JSON.stringify({ email, password }),
-//     });
-
-//     if (!response.ok) {
-//       const errorMessage = await response.text();
-//       console.error('Sign-in failed:', errorMessage);
-//       alert('Failed to sign in. Please check your credentials.');
-//       return;
-//     }
-
-//     const token = await response.text();
-//     cookies.authToken.set(token);
-//     console.log('Sign-in successful:', token);
-
-//     router.push('../../home');
-//   } catch (err) {
-//     console.error('Network error:', err);
-//     alert('Network error. Please try again later.');
-//   }
-// };
-
   return (
     <div>
       <NavbarHome />

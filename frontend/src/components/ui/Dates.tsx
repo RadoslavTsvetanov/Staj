@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { saveDateWindow } from "@/utils/api";
 
 const DateRangeSelector: React.FC = () => {
   const [startDate, setStartDate] = useState<string | null>(null);
@@ -50,7 +51,9 @@ const DateRangeSelector: React.FC = () => {
     const newStartDate = e.target.value;
     setStartDate(newStartDate);
     if (endDate && newStartDate) {
-      validateDates(newStartDate, endDate);
+      if (validateDates(newStartDate, endDate)) {
+        saveDateWindow(newStartDate, endDate);
+      }
     }
   };
 
@@ -58,9 +61,13 @@ const DateRangeSelector: React.FC = () => {
     const newEndDate = e.target.value;
     setEndDate(newEndDate);
     if (startDate && newEndDate) {
-      validateDates(startDate, newEndDate);
+      if (validateDates(startDate, newEndDate)) {
+        saveDateWindow(startDate, newEndDate);
+      }
     }
   };
+
+  
 
   return (
     <div className="p-4 bg-blue-100 rounded-lg shadow-md flex flex-col space-y-2">
