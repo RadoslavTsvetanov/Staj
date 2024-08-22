@@ -1,12 +1,12 @@
-"use client"
+"use client";
 
-import Map from "@/components/ui/map";
+import { useState } from "react";
 import CurrentTripComp from "@/components/ui/currentTrip";
-import MarkerPin from "@/components/ui/marker";
-import { useSearchParams } from 'next/navigation'; 
+import BackButton from "@/components/ui/BackButton";
+import PlanningPageMap from "@/components/ui/PlanningPageMap";
 
 export default function PlanningPage() {
-    const searchParams = useSearchParams();
+  const [address, setAddress] = useState<string>("");
 
     const lat = parseFloat(searchParams.get('lat') ?? '0');
     const lng = parseFloat(searchParams.get('lng') ?? '0');
@@ -22,4 +22,3 @@ export default function PlanningPage() {
         </div>
     );
 }
-

@@ -57,7 +57,6 @@ public class OpenAIService {
             if(!response.isSuccessful()) {
                 System.err.println("Unexpected code: " + response);
                 System.err.println("Response body: " + response.body().string());
-
                 throw new IOException("Unexpected code " + response);
             }
 

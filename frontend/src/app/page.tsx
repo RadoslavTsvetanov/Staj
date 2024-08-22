@@ -85,13 +85,21 @@ const Landing = () => {
       </div>
 
       <div className="relative z-10 flex justify-between items-center h-full px-8">
-        <Canvas camera={{ fov: 64, position: [-2, 2, 0] }} style={{ height: '300px', width: '800px' }}>
+        {/* <Canvas camera={{ fov: 64, position: [-2, 2, 0] }} style={{ height: '300px', width: '800px' }}>
           <ambientLight intensity={5} />
           <OrbitControls enableZoom={true} />
           <Model />
-        </Canvas>
+        </Canvas> */}
 
-        <div className="bg-white bg-opacity-70 rounded-xl p-6 max-h-[60%] w-[40%] overflow-y-auto shadow-lg ml-auto">
+        <input
+          type="button"
+          onClick={() => location.href='../../../auth/signup'}
+          value="Get Started!"
+          className='ml-auto py-3 px-20 bg-[rgb(141,186,119)] border-transparent text-2sm font-medium rounded-2xl text-white hover:bg-[rgb(141,178,119)]'
+          style={{ cursor: 'pointer' }}
+        />
+
+        <div className="bg-white bg-opacity-70 rounded-xl p-6 max-h-[60%] w-[52%] overflow-y-auto shadow-lg ml-auto">
           <h1 className="text-3xl font-bold mb-4 text-[#0e6cc4]">
             🌍 Discover Your Next Adventure & Capture Every Moment with Staj 🚀
           </h1>
@@ -124,13 +132,6 @@ const Landing = () => {
           <p className="text-[#0e6cc4] mb-4">
             Download Staj now and start planning your next trip, where every adventure is tailored to you, and every memory is a keepsake!
           </p>
-
-          <div id="contacts" className="mt-8">
-            <h2 className="text-xl font-semibold text-[#0e6cc4]">Contact Us</h2>
-            <p className="text-[#0e6cc4]">Email: staj@gmail.com</p>
-            <p className="text-[#0e6cc4]">Phone: (123) 456-7890</p>
-            <p className="text-[#0e6cc4]">Address: Tsarigradsko shose, Sofia, Bulgaria</p>
-          </div>
         </div>
       </div>
     </div>
