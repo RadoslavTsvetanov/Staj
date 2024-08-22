@@ -1,5 +1,7 @@
 package uk.gov.hmcts.reform.demo.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import java.util.ArrayList;
@@ -18,13 +20,16 @@ public class Place {
 
     @ManyToOne
     @JoinColumn(name = "plan_id")
+    @JsonBackReference
     private Plan plan;
 
     @ManyToOne
     @JoinColumn(name = "date_window_id")
+    @JsonBackReference
     private DateWindow dateWindow;
 
     @OneToMany(mappedBy = "place", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<PlaceLocation> placeLocations = new ArrayList<>();
 
     public Long getId() {

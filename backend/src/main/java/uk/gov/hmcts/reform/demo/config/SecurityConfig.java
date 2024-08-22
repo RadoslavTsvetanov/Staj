@@ -59,10 +59,13 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.POST, "/user-access/profile/update").permitAll()
                 .requestMatchers(HttpMethod.GET, "/user-access/profile").permitAll()
                 .requestMatchers(HttpMethod.GET, "/user-access/plans").permitAll()
-                .requestMatchers(HttpMethod.POST, "/plans").permitAll()
                 .requestMatchers(HttpMethod.DELETE, "/users/profile/delete").permitAll()
                 .requestMatchers(HttpMethod.POST, "/plans/{planId}/users").permitAll()
                 .requestMatchers(HttpMethod.POST, "/places").permitAll() //tova ne trqbwa userite da go prawqt, ama posle shte se promeni
+                .requestMatchers(HttpMethod.POST, "/date-window").permitAll()
+                .requestMatchers(HttpMethod.POST, "/locations").permitAll()
+                .requestMatchers(HttpMethod.PUT, "/plans/{planId}/places/{placeId}/locations").permitAll()
+                .requestMatchers(HttpMethod.POST, "/plans").permitAll()
                 .anyRequest().hasRole("ADMIN")
             )
         ;

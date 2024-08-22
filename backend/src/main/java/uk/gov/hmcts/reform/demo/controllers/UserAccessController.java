@@ -3,19 +3,18 @@ package uk.gov.hmcts.reform.demo.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import uk.gov.hmcts.reform.demo.models.Credentials;
-import uk.gov.hmcts.reform.demo.models.Preferences;
-import uk.gov.hmcts.reform.demo.models.User;
-import uk.gov.hmcts.reform.demo.models.Plan;
+import uk.gov.hmcts.reform.demo.models.*;
 import uk.gov.hmcts.reform.demo.repositories.CredentialsRepo;
 import uk.gov.hmcts.reform.demo.repositories.PreferencesRepo;
 import uk.gov.hmcts.reform.demo.services.AuthService;
+import uk.gov.hmcts.reform.demo.services.EntityToDtoMapper;
 import uk.gov.hmcts.reform.demo.services.PlanService;
 import uk.gov.hmcts.reform.demo.services.UserService;
 import uk.gov.hmcts.reform.demo.utils.JwtUtil;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/user-access")
@@ -40,7 +39,7 @@ public class UserAccessController {
     private CredentialsRepo credentialsRepo;
 
     @GetMapping("/plans")
-    public ResponseEntity<List<Plan>> getUserPlans(@RequestHeader(value = "Authorization", required = false) String authorizationHeader) {
+    public ResponseEntity<List<PlanDTO>> getUserPlans(@RequestHeader(value = "Authorization", required = false) String authorizationHeader) {
         if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
             return ResponseEntity.status(401).build();
         }
@@ -53,7 +52,23 @@ public class UserAccessController {
         }
 
         List<Plan> plans = planService.findPlansByUsername(username);
-        return ResponseEntity.ok(plans);
+        List<PlanDTO> planDTOs = plans.stream()
+            .map(this::toPlanDTO)
+            .collect(Collectors.toList());
+
+        return ResponseEntity.ok(planDTOs);
+    }
+
+    private PlanDTO toPlanDTO(Plan plan) {
+        PlanDTO planDTO = new PlanDTO();
+        planDTO.setId(plan.getId());
+        planDTO.setEstCost(plan.getEstCost());
+        planDTO.setBudget(plan.getBudget());
+        planDTO.setName(plan.getName());
+        planDTO.setPlaces(plan.getPlaces().stream()
+                              .map(EntityToDtoMapper::toPlaceDTO)
+                              .collect(Collectors.toList()));
+        return planDTO;
     }
 
     @GetMapping("/profile")

@@ -1,5 +1,6 @@
 package uk.gov.hmcts.reform.demo.models;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -45,6 +46,7 @@ public class Plan {
     private Set<String> usernames = new HashSet<>();
 
     @OneToMany(mappedBy = "plan", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<Place> places = new ArrayList<>();
 
     public History getHistory() {
@@ -103,7 +105,6 @@ public class Plan {
         this.usernames.add(username);
     }
 
-    // Method to remove a username from the plan
     public void removeUsername(String username) {
         this.usernames.remove(username);
     }

@@ -20,7 +20,7 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<Map<String, String>> handleJsonParseException(JsonParseException ex) {
         Map<String, String> errors = new HashMap<>();
-        errors.put("error", "Invalid date format. Expected format: yyyy-MM-dd");
+        errors.put("error", "JSON parsing error: " + ex.getOriginalMessage());
         return ResponseEntity.badRequest().body(errors);
     }
 
@@ -28,7 +28,7 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<Map<String, String>> handleJsonMappingException(JsonMappingException ex) {
         Map<String, String> errors = new HashMap<>();
-        errors.put("error", "Invalid date format. Expected format: yyyy-MM-dd");
+        errors.put("error", "JSON mapping error: " + ex.getOriginalMessage());
         return ResponseEntity.badRequest().body(errors);
     }
 

@@ -1,5 +1,7 @@
 package uk.gov.hmcts.reform.demo.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -15,10 +17,12 @@ public class PlaceLocation {
 
     @ManyToOne
     @JoinColumn(name = "place_id", nullable = false)
+    @JsonBackReference
     private Place place;
 
     @ManyToOne
     @JoinColumn(name = "location_id", nullable = false)
+    @JsonBackReference
     private Location location;
 
     @Min(1)
