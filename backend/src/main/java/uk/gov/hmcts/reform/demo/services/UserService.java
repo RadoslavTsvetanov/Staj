@@ -13,6 +13,7 @@ import uk.gov.hmcts.reform.demo.repositories.PreferencesRepo;
 import uk.gov.hmcts.reform.demo.repositories.CredentialsRepo;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
@@ -82,6 +83,11 @@ public class UserService {
                                        .orElseThrow(() -> new UsernameNotFoundException("Username " + username + " not found")));
     }
 
+    public int checkIfUsernameExists(String username) {
+        Optional<User> userOpt = Optional.ofNullable(userRepo.findByUsername(username));
+        return userOpt.isPresent() ? 1 : 0;
+    }
+
     public Preferences savePreferences(Preferences preferences) {
         return preferencesRepo.save(preferences);
     }
@@ -99,8 +105,39 @@ public class UserService {
         return userRepo.findById(id);
     }
 
-    public void deleteUser(Long id) {
-        planService.removeUserFromAllPlans(id);
-        userRepo.deleteById(id);
+    public void deleteUser(String username) {
+        // Find the user by username
+        User user = userRepo.findByUsername(username);
+
+        if (user != null) {
+            Long userId = user.getId();
+
+            planService.removeUserFromAllPlans(username);
+            userRepo.deleteById(userId);
+        } else {
+            throw new NoSuchElementException("User not found with username: " + username);
+        }
+    }
+
+
+    public User save(User user) {
+        userRepo.save(user);
+        return user;
+    }
+
+    public Credentials saveCredentials(Credentials credentials) {
+        return credentialsRepo.save(credentials);
+    }
+
+    public boolean checkIfEmailExists(String email) {
+        return credentialsRepo.existsByEmail(email);
+    }
+
+    public Credentials updateCredentials(Credentials credentials) {
+        if (credentials.getId() == null) {
+            throw new IllegalArgumentException("Credentials ID cannot be null");
+        }
+
+        return credentialsRepo.save(credentials);
     }
 }

@@ -11,9 +11,11 @@ import java.util.Optional;
 public interface PlanRepo extends JpaRepository<Plan, Long> {
     Optional<Plan> findByName(String name);
 
-    @Query("SELECT p FROM Plan p JOIN p.users u WHERE u.username = :username")
-    List<Plan> findPlansByUsername(@Param("username") String username);
+//    @Query("SELECT p FROM Plan p WHERE :username MEMBER OF p.usernames")
+//    List<Plan> findPlansByUsername(@Param("username") String username);
 
-    List<Plan> findAllByUsersUsername(String username);
-    Optional<Plan> findByIdAndUsersUsername(Long id, String username);
+    List<Plan> findAllByUsernamesContaining(String username);
+
+    @Query("SELECT p FROM Plan p WHERE :username MEMBER OF p.usernames")
+    List<Plan> findPlansByUsername(@Param("username") String username);
 }

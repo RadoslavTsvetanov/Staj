@@ -73,7 +73,7 @@ const InfoRoute: React.FC = () => {
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/register/complete`, {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/auth/register/complete`, {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
@@ -88,7 +88,7 @@ const InfoRoute: React.FC = () => {
 
             if (response.ok) {
               alert('Registration complete');
-              router.push('../../signin');
+              router.push('../signin');
             } else {
               const data = await response.text();
               setError(data);

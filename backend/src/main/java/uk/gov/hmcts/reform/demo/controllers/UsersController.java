@@ -12,6 +12,7 @@ import uk.gov.hmcts.reform.demo.models.Credentials;
 import uk.gov.hmcts.reform.demo.models.Preferences;
 import uk.gov.hmcts.reform.demo.models.User;
 import uk.gov.hmcts.reform.demo.services.UserService;
+import uk.gov.hmcts.reform.demo.utils.JwtUtil;
 
 import java.util.List;
 import java.util.Optional;
@@ -19,6 +20,9 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/users")
 public class UsersController {
+
+    @Autowired
+    private JwtUtil jwtUtil;
 
     @Autowired
     private UserService userService;
@@ -61,23 +65,27 @@ public class UsersController {
         return ResponseEntity.ok(users);
     }
 
-    @DeleteMapping("/{userId}")
-    public ResponseEntity<String> deleteUser(@PathVariable Long userId, Authentication authentication) {
-        System.out.println("Authentication: " + authentication);
+    @DeleteMapping("/profile/delete")
+    public ResponseEntity<String> deleteUser(
+        @RequestHeader(value = "Authorization", required = false) String authorizationHeader) {
 
-        String currentUsername = authentication.getName();
-        Optional<User> userToDeleteOptional = userService.findById(userId);
+        if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authorization token is missing or invalid.");
+        }
+
+        String token = authorizationHeader.substring(7);
+        String currentUsername = jwtUtil.getUsernameFromToken(token);
+
+        if (currentUsername == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid token.");
+        }
+
+        Optional<User> userToDeleteOptional = userService.findByUsername(currentUsername);
         if (userToDeleteOptional.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
         }
 
-        User userToDelete = userToDeleteOptional.get();
-
-        if (!userToDelete.getUsername().equals(currentUsername)) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You can only delete your own profile.");
-        }
-
-        userService.deleteUser(userId);
+        userService.deleteUser(userToDeleteOptional.get().getUsername());
         return ResponseEntity.ok("User deleted successfully.");
     }
 

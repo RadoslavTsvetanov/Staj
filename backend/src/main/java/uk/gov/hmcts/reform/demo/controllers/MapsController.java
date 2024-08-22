@@ -7,8 +7,8 @@ import uk.gov.hmcts.reform.demo.services.GoogleApi;
 import uk.gov.hmcts.reform.demo.types.NearbyPlacesResponse;
 import uk.gov.hmcts.reform.demo.utils.Utils;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/maps")
@@ -20,6 +20,7 @@ public class MapsController {
         public float longitude;
         public float radius;
         public List<String> types; // make private later
+        public List<String> wantedInterests;
 
         // Getters and Setters
         public float getLatitude() {
@@ -49,6 +50,16 @@ public class MapsController {
 
 
 
+
+    private Boolean shouldPlaceBeDiscarded(uk.gov.hmcts.reform.demo.types.NearbyPlacesResponse.Result place){ // to filter by some global filter which is universal, for example we dont need to return places that are permamently closed
+        if(place.permanently_closed){
+            return true;
+        }
+
+
+        return false;
+    }
+
     @PostMapping("/nearby")
     public ResponseEntity<String> getMaps(@RequestBody LocationRequest loc) {
 
@@ -61,7 +72,10 @@ public class MapsController {
                 loc.getRadius(),
                 loc.types
             );
-
+            List<uk.gov.hmcts.reform.demo.types.NearbyPlacesResponse.Result> filteredInteresstOnlyConatiningPlacesThatMAtchSelectedInterersts =
+                res.stream()
+                    .filter(place -> !shouldPlaceBeDiscarded(place))
+                    .collect(Collectors.toList());
             return ResponseEntity.ok(u.JsonStringify(res));
         } catch (Exception e) {
             return ResponseEntity.ofNullable("not found or internal error idk, check code");

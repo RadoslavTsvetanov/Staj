@@ -4,8 +4,45 @@ import React from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 import Earth from '../../../../public/Earth';
+import { cookies } from '@/lib/utils';
+import { useRouter } from 'next/navigation';
 
 export default function SignUpRoute() {
+  const router = useRouter(); // Use the hook inside the component
+
+  const handleSignIn = async (event) => {
+    event.preventDefault();
+
+    const email = event.target.email.value;
+    const password = event.target.password.value;
+
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/auth/signin`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (!response.ok) {
+        const errorMessage = await response.text();
+        console.error('Sign-in failed:', errorMessage);
+        alert('Failed to sign in. Please check your credentials.');
+        return;
+      }
+
+      const token = await response.text();
+      cookies.authToken.set(token);
+      console.log('Sign-in successful:', token);
+
+      router.push('../../home');
+    } catch (err) {
+      console.error('Network error:', err);
+      alert('Network error. Please try again later.');
+    }
+  };
+
   return (
     <div className="relative flex flex-col justify-center py-12 sm:px-6 lg:px-8 bg-[#0e6cc4] w-full h-screen">
       {/* Wave animation */}
@@ -17,7 +54,7 @@ export default function SignUpRoute() {
       
       <div className="mt-4 sm:mx-auto sm:w-full sm:max-w-md z-10">
         <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
-          <form method="POST" action="#">
+          <form method="POST" action="#" onSubmit={handleSignIn}>
             <div>
               <Canvas style={{ height: '150px'}}>
                 <ambientLight intensity={1.5} />

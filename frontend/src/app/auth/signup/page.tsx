@@ -52,7 +52,7 @@ export default function SignUpRoute() {
     console.log(username, " ", email, " ", password);
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/register/basic`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/auth/register/basic`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',

@@ -1,3 +1,4 @@
+import React from 'react';
 import styled from 'styled-components';
 
 const Overlay = styled.div`
@@ -59,22 +60,33 @@ const YesButton = styled(Button)`
   }
 `;
 
-// Popup component
 interface PopupProps {
+  visible: boolean;
   togglePopup: () => void;
+  onConfirm?: () => Promise<void>;
+  message: string;
 }
 
-export const Popup: React.FC<PopupProps> = ({ togglePopup }) => {
+export const Popup: React.FC<PopupProps> = ({ visible, togglePopup, onConfirm, message }) => {
+  if (!visible) return null;
+
+  const handleConfirm = async () => {
+    if (onConfirm) {
+      await onConfirm();
+    }
+    togglePopup(); // Close popup after confirmation
+  };
+
   return (
     <Overlay>
       <PopupWindow>
         <div>
           <h2>Account Deletion</h2>
-          <p>Are you sure you want to delete your account?</p>
+          <p>{message}</p>
         </div>
         <ButtonContainer>
           <CloseButton onClick={togglePopup}>Close</CloseButton>
-          <YesButton onClick={togglePopup}>Yes</YesButton>
+          <YesButton onClick={handleConfirm}>Yes</YesButton>
         </ButtonContainer>
       </PopupWindow>
     </Overlay>

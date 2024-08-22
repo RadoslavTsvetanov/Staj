@@ -72,7 +72,7 @@ public class MemoryContoller {
             }
 
             Optional<Plan> planOptional = Optional.ofNullable(planService.findById(planId));
-            if (planOptional.isEmpty() || !planOptional.get().getUsers().contains(user)) {
+            if (planOptional.isEmpty() || !planOptional.get().getUsernames().contains(user.getUsername())) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).body("User is not part of the plan.");
             }
             Plan plan = planOptional.get();
@@ -101,6 +101,7 @@ public class MemoryContoller {
             }
 
             String filename = file.getOriginalFilename();
+            assert filename != null;
             Path filePath = uploadPath.resolve(filename);
             Files.write(filePath, file.getBytes());
 
