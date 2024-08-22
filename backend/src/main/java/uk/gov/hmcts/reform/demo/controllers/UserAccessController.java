@@ -42,7 +42,7 @@ public class UserAccessController {
     @GetMapping("/plans")
     public ResponseEntity<List<Plan>> getUserPlans(@RequestHeader(value = "Authorization", required = false) String authorizationHeader) {
         if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
-            return ResponseEntity.status(401).build(); // Unauthorized
+            return ResponseEntity.status(401).build();
         }
 
         String token = authorizationHeader.substring(7);

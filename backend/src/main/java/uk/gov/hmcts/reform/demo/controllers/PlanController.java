@@ -35,70 +35,22 @@ public class PlanController {
     @Autowired
     private JwtUtil jwtUtil;
 
-    // Helper method to get the username from the current authentication
     private String getUsernameFromAuthentication() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return authentication != null ? authentication.getName() : null;
     }
 
-    @PostMapping
-    public ResponseEntity<Plan> createPlan(
-        @Valid @RequestBody Plan plan,
-        @RequestHeader(value = "Authorization", required = false) String authorizationHeader
-    ) {
-        if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
-            return ResponseEntity.status(401).build(); // Unauthorized
-        }
-
-        String token = authorizationHeader.substring(7);
-        String username = jwtUtil.getUsernameFromToken(token);
-
-        if (username == null) {
-            return ResponseEntity.status(401).build(); // Unauthorized
-        }
-
-        if (planService.findByName(plan.getName()).isPresent()) {
-            return ResponseEntity.status(409).build(); // Conflict
-        }
-
-        Optional<User> userOptional = userService.findByUsername(username);
-
-        if (userOptional.isEmpty()) {
-            return ResponseEntity.status(401).build(); // Unauthorized
-        }
-
-        User currentUser = userOptional.get();
-        plan.getUsers().add(currentUser);
-
-        // Handle DateWindow
-        if (plan.getDateWindow() != null) {
-            DateWindow dateWindow = plan.getDateWindow();
-            DateWindow existingDateWindow = planService.findDateWindowByDates(dateWindow.getStartDate(), dateWindow.getEndDate());
-
-            if (existingDateWindow != null) {
-                plan.setDateWindow(existingDateWindow);
-            } else {
-                // Save the new DateWindow
-                DateWindow savedDateWindow = planService.saveDateWindow(dateWindow);
-                plan.setDateWindow(savedDateWindow);
-            }
-        }
-
-        Plan savedPlan = planService.save(plan);
-        return ResponseEntity.status(201).body(savedPlan); // Created
-    }
-
     @GetMapping
     public ResponseEntity<List<Plan>> getAllPlans(@RequestHeader(value = "Authorization", required = false) String authorizationHeader) {
         if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
-            return ResponseEntity.status(401).build(); // Unauthorized
+            return ResponseEntity.status(401).build();
         }
 
         String token = authorizationHeader.substring(7);
         String username = jwtUtil.getUsernameFromToken(token);
 
         if (username == null) {
-            return ResponseEntity.status(401).build(); // Unauthorized
+            return ResponseEntity.status(401).build();
         }
 
         List<Plan> plans = planService.findAll();
@@ -111,21 +63,46 @@ public class PlanController {
         @RequestHeader(value = "Authorization", required = false) String authorizationHeader
     ) {
         if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
-            return ResponseEntity.status(401).build(); // Unauthorized
+            return ResponseEntity.status(401).build();
         }
 
         String token = authorizationHeader.substring(7);
         String username = jwtUtil.getUsernameFromToken(token);
 
         if (username == null) {
-            return ResponseEntity.status(401).build(); // Unauthorized
+            return ResponseEntity.status(401).build();
         }
 
         Plan plan = planService.findById(id);
         if (plan == null) {
-            return ResponseEntity.notFound().build(); // Not Found
+            return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(plan);
+    }
+
+    @PostMapping
+    public ResponseEntity<Plan> createPlan(
+        @Valid @RequestBody Plan plan,
+        @RequestHeader(value = "Authorization", required = false) String authorizationHeader
+    ) {
+        if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
+            return ResponseEntity.status(401).build();
+        }
+
+        String token = authorizationHeader.substring(7);
+        String username = jwtUtil.getUsernameFromToken(token);
+
+        if (username == null) {
+            return ResponseEntity.status(401).build();
+        }
+
+        if (planService.findByName(plan.getName()).isPresent()) {
+            return ResponseEntity.status(409).build();
+        }
+
+        plan.addUsername(username);
+        Plan savedPlan = planService.save(plan);
+        return ResponseEntity.status(201).body(savedPlan);
     }
 
     @PostMapping("/{planId}/users")
@@ -135,33 +112,14 @@ public class PlanController {
         @RequestHeader(value = "Authorization", required = false) String authorizationHeader
     ) {
         if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
-            return ResponseEntity.status(401).body("Unauthorized"); // Unauthorized
+            return ResponseEntity.status(401).body("Unauthorized");
         }
 
         String token = authorizationHeader.substring(7);
         String currentUsername = jwtUtil.getUsernameFromToken(token);
 
         if (currentUsername == null) {
-            return ResponseEntity.status(401).body("Unauthorized"); // Unauthorized
-        }
-
-        Optional<User> currentUser = userService.findByUsername(currentUsername);
-        if (currentUser.isEmpty()) {
-            return ResponseEntity.status(401).body("Current user not found."); // Unauthorized
-        }
-
-        Plan plan = planService.findById(planId);
-        if (plan == null) {
-            return ResponseEntity.status(404).body("Plan not found."); // Not Found
-        }
-
-        if (!plan.getUsers().contains(currentUser.get())) {
-            return ResponseEntity.status(403).body("You must be a member of this plan to add other users."); // Forbidden
-        }
-
-        Optional<User> userToAdd = userService.findByUsername(username);
-        if (userToAdd.isEmpty()) {
-            return ResponseEntity.status(404).body("User not found."); // Not Found
+            return ResponseEntity.status(401).body("Unauthorized");
         }
 
         planService.addUserToPlan(planId, username);
@@ -175,20 +133,20 @@ public class PlanController {
         @RequestHeader(value = "Authorization", required = false) String authorizationHeader
     ) {
         if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
-            return ResponseEntity.status(401).body("Unauthorized"); // Unauthorized
+            return ResponseEntity.status(401).body("Unauthorized");
         }
 
         String token = authorizationHeader.substring(7);
         String username = jwtUtil.getUsernameFromToken(token);
 
         if (username == null) {
-            return ResponseEntity.status(401).body("Unauthorized"); // Unauthorized
+            return ResponseEntity.status(401).body("Unauthorized");
         }
 
         for (String locationName : locationNames) {
             Optional<Location> location = Optional.ofNullable(locationService.findByName(locationName));
             if (location.isEmpty()) {
-                return ResponseEntity.status(404).body("Location not found: " + locationName); // Not Found
+                return ResponseEntity.status(404).body("Location not found: " + locationName);
             }
         }
 
@@ -204,19 +162,19 @@ public class PlanController {
         @RequestHeader(value = "Authorization", required = false) String authorizationHeader
     ) {
         if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build(); // Unauthorized
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
         String token = authorizationHeader.substring(7);
         String username = jwtUtil.getUsernameFromToken(token);
 
         if (username == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build(); // Unauthorized
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
         Plan plan = planService.findById(planId);
         if (plan == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build(); // Plan not found
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
 
         if (dateWindowId != null) {
@@ -224,17 +182,17 @@ public class PlanController {
             if (existingDateWindowOpt.isPresent()) {
                 plan.setDateWindow(existingDateWindowOpt.get());
             } else {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).build(); // DateWindow not found
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
             }
         } else if (newDateWindow != null) {
             DateWindow savedDateWindow = planService.saveDateWindow(newDateWindow);
             plan.setDateWindow(savedDateWindow);
         } else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build(); // No DateWindow provided
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
 
         Plan updatedPlan = planService.save(plan);
-        return ResponseEntity.ok(updatedPlan); // Return the updated Plan
+        return ResponseEntity.ok(updatedPlan);
     }
 
 }

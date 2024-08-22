@@ -36,19 +36,6 @@ public class PlanService {
         return planRepo.save(plan);
     }
 
-    public Plan addUserToPlan(Long planId, String username) {
-        Plan plan = planRepo.findById(planId)
-            .orElseThrow(() -> new NoSuchElementException("Plan not found with id " + planId));
-
-        User user = userRepo.findByUsername(username);
-        if (user == null) {
-            throw new NoSuchElementException("User not found with username " + username);
-        }
-
-        plan.getUsers().add(user);
-        return planRepo.save(plan);
-    }
-
     public Plan addLocationsToPlan(Long planId, List<String> locationNames) {
         Plan plan = planRepo.findById(planId)
             .orElseThrow(() -> new NoSuchElementException("Plan not found with id " + planId));
@@ -93,7 +80,7 @@ public class PlanService {
     }
 
     public List<Plan> findPlansByUsername(String username) {
-        return planRepo.findPlansByUsername(username);
+        return planRepo.findAllByUsernamesContaining(username);
     }
 
     public boolean isUserInPlan(Long planId, String username) {
@@ -102,15 +89,16 @@ public class PlanService {
             return false;
         }
         Plan plan = planOptional.get();
-        Optional<User> userOptional = Optional.ofNullable(userRepo.findByUsername(username));
-        return userOptional.map(user -> plan.getUsers().contains(user)).orElse(false);
+        return plan.getUsernames().contains(username);
     }
 
-    public void removeUserFromAllPlans(Long userId) {
+    public void removeUserFromAllPlans(String username) {
         List<Plan> plans = planRepo.findAll();
         for (Plan plan : plans) {
-            plan.getUsers().removeIf(user -> user.getId().equals(userId));
-            planRepo.save(plan);
+            if (plan.getUsernames().contains(username)) {
+                plan.removeUsername(username);
+                planRepo.save(plan);
+            }
         }
     }
 
@@ -124,5 +112,14 @@ public class PlanService {
 
     public Optional<DateWindow> findDateWindowById(Long dateWindowId) {
         return dateWindowRepo.findById(dateWindowId);
+    }
+
+    public void addUserToPlan(Long planId, String username) {
+        Optional<Plan> planOptional = planRepo.findById(planId);
+        if (planOptional.isPresent()) {
+            Plan plan = planOptional.get();
+            plan.addUsername(username);
+            planRepo.save(plan);
+        }
     }
 }

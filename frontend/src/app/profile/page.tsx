@@ -127,13 +127,26 @@ const AccountPage: NextPage = () => {
     const handleConfirmDelete = async () => {
         try {
             const token = cookies.authToken.get();
-            await axios.delete(`${process.env.NEXT_PUBLIC_API_BASE_URL}/user-access/profile`, {
+            if (!token) {
+                throw new Error("No auth token found.");
+            }
+    
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/users/profile/delete`, {
+                method: 'DELETE',
                 headers: {
-                    'Authorization': `Bearer ${token}`
-                }
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
             });
+    
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`Failed to delete profile: ${errorText}`);
+            }
+    
             alert('Profile deleted successfully!');
-            router.push('/login');
+            cookies.authToken.delete();
+            router.push('../auth/signup'); 
         } catch (error) {
             console.error('Error deleting profile:', error);
             alert('Failed to delete profile. Please try again.');
@@ -141,6 +154,7 @@ const AccountPage: NextPage = () => {
             setIsPopupVisible(false);
         }
     };
+    
 
     const togglePopup = () => {
         setIsPopupVisible(!isPopupVisible);

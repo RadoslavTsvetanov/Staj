@@ -37,13 +37,10 @@ public class Plan {
     @JoinColumn(name = "history_id", referencedColumnName = "id")
     private History history;
 
-    @ManyToMany
-    @JoinTable(
-        name = "plan_users",
-        joinColumns = @JoinColumn(name = "plan_id"),
-        inverseJoinColumns = @JoinColumn(name = "user_id")
-    )
-    private Set<User> users = new HashSet<>();
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "plan_usernames", joinColumns = @JoinColumn(name = "plan_id"))
+    @Column(name = "username")
+    private Set<String> usernames = new HashSet<>();
 
     @ManyToMany
     @JoinTable(
@@ -97,12 +94,21 @@ public class Plan {
         this.dateWindow = dateWindow;
     }
 
-    public Set<User> getUsers() {
-        return users;
+    public Set<String> getUsernames() {
+        return usernames;
     }
 
-    public void setUsers(Set<User> users) {
-        this.users = users;
+    public void setUsernames(Set<String> usernames) {
+        this.usernames = usernames;
+    }
+
+    public void addUsername(String username) {
+        this.usernames.add(username);
+    }
+
+    // Method to remove a username from the plan
+    public void removeUsername(String username) {
+        this.usernames.remove(username);
     }
 
     public Set<Location> getLocations() {

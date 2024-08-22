@@ -13,6 +13,7 @@ import uk.gov.hmcts.reform.demo.repositories.PreferencesRepo;
 import uk.gov.hmcts.reform.demo.repositories.CredentialsRepo;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
@@ -104,10 +105,20 @@ public class UserService {
         return userRepo.findById(id);
     }
 
-    public void deleteUser(Long id) {
-        planService.removeUserFromAllPlans(id);
-        userRepo.deleteById(id);
+    public void deleteUser(String username) {
+        // Find the user by username
+        User user = userRepo.findByUsername(username);
+
+        if (user != null) {
+            Long userId = user.getId();
+
+            planService.removeUserFromAllPlans(username);
+            userRepo.deleteById(userId);
+        } else {
+            throw new NoSuchElementException("User not found with username: " + username);
+        }
     }
+
 
     public User save(User user) {
         userRepo.save(user);
