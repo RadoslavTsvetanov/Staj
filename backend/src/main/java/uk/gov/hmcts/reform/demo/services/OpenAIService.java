@@ -14,7 +14,7 @@ public class OpenAIService {
 
     private static final String OPENAI_API_KEY =
         "###";
-    
+
     private final OkHttpClient client = new OkHttpClient();
 
     public String getMatchedInterests(String customInterest, String[] predefinedInterests) {
@@ -100,7 +100,7 @@ public class OpenAIService {
             promptBuilder.setLength(promptBuilder.length() - 2);
         }
 
-        promptBuilder.append(". Provide only the most relevant types for the custom interest in the format: \"type1\", \"type2\", \"type3\".");
+        promptBuilder.append(". Provide only the most relevant types for the custom interest in the format: \"type1\", \"type2\", \"type3\". The types need to be written exactly like in the types in the matched interests.");
 
         JsonObject json = new JsonObject();
         json.addProperty("model", "gpt-3.5-turbo");
