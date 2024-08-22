@@ -19,8 +19,6 @@ public class EntityToDtoMapper {
 
     public static PlaceLocationDTO toPlaceLocationDTO(PlaceLocation placeLocation) {
         PlaceLocationDTO placeLocationDTO = new PlaceLocationDTO();
-        placeLocationDTO.setId(placeLocation.getId());
-        placeLocationDTO.setDay(placeLocation.getDay());
         placeLocationDTO.setLocation(toLocationDTO(placeLocation.getLocation()));
         return placeLocationDTO;
     }
