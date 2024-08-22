@@ -28,6 +28,12 @@ public class PlanService {
     @Autowired
     private HistoryRepo historyRepo;
 
+    @Autowired
+    private PlaceService placeService;
+
+    @Autowired
+    private PlaceLocationService placeLocationService;
+
     public Plan save(Plan plan) {
         History history = new History();
         historyRepo.save(history); // Save the history to get the generated ID
@@ -36,17 +42,35 @@ public class PlanService {
         return planRepo.save(plan);
     }
 
-    public Plan addLocationsToPlan(Long planId, List<String> locationNames) {
+    public Plan addPlacesToPlan(Long planId, List<String> placeNames) {
         Plan plan = planRepo.findById(planId)
             .orElseThrow(() -> new NoSuchElementException("Plan not found with id " + planId));
 
-        for (String name : locationNames) {
-            Location location = locationRepo.findByName(name);
-            if (location == null) {
-                throw new NoSuchElementException("Location not found with name " + name);
-            }
-            plan.getLocations().add(location);
+        for (String placeName : placeNames) {
+            Place place = new Place();
+            place.setName(placeName); // Set the place name
+            placeService.addPlaceToPlan(planId, place);
         }
+
+        return planRepo.save(plan);
+    }
+
+    public Plan addLocationsToPlace(Long planId, Long placeId, List<String> locationNames) {
+        Plan plan = planRepo.findById(planId)
+            .orElseThrow(() -> new NoSuchElementException("Plan not found with id " + planId));
+
+        Place place = placeService.findById(placeId);
+
+        List<Location> locations = locationNames.stream()
+            .map(locationName -> locationRepo.findByName(locationName))
+            .filter(location -> location != null)
+            .toList();
+
+        if (locations.size() != locationNames.size()) {
+            throw new NoSuchElementException("One or more locations not found");
+        }
+
+        placeLocationService.addLocationsToPlace(placeId, locations.stream().map(Location::getId).toList());
 
         return planRepo.save(plan);
     }

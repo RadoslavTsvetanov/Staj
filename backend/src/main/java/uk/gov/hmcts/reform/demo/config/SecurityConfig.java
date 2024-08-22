@@ -62,6 +62,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.POST, "/plans").permitAll()
                 .requestMatchers(HttpMethod.DELETE, "/users/profile/delete").permitAll()
                 .requestMatchers(HttpMethod.POST, "/plans/{planId}/users").permitAll()
+                .requestMatchers(HttpMethod.POST, "/places").permitAll() //tova ne trqbwa userite da go prawqt, ama posle shte se promeni
                 .anyRequest().hasRole("ADMIN")
             )
         ;
