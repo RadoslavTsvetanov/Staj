@@ -99,10 +99,10 @@ const Landing = () => {
 
         <div className="bg-white bg-opacity-70 rounded-xl p-6 max-h-[60%] w-[52%] overflow-y-auto shadow-lg ml-auto">
           <h1 className="text-3xl font-bold mb-4 text-[#0e6cc4]">
-            🌍 Discover Your Next Adventure & Capture Every Moment with Staj 🚀
+            🌍 Discover Your Next Adventure & Capture Every Moment with PlanPals 🚀
           </h1>
           <p className="text-lg text-[#0e6cc4] mb-4">
-            Tired of one-size-fits-all travel plans? Ready to explore the world your way and keep every memory alive? Meet Staj—the ultimate travel companion that not only curates your perfect trip but also lets you relive every unforgettable moment!
+            Tired of one-size-fits-all travel plans? Ready to explore the world your way and keep every memory alive? Meet PlanPals—the ultimate travel companion that not only curates your perfect trip but also lets you relive every unforgettable moment!
           </p>
           <h2 className="text-xl font-semibold text-[#0e6cc4] mb-4">✨ How It Works:</h2>
           <ul className="text-[#0e6cc4] mb-4">
@@ -122,13 +122,13 @@ const Landing = () => {
             <li>- Create a Travel Diary: Build a visual story of your adventures, complete with locations and notes.</li>
             <li>- Share & Cherish: Relive your favorite moments anytime, or share them with friends and family.</li>
           </ul>
-          <h2 className="text-xl font-semibold text-[#0e6cc4] mb-4">🌟 Why Choose Staj?</h2>
+          <h2 className="text-xl font-semibold text-[#0e6cc4] mb-4">🌟 Why Choose PlanPals?</h2>
           <p className="text-[#0e6cc4] mb-4">
-            Because your travel story deserves to be told—over and over again. Staj not only crafts the perfect adventure but also helps you treasure it forever.
+            Because your travel story deserves to be told—over and over again. PlanPals not only crafts the perfect adventure but also helps you treasure it forever.
           </p>
           <h2 className="text-xl font-semibold text-[#0e6cc4] mb-4">🚀 Explore. Capture. Remember.</h2>
           <p className="text-[#0e6cc4] mb-4">
-            Download Staj now and start planning your next trip, where every adventure is tailored to you, and every memory is a keepsake!
+            Download PlanPals now and start planning your next trip, where every adventure is tailored to you, and every memory is a keepsake!
           </p>
         </div>
       </div>
