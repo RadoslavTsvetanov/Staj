@@ -15,6 +15,8 @@ public class OpenAIService {
     private static final String OPENAI_API_KEY =
         "###";
 
+    private static final String OPENAI_API_URL = "https://api.openai.com/v1/chat/completions";
+
     private final OkHttpClient client = new OkHttpClient();
 
     public String getMatchedInterests(String customInterest, String[] predefinedInterests) {
@@ -47,7 +49,7 @@ public class OpenAIService {
         );
 
         Request request = new Request.Builder()
-            .url("https://api.openai.com/v1/chat/completions")
+            .url(OPENAI_API_URL)
             .post(body)
             .addHeader("Authorization", "Bearer " + OPENAI_API_KEY)
             .addHeader("Content-Type", "application/json")
@@ -99,7 +101,7 @@ public class OpenAIService {
             promptBuilder.setLength(promptBuilder.length() - 2);
         }
 
-        promptBuilder.append(". Provide only the most relevant types for the custom interest in the format: \"type1\", \"type2\", \"type3\". The types need to be written exactly like in the types in the matched interests.");
+        promptBuilder.append(". Provide only the most relevant types for the custom interest in the format: \"type1\", \"type2\", \"type3\". The relevant types need to be written exactly like the types in the matched interests.");
 
         JsonObject json = new JsonObject();
         json.addProperty("model", "gpt-3.5-turbo");
@@ -120,7 +122,7 @@ public class OpenAIService {
         );
 
         Request request = new Request.Builder()
-            .url("https://api.openai.com/v1/chat/completions")
+            .url(OPENAI_API_URL)
             .post(body)
             .addHeader("Authorization", "Bearer " + OPENAI_API_KEY)
             .addHeader("Content-Type", "application/json")
@@ -160,10 +162,10 @@ public class OpenAIService {
 
         if(matchedInterests != null) {
             String cleanedInterests = matchedInterests
-                .replaceAll("^-\\s*", "") // Remove leading hyphens and spaces
-                .replaceAll("\\s*-\\s*", ", ") // Replace hyphens with commas
-                .replaceAll("\\s*,\\s*,\\s*", ", ") // Handle multiple commas
-                .trim(); // Trim any leading or trailing spaces
+                .replaceAll("^-\\s*", "")
+                .replaceAll("\\s*-\\s*", ", ")
+                .replaceAll("\\s*,\\s*,\\s*", ", ")
+                .trim();
 
             List<String> interests = Arrays.asList(cleanedInterests.split("\\s*,\\s*"));
 
