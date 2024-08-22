@@ -7,13 +7,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-import uk.gov.hmcts.reform.demo.models.DateWindow;
-import uk.gov.hmcts.reform.demo.models.Location;
-import uk.gov.hmcts.reform.demo.models.Plan;
-import uk.gov.hmcts.reform.demo.models.User;
-import uk.gov.hmcts.reform.demo.services.LocationService;
-import uk.gov.hmcts.reform.demo.services.PlanService;
-import uk.gov.hmcts.reform.demo.services.UserService;
+import uk.gov.hmcts.reform.demo.models.*;
+import uk.gov.hmcts.reform.demo.services.*;
 import uk.gov.hmcts.reform.demo.utils.JwtUtil;
 
 import java.util.List;
@@ -31,6 +26,12 @@ public class PlanController {
 
     @Autowired
     private LocationService locationService;
+
+    @Autowired
+    private PlaceService placeService;
+
+    @Autowired
+    private PlaceLocationService placeLocationService;
 
     @Autowired
     private JwtUtil jwtUtil;
@@ -126,9 +127,31 @@ public class PlanController {
         return ResponseEntity.ok("User added successfully.");
     }
 
-    @PutMapping("/{planId}/locations")
-    public ResponseEntity<String> addLocationsToPlan(
+    @PutMapping("/{planId}/places")
+    public ResponseEntity<String> addPlacesToPlan(
         @PathVariable Long planId,
+        @RequestBody List<String> placeNames,
+        @RequestHeader(value = "Authorization", required = false) String authorizationHeader
+    ) {
+        if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
+            return ResponseEntity.status(401).body("Unauthorized");
+        }
+
+        String token = authorizationHeader.substring(7);
+        String username = jwtUtil.getUsernameFromToken(token);
+
+        if (username == null) {
+            return ResponseEntity.status(401).body("Unauthorized");
+        }
+
+        Plan updatedPlan = planService.addPlacesToPlan(planId, placeNames);
+        return ResponseEntity.ok("Places added successfully.");
+    }
+
+    @PutMapping("/{planId}/places/{placeId}/locations")
+    public ResponseEntity<String> addLocationsToPlace(
+        @PathVariable Long planId,
+        @PathVariable Long placeId,
         @RequestBody List<String> locationNames,
         @RequestHeader(value = "Authorization", required = false) String authorizationHeader
     ) {
@@ -150,8 +173,8 @@ public class PlanController {
             }
         }
 
-        Plan updatedPlan = planService.addLocationsToPlan(planId, locationNames);
-        return ResponseEntity.ok("Locations added successfully.");
+        Plan updatedPlan = planService.addLocationsToPlace(planId, placeId, locationNames);
+        return ResponseEntity.ok("Locations added to place successfully.");
     }
 
     @PutMapping("/{planId}/date-window")
@@ -194,6 +217,4 @@ public class PlanController {
         Plan updatedPlan = planService.save(plan);
         return ResponseEntity.ok(updatedPlan);
     }
-
 }
-
