@@ -15,15 +15,15 @@ export default function SignUpRoute() {
 
   const router = useRouter();
 
-  useEffect(() => {
-    document.body.style.overflow = 'hidden';
-    document.documentElement.style.overflow = 'hidden';
+  // useEffect(() => {
+  //   document.body.style.overflow = 'hidden';
+  //   document.documentElement.style.overflow = 'hidden';
 
-    return () => {
-      document.body.style.overflow = '';
-      document.documentElement.style.overflow = '';
-    };
-  }, []);
+  //   return () => {
+  //     document.body.style.overflow = '';
+  //     document.documentElement.style.overflow = '';
+  //   };
+  // }, []);
 
   const handleUsernameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setUsername(event.target.value);
