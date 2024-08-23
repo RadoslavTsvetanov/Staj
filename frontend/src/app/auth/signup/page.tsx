@@ -45,6 +45,7 @@ export default function SignUpRoute() {
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    
     if (username.length < 5 || username.length > 20) {
       setError("Username should be between 5 and 20 characters long");
       return;

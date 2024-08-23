@@ -38,6 +38,7 @@ const InfoRoute: React.FC = () => {
     const [name, setName] = useState('');
     const [dateOfBirth, setDateOfBirth] = useState('');
     const [error, setError] = useState('');
+    const [isOver100, setIsOver100] = useState(false);
     const router = useRouter();
     const searchParams = useSearchParams();
     const username = searchParams.get('username') || '';
@@ -70,8 +71,38 @@ const InfoRoute: React.FC = () => {
         }
     };
 
+    const calculateAge = (dob: string) => {
+        const birthDate = new Date(dob);
+        const today = new Date();
+        let age = today.getFullYear() - birthDate.getFullYear();
+        const monthDifference = today.getMonth() - birthDate.getMonth();
+
+        if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDate.getDate())) {
+            age--;
+        }
+        return age;
+    };
+
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
+        
+        if (name.length < 2 || name.length > 40) {
+            setError('Name should be between 2 and 40 characters long');
+            return;
+        }
+        const age = calculateAge(dateOfBirth);
+        if (age < 13) {
+            setError('Womp womp too young');
+            setIsOver100(false);
+            return;
+        }
+        if (age > 100) {
+            setError('Womp womp too old');
+            setIsOver100(true);
+            return;
+        }
+        setError('');
+
         try {
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/auth/register/complete`, {
               method: 'POST',
@@ -94,7 +125,7 @@ const InfoRoute: React.FC = () => {
               setError(data);
             }
         } catch (err) {
-            setError('An error occurred while completing registration. Please try again.');
+            console.error('Error:', error);
         }
     };
 
@@ -192,6 +223,13 @@ const InfoRoute: React.FC = () => {
                                 )}
                             </div>
                         </div>
+
+                        {/* {error && <p className="text-red-500 text-sm mt-2">{error}</p>} */}
+                        {error && (
+                            <p className={`mt-2 text-sm ${isOver100 ? "text-4xl text-red-600" : "text-red-500"}`}>
+                                {error}
+                            </p>
+                        )}
 
                         <div className="mt-4">
                             <button
