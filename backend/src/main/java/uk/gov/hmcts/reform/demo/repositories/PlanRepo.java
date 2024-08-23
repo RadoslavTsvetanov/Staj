@@ -22,4 +22,7 @@ public interface PlanRepo extends JpaRepository<Plan, Long> {
 
     @EntityGraph(attributePaths = {"places.placeLocations"})
     List<Plan> findAll();
+
+    @Query("SELECT p FROM Plan p WHERE :username MEMBER OF p.usernames")
+    List<Plan> findByUsernamesContaining(@Param("username") String username);
 }

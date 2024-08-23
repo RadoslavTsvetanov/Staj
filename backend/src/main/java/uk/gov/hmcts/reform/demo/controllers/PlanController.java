@@ -101,8 +101,12 @@ public class PlanController {
             return ResponseEntity.status(409).build();
         }
 
+        // Add the username to the plan
         plan.addUsername(username);
+
+        // Save the Plan along with its DateWindow
         Plan savedPlan = planService.save(plan);
+
         return ResponseEntity.status(201).body(savedPlan);
     }
 

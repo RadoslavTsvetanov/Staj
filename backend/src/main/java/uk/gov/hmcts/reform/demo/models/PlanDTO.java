@@ -8,7 +8,9 @@ public class PlanDTO {
     private Integer budget;
     private String name;
     private List<PlaceDTO> places;
+    private HistoryDTO history; // Use HistoryDTO instead of History
 
+    // Getters and setters...
     public Long getId() {
         return id;
     }
@@ -48,5 +50,14 @@ public class PlanDTO {
     public void setPlaces(List<PlaceDTO> places) {
         this.places = places;
     }
+
+    public HistoryDTO getHistory() {
+        return history;
+    }
+
+    public void setHistory(HistoryDTO history) {
+        this.history = history;
+    }
 }
+
 

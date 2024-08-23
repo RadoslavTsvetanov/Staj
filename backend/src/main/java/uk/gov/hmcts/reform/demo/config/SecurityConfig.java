@@ -40,7 +40,6 @@ public class SecurityConfig {
 
         http.authorizeHttpRequests(authorize -> authorize
                 .requestMatchers(HttpMethod.GET, "/users/search").hasRole("USER")
-                .requestMatchers(HttpMethod.POST, "/memory/upload").hasRole("USER")
                 .requestMatchers(HttpMethod.PUT, "/plans/{planId}/date-window").hasRole("USER")
                 .requestMatchers(HttpMethod.POST, "/history/{historyId}/memories").hasRole("USER")
                 .requestMatchers(HttpMethod.GET, "/history/{id}").hasRole("USER")
@@ -66,6 +65,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.POST, "/locations").permitAll()
                 .requestMatchers(HttpMethod.PUT, "/plans/{planId}/places/{placeId}/locations").permitAll()
                 .requestMatchers(HttpMethod.POST, "/plans").permitAll()
+                .requestMatchers(HttpMethod.POST, "/memory/upload").permitAll()
                 .anyRequest().hasRole("ADMIN")
             )
         ;

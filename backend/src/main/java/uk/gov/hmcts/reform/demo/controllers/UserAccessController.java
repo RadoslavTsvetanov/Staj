@@ -53,7 +53,7 @@ public class UserAccessController {
 
         List<Plan> plans = planService.findPlansByUsername(username);
         List<PlanDTO> planDTOs = plans.stream()
-            .map(this::toPlanDTO)
+            .map(EntityToDtoMapper::toPlanDTO)
             .collect(Collectors.toList());
 
         return ResponseEntity.ok(planDTOs);

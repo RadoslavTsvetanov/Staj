@@ -36,9 +36,8 @@ public class PlanService {
 
     public Plan save(Plan plan) {
         History history = new History();
-        historyRepo.save(history); // Save the history to get the generated ID
-
-        plan.setHistory(history); // Associate the new history with the plan
+        historyRepo.save(history);
+        plan.setHistory(history);
         return planRepo.save(plan);
     }
 

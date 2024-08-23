@@ -10,10 +10,15 @@ import java.time.LocalDate;
 import java.util.List;
 
 public interface MemoryRepo extends JpaRepository<Memory, Long> {
-    List<Memory> findByLocation(String location);
-    List<Memory> findByDate(LocalDate date);
-    List<Memory> findByDateAndLocation(LocalDate date, String location);
+    @Query("SELECT m FROM Memory m WHERE LOWER(m.place) = LOWER(:place) AND m.history.id IN :historyIds")
+    List<Memory> findByPlaceAndHistoryIds(@Param("place") String place, @Param("historyIds") List<Long> historyIds);
 
-    @Query("SELECT m FROM Memory m WHERE LOWER(m.location) = LOWER(:location)")
-    List<Memory> findByLocationIgnoreCase(@Param("location") String location);
+    @Query("SELECT m FROM Memory m WHERE m.date = :date AND m.history.id IN :historyIds")
+    List<Memory> findByDateAndHistoryIds(@Param("date") LocalDate date, @Param("historyIds") List<Long> historyIds);
+
+    @Query("SELECT m FROM Memory m WHERE LOWER(m.place) = LOWER(:place) AND m.date = :date AND m.history.id IN :historyIds")
+    List<Memory> findByDateAndPlaceAndHistoryIds(@Param("date") LocalDate date, @Param("place") String place, @Param("historyIds") List<Long> historyIds);
+
+    @Query("SELECT m FROM Memory m WHERE LOWER(m.place) = LOWER(:place)")
+    List<Memory> findByPlaceIgnoreCase(@Param("place") String place);
 }

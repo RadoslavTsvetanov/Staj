@@ -17,7 +17,7 @@ public class PlaceLocation {
 
     @ManyToOne
     @JoinColumn(name = "place_id", nullable = false)
-    @JsonBackReference
+    @JsonBackReference("new")
     private Place place;
 
     @ManyToOne

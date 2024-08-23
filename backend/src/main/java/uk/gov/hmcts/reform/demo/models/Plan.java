@@ -32,11 +32,11 @@ public class Plan {
     @NotBlank(message = "Name cannot be empty")
     private String name;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "date_window_id", referencedColumnName = "id")
     private DateWindow dateWindow;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "history_id", referencedColumnName = "id")
     private History history;
 
