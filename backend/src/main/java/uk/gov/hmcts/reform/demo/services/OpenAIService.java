@@ -55,26 +55,7 @@ public class OpenAIService {
             .addHeader("Content-Type", "application/json")
             .build();
 
-        try(Response response = client.newCall(request).execute()) {
-            if(!response.isSuccessful()) {
-                System.err.println("Unexpected code: " + response);
-                System.err.println("Response body: " + response.body().string());
-                throw new IOException("Unexpected code " + response);
-            }
-
-            String responseBody = response.body().string();
-            JsonObject jsonResponse = new Gson().fromJson(responseBody, JsonObject.class);
-            JsonArray choices = jsonResponse.getAsJsonArray("choices");
-
-            if (!choices.isEmpty()) {
-                return choices.get(0).getAsJsonObject().getAsJsonObject("message").get("content").getAsString().trim();
-            } else {
-                return "No response received.";
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
+        return executeRequest(request);
     }
 
     public String getSpecificTypesForCustomInterest(String customInterest, String matchedInterests) {
@@ -128,11 +109,37 @@ public class OpenAIService {
             .addHeader("Content-Type", "application/json")
             .build();
 
+        return executeRequest(request);
+    }
+
+    public String processCustomInterest(String customInterest) {
+        String[] predefinedInterests = {
+            "Food", "Art", "Sport", "Books", "Education", "Entertainment",
+            "History", "Hiking", "Movies", "Theater", "Animals", "Shopping",
+            "Relax", "Religion", "Flora"
+        };
+
+        String matchedInterests = getMatchedInterests(customInterest, predefinedInterests);
+
+        if (matchedInterests != null && !matchedInterests.isEmpty()) {
+            String cleanedInterests = matchedInterests
+                .replaceAll("^-\\s*", "")
+                .replaceAll("\\s*-\\s*", ", ")
+                .replaceAll("\\s*,\\s*,\\s*", ", ")
+                .trim();
+
+            String specificTypes = getSpecificTypesForCustomInterest(customInterest, cleanedInterests);
+            return specificTypes != null ? specificTypes : "No specific types found.";
+        } else {
+            return "No matched interests found.";
+        }
+    }
+
+    private String executeRequest(Request request) {
         try (Response response = client.newCall(request).execute()) {
             if (!response.isSuccessful()) {
                 System.err.println("Unexpected code: " + response);
                 System.err.println("Response body: " + response.body().string());
-
                 throw new IOException("Unexpected code " + response);
             }
 
@@ -147,39 +154,7 @@ public class OpenAIService {
             }
         } catch (IOException e) {
             e.printStackTrace();
-            return null;
-        }
-    }
-
-    public void runTest() {
-        String[] predefinedInterests =
-                {"Food", "Art", "Sport", "Books", "Education", "Entertainment", "History",
-                "Hiking", "Movies", "Theater", "Animals", "Shopping", "Relax", "Religion", "Flora"};
-
-        String customInterest = "Libraries";
-
-        String matchedInterests = getMatchedInterests(customInterest, predefinedInterests);
-
-        if(matchedInterests != null) {
-            String cleanedInterests = matchedInterests
-                .replaceAll("^-\\s*", "")
-                .replaceAll("\\s*-\\s*", ", ")
-                .replaceAll("\\s*,\\s*,\\s*", ", ")
-                .trim();
-
-            List<String> interests = Arrays.asList(cleanedInterests.split("\\s*,\\s*"));
-
-            for (int i = 0; i < interests.size(); i++) {
-                String interest = interests.get(i).trim();
-                if (!interest.isEmpty()) {
-                    System.out.println("Interest " + (i + 1) + ": " + interest);
-                }
-            }
-
-            String specificTypes = getSpecificTypesForCustomInterest(customInterest, cleanedInterests);
-            System.out.println("Specific Types for " + customInterest + ": " + specificTypes);
-        } else {
-            System.out.println("Failed to match interests.");
+            return "Error occurred: " + e.getMessage();
         }
     }
 }

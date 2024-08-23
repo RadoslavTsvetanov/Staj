@@ -15,7 +15,7 @@ import uk.gov.hmcts.reform.demo.services.OpenAIService;
 @EnableJpaRepositories(basePackages = "uk.gov.hmcts.reform.demo.repositories")
 @EntityScan(basePackages = "uk.gov.hmcts.reform.demo")
 
-public class Application implements CommandLineRunner {
+public class Application {
     @Bean
     public WebMvcConfigurer corsConfigurer() {
         return new WebMvcConfigurer() {
@@ -39,8 +39,8 @@ public class Application implements CommandLineRunner {
         SpringApplication.run(Application.class, args);
     }
 
-    @Override
-    public void run(String... args) throws Exception {
-        openAIService.runTest();
-    }
+    //@Override
+    //public void run(String... args) throws Exception {
+        //openAIService.runTest();
+    //}
 }
