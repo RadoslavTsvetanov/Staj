@@ -101,7 +101,12 @@ const InfoRoute: React.FC = () => {
             setIsOver100(true);
             return;
         }
+        if (selectedInterests.length === 0) {
+            setError('Please select at least one interest')
+            return;
+        }
         setError('');
+        setIsOver100(false);
 
         try {
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/auth/register/complete`, {
