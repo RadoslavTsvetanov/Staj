@@ -29,12 +29,6 @@ export default function SignUpRoute() {
 
   const handleUsernameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setUsername(event.target.value);
-
-    if (username.length < 5 || username.length > 20) {
-      setUsernameError("Username should be between 5 and 20 characters long");
-    } else {
-      setUsernameError("");
-    }
   };
 
   const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -43,12 +37,6 @@ export default function SignUpRoute() {
 
   const handlePasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setPassword(event.target.value);
-
-    if (password.length < 8) {
-      setPasswordError("Password should be at least 8 characters long");
-    } else {
-      setPasswordError("");
-    }
   };
 
   const handleConfirmPasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -57,7 +45,7 @@ export default function SignUpRoute() {
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (usernameError) {
+    if (username.length < 5 || username.length > 20) {
       setError("Username should be between 5 and 20 characters long");
       return;
     }
@@ -65,7 +53,7 @@ export default function SignUpRoute() {
       setError('Passwords do not match');
       return;
     }
-    if (passwordError) {
+    if (password.length < 8) {
       setError("Password should be at least 8 characters long");
       return;
     }
