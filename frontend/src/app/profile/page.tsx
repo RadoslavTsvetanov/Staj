@@ -26,10 +26,12 @@ const AccountPage: NextPage = () => {
     const [username, setUsername] = useState<string>('');
     const [email, setEmail] = useState<string>('');
     const [dob, setDob] = useState<string>('');
+    const [password, setPassword] = useState<string>('');
     const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
     const [showFoodSubInterests, setShowFoodSubInterests] = useState<boolean>(false);
     const [isPopupVisible, setIsPopupVisible] = useState<boolean>(false);
-    const [password, setPassword] = useState<string>('');
+    const [initialState, setInitialState] = useState<any>(null);
+    const [isDirty, setIsDirty] = useState<boolean>(false);
     const router = useRouter();
 
     useEffect(() => {
@@ -43,19 +45,23 @@ const AccountPage: NextPage = () => {
                 });
                 const userData = profileResponse.data;
 
-                setName(userData.name || '');
-                setUsername(userData.username || '');
-                setEmail(userData.credentials?.email || '');
-                setDob(userData.dateOfBirth || '');
-                setPassword(userData.credentials?.password || '');
+                const userInitialState = {
+                    name: userData.name || '',
+                    username: userData.username || '',
+                    email: userData.credentials?.email || '',
+                    dob: userData.dateOfBirth || '',
+                    password: userData.credentials?.password || '',
+                    selectedInterests: userData.preferences?.interests || []
+                };
 
-                if (userData.preferences && userData.preferences.interests) {
-                    setSelectedInterests(userData.preferences.interests);
-                    setShowFoodSubInterests(userData.preferences.interests.includes('Food'));
-                } else {
-                    setSelectedInterests([]);
-                    setShowFoodSubInterests(false);
-                }
+                setName(userInitialState.name);
+                setUsername(userInitialState.username);
+                setEmail(userInitialState.email);
+                setDob(userInitialState.dob);
+                setPassword(userInitialState.password);
+                setSelectedInterests(userInitialState.selectedInterests);
+                setShowFoodSubInterests(userInitialState.selectedInterests.includes('Food'));
+                setInitialState(userInitialState);
             } catch (error) {
                 console.error('Error fetching user data:', error);
                 alert('Failed to fetch user data. Please try again.');
@@ -64,6 +70,23 @@ const AccountPage: NextPage = () => {
 
         fetchUserData();
     }, []);
+
+    useEffect(() => {
+        if (initialState) {
+            if (
+                name !== initialState.name ||
+                username !== initialState.username ||
+                email !== initialState.email ||
+                dob !== initialState.dob ||
+                password !== initialState.password ||
+                JSON.stringify(selectedInterests) !== JSON.stringify(initialState.selectedInterests)
+            ) {
+                setIsDirty(true);
+            } else {
+                setIsDirty(false);
+            }
+        }
+    }, [name, username, email, dob, password, selectedInterests, initialState]);
 
     const handleSave = async () => {
         try {
@@ -113,6 +136,8 @@ const AccountPage: NextPage = () => {
             }
     
             alert('Profile updated successfully!');
+            setInitialState(updatedUserData);
+            setIsDirty(false);
         } catch (error) {
             console.error('Error updating user profile:', error);
             alert('Failed to update profile. Please try again.');
@@ -199,9 +224,10 @@ const AccountPage: NextPage = () => {
                         </h1>
                         <div className='absolute right-0'>
                             <button
-                                className="text-white-500 bg-green-300 rounded-md px-3 py-1 hover:text-white-700 hover:bg-green-500"
+                                className={`text-white-500 rounded-md px-3 py-1 ${isDirty ? 'font-bold' : 'bg-transparent'}`}
                                 onClick={handleSave}
                                 type="button"
+                                disabled={!isDirty}
                             >
                                 Save
                             </button>
@@ -287,12 +313,14 @@ const AccountPage: NextPage = () => {
                         </div>
                     </form>
 
-                    <button
-                        onClick={handleDelete}
-                        className="mt-4 bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600"
-                    >
-                        Delete Account
-                    </button>
+                    <div className='flex float-right'>
+                        <button
+                            onClick={handleDelete}
+                            className="mt-4 bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600"
+                        >
+                            Delete Account
+                        </button>
+                    </div>
 
                     <Popup
                         visible={isPopupVisible}
