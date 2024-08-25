@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.*;
 import uk.gov.hmcts.reform.demo.models.CustomInterestRequest;
 import uk.gov.hmcts.reform.demo.services.OpenAIService;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/interests")
 public class InterestController {
@@ -19,19 +21,19 @@ public class InterestController {
     }
 
     @PostMapping("/process")
-    public ResponseEntity<String> processCustomInterest(@RequestBody CustomInterestRequest request) {
+    public ResponseEntity<List<String>> processCustomInterest(@RequestBody CustomInterestRequest request) {
         String customInterest = request.getCustomInterest();
 
         if (customInterest == null || customInterest.trim().isEmpty()) {
-            return ResponseEntity.badRequest().body("Custom interest must not be empty.");
+            return ResponseEntity.badRequest().body(List.of("Custom interest must not be empty."));
         }
 
         try {
-            String result = openAIService.processCustomInterest(customInterest);
+            List<String> result = openAIService.processCustomInterest(customInterest);
             return ResponseEntity.ok(result);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body("An error occurred while processing the request: " + e.getMessage());
+                .body(List.of("An error occurred while processing the request: " + e.getMessage()));
         }
     }
 }

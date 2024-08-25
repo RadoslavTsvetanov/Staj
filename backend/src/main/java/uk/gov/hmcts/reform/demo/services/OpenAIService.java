@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import okhttp3.*;
 import com.google.gson.*;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -58,7 +59,7 @@ public class OpenAIService {
         return executeRequest(request);
     }
 
-    public String getSpecificTypesForCustomInterest(String customInterest, String matchedInterests) {
+    public List<String> getSpecificTypesForCustomInterest(String customInterest, String matchedInterests) {
         StringBuilder promptBuilder = new StringBuilder("The user has a specific interest in '")
             .append(customInterest)
             .append("'. Given the following matched interests: ")
@@ -109,10 +110,11 @@ public class OpenAIService {
             .addHeader("Content-Type", "application/json")
             .build();
 
-        return executeRequest(request);
+        String response = executeRequest(request);
+        return parseTypesFromResponse(response);
     }
 
-    public String processCustomInterest(String customInterest) {
+    public List<String> processCustomInterest(String customInterest) {
         String[] predefinedInterests = {
             "Food", "Art", "Sport", "Books", "Education", "Entertainment",
             "History", "Hiking", "Movies", "Theater", "Animals", "Shopping",
@@ -128,10 +130,10 @@ public class OpenAIService {
                 .replaceAll("\\s*,\\s*,\\s*", ", ")
                 .trim();
 
-            String specificTypes = getSpecificTypesForCustomInterest(customInterest, cleanedInterests);
-            return specificTypes != null ? specificTypes : "No specific types found.";
+            List<String> specificTypes = getSpecificTypesForCustomInterest(customInterest, cleanedInterests);
+            return specificTypes != null && !specificTypes.isEmpty() ? specificTypes : Arrays.asList("No specific types found.");
         } else {
-            return "No matched interests found.";
+            return Arrays.asList("No matched interests found.");
         }
     }
 
@@ -156,5 +158,14 @@ public class OpenAIService {
             e.printStackTrace();
             return "Error occurred: " + e.getMessage();
         }
+    }
+
+    private List<String> parseTypesFromResponse(String response) {
+        List<String> typesList = new ArrayList<>();
+        if (response != null && !response.isEmpty()) {
+            response = response.replaceAll("\"", "");
+            typesList = Arrays.asList(response.split("\\s*,\\s*"));
+        }
+        return typesList;
     }
 }
