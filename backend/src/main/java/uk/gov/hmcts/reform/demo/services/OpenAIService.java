@@ -64,7 +64,7 @@ public class OpenAIService {
             .append(customInterest)
             .append("'. Given the following matched interests: ")
             .append(matchedInterests)
-            .append(". Please list the relevant types based on the following types: ");
+            .append(". Please list the relevant types associated with these interests. Do not include the interest names themselves in the list. Use the following types: ");
 
         List<String> matchedInterestsList = Arrays.asList(matchedInterests.split("\\s*,\\s*"));
         int limit = Math.min(matchedInterestsList.size(), 2);
