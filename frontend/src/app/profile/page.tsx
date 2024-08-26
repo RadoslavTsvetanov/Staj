@@ -276,6 +276,19 @@ const AccountPage: NextPage = () => {
                                 />
                             </div>
                         </div>
+                        <div className='flex'>
+                            <div className='w-full'>
+                                <label className='block text-sm font-medium text-gray-700'>Email</label>
+                                <input
+                                    className="mt-1 block w-full px-3 py-2 border border-gray-300 text-gray-500 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                                    type="email"
+                                    name='email'
+                                    id="email"
+                                    value={email}
+                                    readOnly
+                                />
+                            </div>
+                        </div>
                         <div>
                             <label className="block text-sm font-medium text-gray-600">Interests</label>
                             <div className="flex flex-wrap gap-2">
