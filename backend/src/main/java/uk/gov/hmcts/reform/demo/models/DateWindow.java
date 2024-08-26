@@ -1,9 +1,11 @@
 package uk.gov.hmcts.reform.demo.models;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotNull;
+import uk.gov.hmcts.reform.demo.deserializers.LocalDateDeserializer;
 import uk.gov.hmcts.reform.demo.validators.ValidDateWindow;
 
 import java.time.LocalDate;
@@ -19,11 +21,13 @@ public class DateWindow {
 
     @NotNull(message = "Start date cannot be null")
     @FutureOrPresent(message = "Start date must be in the present or future")
+    @JsonDeserialize(using = LocalDateDeserializer.class)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "UTC")
     private LocalDate startDate;
 
     @NotNull(message = "End date cannot be null")
     @FutureOrPresent(message = "End date must be in the present or future")
+    @JsonDeserialize(using = LocalDateDeserializer.class)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "UTC")
     private LocalDate endDate;
 
