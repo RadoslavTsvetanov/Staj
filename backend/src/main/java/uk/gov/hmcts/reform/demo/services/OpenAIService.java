@@ -131,7 +131,9 @@ public class OpenAIService {
                 .trim();
 
             List<String> specificTypes = getSpecificTypesForCustomInterest(customInterest, cleanedInterests);
-            return specificTypes != null && !specificTypes.isEmpty() ? specificTypes : Arrays.asList("No specific types found.");
+            specificTypes = formatSpecificTypes(specificTypes);
+
+            return !specificTypes.isEmpty() ? specificTypes : Arrays.asList("No specific types found.");
         } else {
             return Arrays.asList("No matched interests found.");
         }
@@ -167,5 +169,19 @@ public class OpenAIService {
             typesList = Arrays.asList(response.split("\\s*,\\s*"));
         }
         return typesList;
+    }
+
+    private List<String> formatSpecificTypes(List<String> specificTypes) {
+        List<String> formattedTypes = new ArrayList<>();
+        for (String type : specificTypes) {
+            if (type.contains(" ")) {
+                type = type.replace(" ", "_");
+            }
+            if (Character.isUpperCase(type.charAt(0))) {
+                type = Character.toLowerCase(type.charAt(0)) + type.substring(1);
+            }
+            formattedTypes.add(type);
+        }
+        return formattedTypes;
     }
 }
