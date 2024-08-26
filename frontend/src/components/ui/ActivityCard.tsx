@@ -1,5 +1,7 @@
-import React from 'react';
+import React, {useState} from 'react';
 import Image from 'next/image';
+import Memory from '@/components/ui/Memory';
+import ImageSlider from './ImageSlider';
 
 type ActivityCardProps = {
   name: string;
@@ -7,20 +9,30 @@ type ActivityCardProps = {
 };
 
 const ActivityCard: React.FC<ActivityCardProps> = ({ name, imageUrl }) => {
+
+  const [images, setImages] = useState([
+    '/images/memory.png',
+    '/images/memory.png',
+    '/images/memory.pngg',
+  ]);
+
+  const addPhoto = () => {
+    // Logic to add a new photo
+    const newPhoto = prompt('Enter the URL of the new photo:');
+    if (newPhoto) {
+      setImages([...images, newPhoto]);
+    }
+  };
   return (
-    <div className="bg-teal-300 rounded-lg p-4 mb-4 shadow-md">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center">
+    <div className="h-[40vh] bg-teal-200 rounded-lg p-4 mb-4 mx-8 shadow-md flex flex-col justify-between">
+      <div className="flex items-center">
           <Image src="/images/gps.png" alt="LocationIcon" width={24} height={24} />
-          <span className="ml-2 text-lg font-semibold">{name}</span>
-        </div>
-        <div className="flex items-center space-x-2">
-          <div className="bg-gray-200 w-24 h-16 rounded"></div>
-          <div className="bg-gray-200 w-24 h-16 rounded"></div>
-          <div className="bg-gray-200 w-24 h-16 rounded"></div>
-          <div className="bg-gray-400 w-16 h-16 rounded flex items-center justify-center text-xl">+</div>
-        </div>
+          <span className="ml-2 text-lg font-semibold">{name}</span> 
       </div>
+      
+      <div className="flex justify-center items-center h-screen  bg-teal-400">
+      <ImageSlider />
+    </div>
     </div>
   );
 };

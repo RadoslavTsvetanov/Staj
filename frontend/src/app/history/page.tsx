@@ -11,7 +11,7 @@ const HomePage: React.FC = () => {
       <BackButton/>
       <Header />
       <DateLabel />
-      <div className="w-full max-w-2xl mt-4">
+      <div className="w-full mt-4">
         <ActivityCard name="Aqua park" imageUrl="/images/aqua-park.png" />
         <ActivityCard name="Sushi place" imageUrl="/images/sushi-place.png" />
       </div>
