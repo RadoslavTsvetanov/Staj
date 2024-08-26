@@ -227,7 +227,7 @@ const InfoRoute: React.FC = () => {
 
                         {/* {error && <p className="text-red-500 text-sm mt-2">{error}</p>} */}
                         {error && (
-                            <p className={`mt-2 text-sm ${error === 'Womp womp too old' ? "text-4xl text-red-600" : "text-red-500"}`}>
+                            <p className={`mt-2 text-sm ${error === 'Womp womp too old' ? "text-xl text-red-600" : "text-red-500"}`}>
                                 {error}
                             </p>
                         )}

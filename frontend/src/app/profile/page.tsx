@@ -143,7 +143,6 @@ const AccountPage: NextPage = () => {
             alert('Failed to update profile. Please try again.');
         }
     };
-      
     
     const handleDelete = () => {
         setIsPopupVisible(true);
