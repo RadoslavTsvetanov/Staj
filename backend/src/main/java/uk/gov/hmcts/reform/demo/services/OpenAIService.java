@@ -79,7 +79,7 @@ public class OpenAIService {
             }
         }
 
-        if (promptBuilder.length() > 0) {
+        if (!promptBuilder.isEmpty()) {
             promptBuilder.setLength(promptBuilder.length() - 2);
         }
 
@@ -133,9 +133,9 @@ public class OpenAIService {
             List<String> specificTypes = getSpecificTypesForCustomInterest(customInterest, cleanedInterests);
             specificTypes = formatSpecificTypes(specificTypes);
 
-            return !specificTypes.isEmpty() ? specificTypes : Arrays.asList("No specific types found.");
+            return !specificTypes.isEmpty() ? specificTypes : List.of("No specific types found.");
         } else {
-            return Arrays.asList("No matched interests found.");
+            return List.of("No matched interests found.");
         }
     }
 
