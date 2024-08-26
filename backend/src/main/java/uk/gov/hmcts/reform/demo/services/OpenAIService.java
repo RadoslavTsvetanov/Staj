@@ -64,23 +64,25 @@ public class OpenAIService {
             .append(customInterest)
             .append("'. Given the following matched interests: ")
             .append(matchedInterests)
-            .append(". Please list the relevant types associated with these interests. Do not include the interest names themselves in the list. Use the following types: ");
+            .append(". Please identify the most relevant types associated with these interests. Only provide specific types, not the interest names themselves. The specific types should be chosen from the following list: ");
 
         List<String> matchedInterestsList = Arrays.asList(matchedInterests.split("\\s*,\\s*"));
         int limit = Math.min(matchedInterestsList.size(), 2);
 
+        List<String> availableTypes = new ArrayList<>();
         for (int i = 0; i < limit; i++) {
             String interest = matchedInterestsList.get(i).trim();
             List<String> typesForInterest = ApiTypes.getTypesForInterest(interest);
             if (typesForInterest != null) {
-                for (String type : typesForInterest) {
-                    promptBuilder.append(type).append(", ");
-                }
+                availableTypes.addAll(typesForInterest);
             }
         }
 
-        if (!promptBuilder.isEmpty()) {
-            promptBuilder.setLength(promptBuilder.length() - 2);
+        if (!availableTypes.isEmpty()) {
+            for (String type : availableTypes) {
+                promptBuilder.append(type).append(", ");
+            }
+            promptBuilder.setLength(promptBuilder.length() - 2); // Remove trailing comma and space
         }
 
         promptBuilder.append(". Provide only the most relevant types for the custom interest in the format: \"type1\", \"type2\", \"type3\". The relevant types need to be written exactly like the types in the matched interests.");
