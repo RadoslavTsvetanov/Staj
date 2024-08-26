@@ -32,7 +32,7 @@ public class OpenAIService {
         promptBuilder.append(". Provide a list of the most relevant interests starting with the most compatible one.");
 
         JsonObject json = new JsonObject();
-        json.addProperty("model", "gpt-3.5-turbo");
+        json.addProperty("model", "gpt-4");
 
         JsonArray messages = new JsonArray();
         JsonObject message = new JsonObject();
