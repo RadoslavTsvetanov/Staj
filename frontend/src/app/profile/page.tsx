@@ -3,9 +3,9 @@
 import { NextPage } from 'next';
 import Head from 'next/head';
 import Image from 'next/image';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
-import Charles from "./charles-leclerc-ferrari.jpg";
+import DefaultPfp from "./buffpfp.webp";
 import LArrow from "./left.png";
 import { Popup } from "../../components/ui/Popup";
 import { useRouter } from 'next/navigation';
@@ -29,10 +29,13 @@ const AccountPage: NextPage = () => {
     const [password, setPassword] = useState<string>('');
     const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
     const [showFoodSubInterests, setShowFoodSubInterests] = useState<boolean>(false);
+    const [profilePicture, setProfilePicture] = useState<File | null>(null);
+    const [profilePictureUrl, setProfilePictureUrl] = useState<string>(DefaultPfp.src);
     const [isPopupVisible, setIsPopupVisible] = useState<boolean>(false);
     const [initialState, setInitialState] = useState<any>(null);
     const [isDirty, setIsDirty] = useState<boolean>(false);
     const router = useRouter();
+    const fileInputRef = useRef<HTMLInputElement | null>(null);
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -51,6 +54,7 @@ const AccountPage: NextPage = () => {
                     email: userData.credentials?.email || '',
                     dob: userData.dateOfBirth || '',
                     password: userData.credentials?.password || '',
+                    profilePictureUrl: userData.profilePictureUrl || DefaultPfp,
                     selectedInterests: userData.preferences?.interests || []
                 };
 
@@ -59,6 +63,7 @@ const AccountPage: NextPage = () => {
                 setEmail(userInitialState.email);
                 setDob(userInitialState.dob);
                 setPassword(userInitialState.password);
+                setProfilePictureUrl(userInitialState.profilePictureUrl);
                 setSelectedInterests(userInitialState.selectedInterests);
                 setShowFoodSubInterests(userInitialState.selectedInterests.includes('Food'));
                 setInitialState(userInitialState);
@@ -79,6 +84,7 @@ const AccountPage: NextPage = () => {
                 email !== initialState.email ||
                 dob !== initialState.dob ||
                 password !== initialState.password ||
+                profilePictureUrl !== initialState.profilePictureUrl ||
                 JSON.stringify(selectedInterests) !== JSON.stringify(initialState.selectedInterests)
             ) {
                 setIsDirty(true);
@@ -86,7 +92,16 @@ const AccountPage: NextPage = () => {
                 setIsDirty(false);
             }
         }
-    }, [name, username, email, dob, password, selectedInterests, initialState]);
+    }, [name, username, email, dob, password, profilePictureUrl, selectedInterests, initialState]);
+
+    const handleProfilePictureChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files[0]) {
+            const newProfilePicture = e.target.files[0];
+            setProfilePicture(newProfilePicture);
+            setProfilePictureUrl(URL.createObjectURL(newProfilePicture));
+            setIsDirty(true);
+        }
+    }
 
     const handleSave = async () => {
         try {
@@ -95,6 +110,21 @@ const AccountPage: NextPage = () => {
                 throw new Error("No auth token found.");
             }
     
+            let profilePictureUploadUrl = profilePictureUrl;
+
+            if (profilePicture) {
+                const formData = new FormData();
+                formData.append('file', profilePicture);
+
+                const uploadResponse = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_URL}/user-access/profile/upload`, formData, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    },
+                });
+
+                profilePictureUploadUrl = uploadResponse.data;  
+            }
+
             const updatedUser = {
                 name,
                 username,
@@ -105,7 +135,8 @@ const AccountPage: NextPage = () => {
                 credentials: {
                     email,
                     password
-                }
+                },
+                profilePictureUrl: profilePictureUploadUrl,
             };
     
             const response = await fetch(
@@ -179,7 +210,6 @@ const AccountPage: NextPage = () => {
         }
     };
     
-
     const togglePopup = () => {
         setIsPopupVisible(!isPopupVisible);
     };
@@ -197,6 +227,12 @@ const AccountPage: NextPage = () => {
             if (interest === "Food") {
                 setShowFoodSubInterests(true);
             }
+        }
+    };
+
+    const handleProfilePictureClick = () => {
+        if (fileInputRef.current) {
+            fileInputRef.current.click();
         }
     };
 
@@ -233,17 +269,29 @@ const AccountPage: NextPage = () => {
                         </div>
                     </div>
 
-                    <div className="flex items-center float-left mb-4">
-                        <Image
-                            src={Charles}
-                            alt="Profile Picture"
-                            width={90}
-                            height={90}
-                            className="rounded-full"
+                    <div className="flex items-center float-left mb-30">
+                        <div
+                            onClick={handleProfilePictureClick}
+                            className="cursor-pointer"
+                        >
+                            <Image
+                                src={profilePictureUrl}
+                                alt="Profile Picture"
+                                width={70}
+                                height={70}
+                                className="rounded-full"
+                            />
+                        </div>
+                        <input
+                            type='file'
+                            accept="image/*"
+                            className='absolute flex left-0 top-0 opacity-0'
+                            onChange={handleProfilePictureChange}
+                            ref={fileInputRef}
                         />
                     </div>
                     <form className="space-y-4">
-                        <div>
+                        <div className='ml-20'>
                             <label htmlFor="name" className="block text-sm font-medium text-gray-600">Name</label>
                             <input
                                 type="text"
