@@ -36,7 +36,7 @@ public class OpenAIServiceTest {
                                   .setBody(mockResponseBody)
                                   .addHeader("Content-Type", "application/json"));
 
-        List<String> types = openAIService.getSpecificTypesForCustomInterest("Art", "visual_Arts");
+        List<String> types = openAIService.getSpecificTypesForCustomInterest("football", "Sport");
 
         assertEquals(2, types.size());
         assertEquals("type1", types.get(0));
