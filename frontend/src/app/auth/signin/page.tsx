@@ -1,6 +1,6 @@
 "use client";
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 import Earth from '../../../../public/Earth';
@@ -8,6 +8,7 @@ import { cookies } from '@/lib/utils';
 import { useRouter } from 'next/navigation';
 
 export default function SignUpRoute() {
+  const [error, setError] = useState('');
   const router = useRouter(); // Use the hook inside the component
 
   const handleSignIn = async (event) => {
@@ -28,7 +29,8 @@ export default function SignUpRoute() {
       if (!response.ok) {
         const errorMessage = await response.text();
         console.error('Sign-in failed:', errorMessage);
-        alert('Failed to sign in. Please check your credentials.');
+        //alert('Failed to sign in. Please check your credentials.');
+        setError(errorMessage);
         return;
       }
 
@@ -112,6 +114,8 @@ export default function SignUpRoute() {
                 </label>
               </div>
             </div>
+
+            {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
 
             <div className="mt-4">
               <button
