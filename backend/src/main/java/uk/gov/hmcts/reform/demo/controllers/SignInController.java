@@ -10,7 +10,7 @@ import uk.gov.hmcts.reform.demo.repositories.UserRepo;
 import uk.gov.hmcts.reform.demo.services.AuthService;
 
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/auth")
 public class SignInController {
 
     @Autowired

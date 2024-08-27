@@ -1,18 +1,29 @@
 package uk.gov.hmcts.reform.demo.controllers;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import uk.gov.hmcts.reform.demo.models.Preferences;
+import uk.gov.hmcts.reform.demo.models.User;
 import uk.gov.hmcts.reform.demo.services.GoogleApi;
-import uk.gov.hmcts.reform.demo.types.NearbyPlacesResponse;
+import uk.gov.hmcts.reform.demo.services.UserService;
+import uk.gov.hmcts.reform.demo.utils.ApiTypes;
+import uk.gov.hmcts.reform.demo.utils.JwtUtil;
 import uk.gov.hmcts.reform.demo.utils.Utils;
 
+import java.io.Console;
+import java.time.LocalDate;
+import java.time.Period;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/maps")
 public class MapsController {
+    @Autowired
+    UserService userService;
+    // TODO : make it cleaner since its not easy tp read and functionns are all over the place
     GoogleApi googleApi = new GoogleApi();
     Utils u = new Utils();
     public static class LocationRequest {
@@ -20,7 +31,7 @@ public class MapsController {
         public float longitude;
         public float radius;
         public List<String> types; // make private later
-        public List<String> wantedInterests;
+        public List<String> authTokens;
 
         // Getters and Setters
         public float getLatitude() {
@@ -48,7 +59,13 @@ public class MapsController {
         }
     }
 
+    private Boolean isPlaceAgeRestricted(String placeType){
+        if(placeType.contains("bar") || placeType.contains("night_club") || placeType.contains("casino")) {
+            return true;
+        }
 
+        return false;
+    }
 
 
     private Boolean shouldPlaceBeDiscarded(uk.gov.hmcts.reform.demo.types.NearbyPlacesResponse.Result place){ // to filter by some global filter which is universal, for example we dont need to return places that are permamently closed
@@ -60,8 +77,67 @@ public class MapsController {
         return false;
     }
 
+
+    public static String[] getSection(String[][] arrays) {
+        if (arrays == null || arrays.length == 0) {
+            return new String[0];
+        }
+
+        Set<String> commonElements = new HashSet<>(Arrays.asList(arrays[0]));
+
+        for (int i = 1; i < arrays.length; i++) {
+            commonElements.retainAll(Arrays.asList(arrays[i]));
+        }
+
+        return commonElements.toArray(new String[0]);
+    }
+
+    public static void main(String[] args) {
+        String[][] arrays = {
+            {"apple", "banana", "orange"},
+            {"banana", "orange", "grape"},
+            {"orange", "banana", "kiwi"}
+        };
+
+        String[] result = getSection(arrays);
+
+        System.out.println("Common elements: " + Arrays.toString(result));
+    }
+
+
     @PostMapping("/nearby")
     public ResponseEntity<String> getMaps(@RequestBody LocationRequest loc) {
+         ApiTypes apiTypes = new ApiTypes();
+         JwtUtil jwtUtil = new JwtUtil();
+        AtomicReference<Boolean> shouldAgeRestrictionApply = new AtomicReference<>(false);
+
+
+
+        List<Optional<User>> users = loc.authTokens.stream()
+            .map(token -> jwtUtil.getUsernameFromToken(token))
+            .map(username ->  userService.findByUsername(username))
+            .collect(Collectors.toList());
+
+        users.stream().forEach(user -> {
+            LocalDate dateOfBirth = user.get().getDateOfBirth();
+            LocalDate currentDate = LocalDate.now();
+            int age = Period.between(dateOfBirth, currentDate).getYears();
+            if(age < 18){
+                shouldAgeRestrictionApply.set(true);
+            }
+        });
+        List<List<String>> listWithAllUsersInterests = Collections.emptyList();
+        users.stream().forEach(user -> {
+
+            Preferences prefs = user.get().getPreferences();
+            try{
+                listWithAllUsersInterests.add(prefs.getInterests()); // yay no indication of error throw
+            }catch(Exception e){
+
+            }
+        });
+
+        System.out.println("list, " + listWithAllUsersInterests);
 
 
         try {
@@ -75,10 +151,35 @@ public class MapsController {
             List<uk.gov.hmcts.reform.demo.types.NearbyPlacesResponse.Result> filteredInteresstOnlyConatiningPlacesThatMAtchSelectedInterersts =
                 res.stream()
                     .filter(place -> !shouldPlaceBeDiscarded(place))
-                    .collect(Collectors.toList());
+                    .collect(Collectors.toList())
+                    .stream().map(place -> {
+                        if (shouldAgeRestrictionApply.get() && isPlaceAgeRestricted(place.reference)) {
+                            return null;
+                        }
+                        return place;
+                    }).collect(Collectors.toUnmodifiableList());
+
+
+            // -----------------------
+
+
+            filteredInteresstOnlyConatiningPlacesThatMAtchSelectedInterersts.stream().map(place -> {
+                return place.types;
+            });
+
+
+
+            // --------------------
+
+
+
+
             return ResponseEntity.ok(u.JsonStringify(res));
+
         } catch (Exception e) {
-            return ResponseEntity.ofNullable("not found or internal error idk, check code");
+
+            return ResponseEntity.ofNullable("not found or internal error idk, check code" + "error is "+ e.toString());
+
         }
     }
 }
