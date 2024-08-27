@@ -104,6 +104,33 @@ public class MapsController {
         System.out.println("Common elements: " + Arrays.toString(result));
     }
 
+    public static class Coords{
+        Coords(double lat,double lng){
+            this.lat = lat;
+            this.lon = lng;
+        }
+        public double lon;
+        public double lat;
+    }
+    public static class PlaceResultWithOnlyFrontendRelevantData {
+
+        public PlaceResultWithOnlyFrontendRelevantData(Coords coords, int cost, String imageUrl, Boolean isAgeRestricted, String description,float rating){
+            coordinates = coords;
+            this.cost = cost;
+            this.iconUrl = imageUrl;
+            this.isAgeRestricted = isAgeRestricted;
+            this.description = description;
+            this.rating = rating;
+        }
+
+        public Coords coordinates;
+        public int cost;
+        public String iconUrl;
+        public Boolean isAgeRestricted;
+        public String description;
+        public float rating;
+    }
+
 
     @PostMapping("/nearby")
     public ResponseEntity<String> getMaps(@RequestBody LocationRequest loc) {
@@ -171,10 +198,26 @@ public class MapsController {
 
             // --------------------
 
+            List<PlaceResultWithOnlyFrontendRelevantData> resWithOnlyFrontendRealtiveData = filteredInteresstOnlyConatiningPlacesThatMAtchSelectedInterersts.stream()
+                .map(place -> {
+                    Boolean isAgeRestricted = false;
+                    for(String type : place.types) {
+                        if(isPlaceAgeRestricted(type)){
+                            isAgeRestricted = true;
+                        }
+                    }
+
+                    return new PlaceResultWithOnlyFrontendRelevantData(new Coords(place.geometry.location.lat,place.geometry.location.lng),place.price_level,place.icon,isAgeRestricted,"problem most places dont have description",9.0f
+                    );
+                }).collect(Collectors.toUnmodifiableList());
 
 
 
-            return ResponseEntity.ok(u.JsonStringify(res));
+
+
+
+
+            return ResponseEntity.ok(u.JsonStringify(resWithOnlyFrontendRealtiveData));
 
         } catch (Exception e) {
 
