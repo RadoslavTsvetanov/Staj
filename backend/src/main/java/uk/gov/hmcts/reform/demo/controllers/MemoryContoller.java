@@ -5,22 +5,21 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.http.*;
+import org.springframework.http.client.MultipartBodyBuilder;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import uk.gov.hmcts.reform.demo.models.History;
 import uk.gov.hmcts.reform.demo.models.Memory;
 import uk.gov.hmcts.reform.demo.models.Plan;
-import uk.gov.hmcts.reform.demo.models.User;
 import uk.gov.hmcts.reform.demo.repositories.HistoryRepo;
 import uk.gov.hmcts.reform.demo.repositories.MemoryRepo;
 import uk.gov.hmcts.reform.demo.services.HistoryService;
 import uk.gov.hmcts.reform.demo.services.MemoryService;
 import uk.gov.hmcts.reform.demo.services.PlanService;
 import uk.gov.hmcts.reform.demo.services.UserService;
+import uk.gov.hmcts.reform.demo.utils.EnvThingies;
 import uk.gov.hmcts.reform.demo.utils.JwtUtil;
 
 import java.io.IOException;
@@ -30,7 +29,10 @@ import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import org.springframework.web.client.RestTemplate;
+
 
 @RestController
 @RequestMapping("memory")
@@ -184,4 +186,9 @@ public class MemoryContoller {
 
         return ResponseEntity.ok(memories);
     }
+
+
+
+
+
 }
