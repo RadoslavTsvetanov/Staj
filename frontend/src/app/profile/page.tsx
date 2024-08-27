@@ -243,7 +243,7 @@ const AccountPage: NextPage = () => {
                 <meta name="description" content="Your account page" />
             </Head>
 
-            <div className="min-h-screen bg-[#0e6cc4] flex items-center justify-center w-full h-screen">
+            <div className="min-h-screen bg-blue-100 flex items-center justify-center w-full h-screen">
                 <div className='box'>
                     <div className='wave -one'></div>
                     <div className='wave -two'></div>
