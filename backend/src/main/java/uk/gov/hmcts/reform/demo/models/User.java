@@ -41,6 +41,16 @@ public class User {
     @Column(name = "role", nullable = false)
     private Set<Role> roles;
 
+    private String profilePicture;
+
+    public String getProfilePicture() {
+        return profilePicture;
+    }
+
+    public void setProfilePicture(String profilePicture) {
+        this.profilePicture = profilePicture;
+    }
+
     public Long getId() {
         return id;
     }

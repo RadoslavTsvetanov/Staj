@@ -1,8 +1,10 @@
 package uk.gov.hmcts.reform.demo.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import uk.gov.hmcts.reform.demo.models.*;
 import uk.gov.hmcts.reform.demo.repositories.CredentialsRepo;
 import uk.gov.hmcts.reform.demo.repositories.PreferencesRepo;
@@ -12,6 +14,10 @@ import uk.gov.hmcts.reform.demo.services.PlanService;
 import uk.gov.hmcts.reform.demo.services.UserService;
 import uk.gov.hmcts.reform.demo.utils.JwtUtil;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -37,6 +43,8 @@ public class UserAccessController {
 
     @Autowired
     private CredentialsRepo credentialsRepo;
+
+    private static final String UPLOAD_DIR = "uploads/profile_pictures";
 
     @GetMapping("/plans")
     public ResponseEntity<List<PlanDTO>> getUserPlans(@RequestHeader(value = "Authorization", required = false) String authorizationHeader) {
@@ -85,8 +93,20 @@ public class UserAccessController {
         }
 
         Optional<User> userOptional = userService.findByUsername(username);
-        return userOptional.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+
+            if (user.getProfilePicture() != null) {
+                String profilePictureUrl = "/uploads/profile_pictures/" + user.getProfilePicture();
+                user.setProfilePicture(profilePictureUrl);
+            }
+
+            return ResponseEntity.ok(user);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
+
 
     @PostMapping("/profile/update")
     public ResponseEntity<?> updateUserProfile(
@@ -159,6 +179,57 @@ public class UserAccessController {
                 .body(savedUser);
         } else {
             return ResponseEntity.notFound().build();
+        }
+    }
+
+    @PostMapping("/profile/upload-picture")
+    public ResponseEntity<?> uploadProfilePicture(
+        @RequestHeader(value = "Authorization", required = false) String authorizationHeader,
+        @RequestParam("file") MultipartFile file) {
+
+        System.out.println("AAAA");
+        if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authorization token is missing or invalid.");
+        }
+
+        String token = authorizationHeader.substring(7);
+        String username = jwtUtil.getUsernameFromToken(token);
+        System.out.println("username");
+
+        if (username == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid token.");
+        }
+
+        Optional<User> existingUserOpt = userService.findByUsername(username);
+        if (existingUserOpt.isPresent()) {
+            User existingUser = existingUserOpt.get();
+
+            try {
+                Path uploadPath = Paths.get(UPLOAD_DIR);
+                if (!Files.exists(uploadPath)) {
+                    Files.createDirectories(uploadPath);
+                }
+
+                String oldFilename = existingUser.getProfilePicture();
+                if (oldFilename != null) {
+                    Path oldFilePath = uploadPath.resolve(oldFilename);
+                    Files.deleteIfExists(oldFilePath);
+                }
+
+                String filename = username + "_" + file.getOriginalFilename();
+                Path filePath = uploadPath.resolve(filename);
+                Files.write(filePath, file.getBytes());
+
+                existingUser.setProfilePicture(filename);
+                userService.save(existingUser);
+
+                return ResponseEntity.ok("Profile picture uploaded successfully!");
+            } catch (IOException e) {
+                e.printStackTrace();
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to upload file.");
+            }
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
         }
     }
 }
