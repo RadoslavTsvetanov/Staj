@@ -17,7 +17,7 @@ public class ApiTypes {
         put("Movies", Arrays.asList("movie_central", "movie_theater"));
         put("Theater", Arrays.asList("theater"));
         put("Animals", Arrays.asList("aquarium", "dog_park", "national_park", "zoo", "pet_store"));
-        put("Shopping", Arrays.asList("clothing-store"));
+        put("Shopping", Arrays.asList("clothing_store"));
         put("Relax", Arrays.asList("spa"));
         put("Religion", Arrays.asList("church", "mosque", "hindu_temple", "synagogue"));
         put("Flora", Arrays.asList("national_park", "florist"));

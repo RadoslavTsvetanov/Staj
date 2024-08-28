@@ -58,13 +58,25 @@ const InfoRoute: React.FC = () => {
         }
     };
 
-    const handleOtherInterest = (event: React.FormEvent<HTMLInputElement>) => {
-        setOtherInterest(event.currentTarget.value);
-    }
-
-    const addOtherInterest = () => {
+    const addOtherInterest = async () => {
         if(otherInterest) {
-            setSelectedInterests([...selectedInterests, otherInterest]);
+            try {
+                const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/match-interest`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        customInterest: otherInterest
+                    })
+                });
+        
+                const matchedInterests = await response.json();
+        
+                setSelectedInterests([...selectedInterests, ...matchedInterests]);
+            } catch (err) {
+                console.error('Error matching interest:', err);
+            }
             setShowOtherInput(false);
             setOtherInterest('');
         }
