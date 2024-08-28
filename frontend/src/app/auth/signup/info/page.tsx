@@ -66,7 +66,7 @@ const InfoRoute: React.FC = () => {
         if(otherInterest) {
             setSelectedInterests([...selectedInterests, otherInterest]);
             try {
-                const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/interests/process`, {
+                const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/interests/process`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -107,8 +107,12 @@ const InfoRoute: React.FC = () => {
             return;
         }
         const age = calculateAge(dateOfBirth);
-        if (age < 13) {
+        if (age < 13 && age >= 0) {
             setError('Womp womp too young');
+            return;
+        }
+        if (age < 0) {
+            setError("You aren't born yet wdym 💀");
             return;
         }
         if (age > 100) {
@@ -122,7 +126,7 @@ const InfoRoute: React.FC = () => {
         setError('');
 
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/auth/register/complete`, {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/register/complete`, {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',

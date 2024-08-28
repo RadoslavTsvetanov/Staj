@@ -325,7 +325,7 @@ const AccountPage: NextPage = () => {
                                     name="dob"
                                     id="dob"
                                     value={dob}
-                                    onChange={(e) => setDob(e.target.value)}
+                                    readOnly
                                 />
                             </div>
                         </div>
