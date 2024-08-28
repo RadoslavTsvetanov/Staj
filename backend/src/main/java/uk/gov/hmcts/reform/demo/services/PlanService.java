@@ -145,4 +145,8 @@ public class PlanService {
             planRepo.save(plan);
         }
     }
+
+    public boolean userHasPlanWithName(String username, String planName) {
+        return planRepo.findByUsernamesContainingAndName(username, planName).isPresent();
+    }
 }

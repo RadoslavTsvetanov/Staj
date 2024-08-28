@@ -87,28 +87,26 @@ public class PlanController {
         @RequestHeader(value = "Authorization", required = false) String authorizationHeader
     ) {
         if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
-            return ResponseEntity.status(401).build();
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
         String token = authorizationHeader.substring(7);
         String username = jwtUtil.getUsernameFromToken(token);
 
         if (username == null) {
-            return ResponseEntity.status(401).build();
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        if (planService.findByName(plan.getName()).isPresent()) {
-            return ResponseEntity.status(409).build();
+        if (planService.userHasPlanWithName(username, plan.getName())) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
 
-        // Add the username to the plan
         plan.addUsername(username);
-
-        // Save the Plan along with its DateWindow
         Plan savedPlan = planService.save(plan);
 
-        return ResponseEntity.status(201).body(savedPlan);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedPlan);
     }
+
 
     @PostMapping("/{planId}/users")
     public ResponseEntity<String> addUserToPlan(

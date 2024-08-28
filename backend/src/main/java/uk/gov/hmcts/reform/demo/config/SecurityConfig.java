@@ -58,6 +58,8 @@ public class SecurityConfig {
                 .requestMatchers(new AntPathRequestMatcher("/auth/signin")).permitAll()
                 .requestMatchers(HttpMethod.POST, "/user-access/profile/update").permitAll()
                 .requestMatchers(HttpMethod.POST, "/user-access/profile/upload-picture").permitAll()
+                .requestMatchers(HttpMethod.POST, "/user-access/friends/add").permitAll()
+                .requestMatchers(HttpMethod.GET, "/user-access/friends").permitAll()
                 .requestMatchers(HttpMethod.GET, "/user-access/profile").permitAll()
                 .requestMatchers(HttpMethod.GET, "/user-access/plans").permitAll()
                 .requestMatchers(HttpMethod.DELETE, "/users/profile/delete").permitAll()
