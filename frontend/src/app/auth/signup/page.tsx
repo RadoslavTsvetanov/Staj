@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState } from 'react';
-import { useRouter } from 'next/navigation'; // Import useRouter from next/navigation
+import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 import Earth from '../../../../public/Earth';
@@ -14,6 +14,16 @@ export default function SignUpRoute() {
   const [error, setError] = useState('');
 
   const router = useRouter();
+
+  // useEffect(() => {
+  //   document.body.style.overflow = 'hidden';
+  //   document.documentElement.style.overflow = 'hidden';
+
+  //   return () => {
+  //     document.body.style.overflow = '';
+  //     document.documentElement.style.overflow = '';
+  //   };
+  // }, []);
 
   const handleUsernameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setUsername(event.target.value);
@@ -33,8 +43,17 @@ export default function SignUpRoute() {
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    
+    if (username.length < 5 || username.length > 20) {
+      setError("Username should be between 5 and 20 characters long");
+      return;
+    }
     if (password !== confirmPassword) {
       setError('Passwords do not match');
+      return;
+    }
+    if (password.length < 8) {
+      setError("Password should be at least 8 characters long");
       return;
     }
     setError('');
@@ -42,7 +61,7 @@ export default function SignUpRoute() {
     console.log(username, " ", email, " ", password);
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/auth/register/basic`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/register/basic`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
@@ -71,8 +90,7 @@ export default function SignUpRoute() {
   };
 
   return (
-    <div className="relative flex flex-col justify-center py-12 sm:px-6 lg:px-8 bg-[#0e6cc4] w-full h-screen">
-      {/* Wave animation */}
+    <div className="relative flex flex-col justify-center py-12 sm:px-6 lg:px-8 bg-blue-100 w-full h-full">
       <div className='box'>
         <div className='wave -one'></div>
         <div className='wave -two'></div>
@@ -184,20 +202,6 @@ export default function SignUpRoute() {
                   >
                    terms and conditions
                   </a>
-                </label>
-              </div>
-            </div>
-
-            <div className="mt-4 flex items-center justify-between">
-              <div className="flex items-center">
-                <input
-                  className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
-                  type="checkbox"
-                  name="remember-me"
-                  id="remember-me"
-                />
-                <label className="ml-2 block text-sm text-gray-600">
-                  Remember me
                 </label>
               </div>
             </div>

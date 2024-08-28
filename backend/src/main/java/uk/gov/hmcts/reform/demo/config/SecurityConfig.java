@@ -63,6 +63,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.DELETE, "/users/profile/delete").permitAll()
                 .requestMatchers(HttpMethod.POST, "/plans/{planId}/users").permitAll()
                 .requestMatchers(HttpMethod.POST, "/places").permitAll() //tova ne trqbwa userite da go prawqt, ama posle shte se promeni
+                .requestMatchers(HttpMethod.POST, "/api/interests/process").permitAll()
                 .requestMatchers(HttpMethod.POST, "/date-window").permitAll()
                 .requestMatchers(HttpMethod.POST, "/locations").permitAll()
                 .requestMatchers(HttpMethod.PUT, "/plans/{planId}/places/{placeId}/locations").permitAll()
@@ -70,7 +71,6 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.POST, "/memory/upload").permitAll()
                 .requestMatchers(HttpMethod.POST,"/maps/nearby").permitAll()
                 .requestMatchers(HttpMethod.POST,"/maps/upload").permitAll()
-
                 .anyRequest().hasRole("ADMIN")
             );
 

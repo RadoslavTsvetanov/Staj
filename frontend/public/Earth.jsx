@@ -10,7 +10,7 @@ export default function Model(props) {
   
   useFrame(() => {
     if (!isInteracting && earthRef.current) {
-        earthRef.current.rotation.y += 10.01;
+        earthRef.current.rotation.y += 0.01;
     }
 });
   return (
@@ -20,6 +20,7 @@ export default function Model(props) {
           ref={earthRef}
           onPointerOver={() => setInteracting(true)}
           onPointerOut={() => setInteracting(false)}
+          scale={[2.3, 2.3, 2.3]}
         >
           <primitive object={scene} />
       </mesh>
