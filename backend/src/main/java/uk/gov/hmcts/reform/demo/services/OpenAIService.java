@@ -1,8 +1,8 @@
 package uk.gov.hmcts.reform.demo.services;
 
-import uk.gov.hmcts.reform.demo.utils.ApiTypes;
-
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import uk.gov.hmcts.reform.demo.utils.ApiTypes;
 import okhttp3.*;
 import com.google.gson.*;
 import java.io.IOException;
@@ -12,13 +12,55 @@ import java.util.List;
 
 @Service
 public class OpenAIService {
-
     private static final String OPENAI_API_KEY =
         "###";
-
     private static final String OPENAI_API_URL = "https://api.openai.com/v1/chat/completions";
 
     private final OkHttpClient client = new OkHttpClient();
+    private final Cache cache;
+
+    private static final String[] predefinedInterests = {
+        "Food", "Art", "Sport", "Books", "Education", "Entertainment",
+        "History", "Hiking", "Movies", "Theater", "Animals", "Shopping",
+        "Relax", "Religion", "Flora"
+    };
+
+    @Autowired
+    public OpenAIService(Cache cache) {
+        this.cache = cache;
+    }
+
+    public List<String> processCustomInterest(String customInterest) {
+        String normalizedInterest = customInterest.trim().toLowerCase();
+
+        List<String> cachedResult = cache.get(normalizedInterest);
+        if (cachedResult != null) {
+            return cachedResult;
+        }
+
+        String matchedInterests = getMatchedInterests(customInterest, predefinedInterests);
+
+        if (matchedInterests != null && !matchedInterests.isEmpty()) {
+            String cleanedInterests = matchedInterests
+                .replaceAll("^-\\s*", "")
+                .replaceAll("\\s*-\\s*", ", ")
+                .replaceAll("\\s*,\\s*,\\s*", ", ")
+                .trim();
+
+            List<String> specificTypes = getSpecificTypesForCustomInterest(customInterest, cleanedInterests);
+            specificTypes = formatSpecificTypes(specificTypes);
+
+            List<String> result = !specificTypes.isEmpty() ? specificTypes : List.of("No specific types found.");
+
+            cache.put(normalizedInterest, result);
+
+            return result;
+        } else {
+            List<String> noMatch = List.of("No matched interests found.");
+            cache.put(normalizedInterest, noMatch);
+            return noMatch;
+        }
+    }
 
     public String getMatchedInterests(String customInterest, String[] predefinedInterests) {
         StringBuilder promptBuilder = new StringBuilder("The user has entered the custom interest '")
@@ -116,36 +158,9 @@ public class OpenAIService {
         return parseTypesFromResponse(response);
     }
 
-    public List<String> processCustomInterest(String customInterest) {
-        String[] predefinedInterests = {
-            "Food", "Art", "Sport", "Books", "Education", "Entertainment",
-            "History", "Hiking", "Movies", "Theater", "Animals", "Shopping",
-            "Relax", "Religion", "Flora"
-        };
-
-        String matchedInterests = getMatchedInterests(customInterest, predefinedInterests);
-
-        if (matchedInterests != null && !matchedInterests.isEmpty()) {
-            String cleanedInterests = matchedInterests
-                .replaceAll("^-\\s*", "")
-                .replaceAll("\\s*-\\s*", ", ")
-                .replaceAll("\\s*,\\s*,\\s*", ", ")
-                .trim();
-
-            List<String> specificTypes = getSpecificTypesForCustomInterest(customInterest, cleanedInterests);
-            specificTypes = formatSpecificTypes(specificTypes);
-
-            return !specificTypes.isEmpty() ? specificTypes : List.of("No specific types found.");
-        } else {
-            return List.of("No matched interests found.");
-        }
-    }
-
     private String executeRequest(Request request) {
         try (Response response = client.newCall(request).execute()) {
             if (!response.isSuccessful()) {
-                System.err.println("Unexpected code: " + response);
-                System.err.println("Response body: " + response.body().string());
                 throw new IOException("Unexpected code " + response);
             }
 
