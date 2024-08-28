@@ -1,20 +1,16 @@
 package uk.gov.hmcts.reform.demo.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.hibernate.mapping.Any;
 import org.springframework.web.client.RestTemplate;
-import uk.gov.hmcts.reform.demo.secrets.Secrets;
 import uk.gov.hmcts.reform.demo.types.NearbyPlacesResponse;
 import uk.gov.hmcts.reform.demo.utils.Utils;
 
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class GoogleApi {
