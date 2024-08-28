@@ -1,27 +1,23 @@
 package uk.gov.hmcts.reform.demo.services;
 
-import uk.gov.hmcts.reform.demo.utils.ApiTypes;
-
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import uk.gov.hmcts.reform.demo.utils.ApiTypes;
 import okhttp3.*;
 import com.google.gson.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
 @Service
 public class OpenAIService {
-
     private static final String OPENAI_API_KEY =
         "###";
     private static final String OPENAI_API_URL = "https://api.openai.com/v1/chat/completions";
 
     private final OkHttpClient client = new OkHttpClient();
-
-    private final ConcurrentMap<String, List<String>> cache = new ConcurrentHashMap<>();
+    private final Cache cache;
 
     private static final String[] predefinedInterests = {
         "Food", "Art", "Sport", "Books", "Education", "Entertainment",
@@ -29,11 +25,17 @@ public class OpenAIService {
         "Relax", "Religion", "Flora"
     };
 
+    @Autowired
+    public OpenAIService(Cache cache) {
+        this.cache = cache;
+    }
+
     public List<String> processCustomInterest(String customInterest) {
         String normalizedInterest = customInterest.trim().toLowerCase();
 
-        if (cache.containsKey(normalizedInterest)) {
-            return cache.get(normalizedInterest);
+        List<String> cachedResult = cache.get(normalizedInterest);
+        if (cachedResult != null) {
+            return cachedResult;
         }
 
         String matchedInterests = getMatchedInterests(customInterest, predefinedInterests);
