@@ -9,16 +9,45 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 @Service
 public class OpenAIService {
 
     private static final String OPENAI_API_KEY =
         "###";
-
     private static final String OPENAI_API_URL = "https://api.openai.com/v1/chat/completions";
 
     private final OkHttpClient client = new OkHttpClient();
+
+    private final ConcurrentMap<String, List<String>> cache = new ConcurrentHashMap<>();
+
+    private static final String[] predefinedInterests = {
+        "Food", "Art", "Sport", "Books", "Education", "Entertainment",
+        "History", "Hiking", "Movies", "Theater", "Animals", "Shopping",
+        "Relax", "Religion", "Flora"
+    };
+
+    public List<String> checkForCustomInterest(String customInterest) {
+        if (cache.containsKey(customInterest)) {
+            return cache.get(customInterest);
+        }
+
+        String matchedInterests = getMatchedInterests(customInterest, predefinedInterests);
+
+        if (matchedInterests != null && !matchedInterests.isEmpty()) {
+            List<String> specificTypes = getSpecificTypesForCustomInterest(customInterest, matchedInterests);
+
+            if (specificTypes != null && !specificTypes.isEmpty()) {
+                cache.put(customInterest, specificTypes);
+            }
+
+            return specificTypes != null && !specificTypes.isEmpty() ? specificTypes : Arrays.asList("No specific types found.");
+        } else {
+            return List.of("No matched interests found.");
+        }
+    }
 
     public String getMatchedInterests(String customInterest, String[] predefinedInterests) {
         StringBuilder promptBuilder = new StringBuilder("The user has entered the custom interest '")
@@ -117,11 +146,6 @@ public class OpenAIService {
     }
 
     public List<String> processCustomInterest(String customInterest) {
-        String[] predefinedInterests = {
-            "Food", "Art", "Sport", "Books", "Education", "Entertainment",
-            "History", "Hiking", "Movies", "Theater", "Animals", "Shopping",
-            "Relax", "Religion", "Flora"
-        };
 
         String matchedInterests = getMatchedInterests(customInterest, predefinedInterests);
 
