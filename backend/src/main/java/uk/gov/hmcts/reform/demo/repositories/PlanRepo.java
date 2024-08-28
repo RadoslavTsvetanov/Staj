@@ -1,5 +1,6 @@
 package uk.gov.hmcts.reform.demo.repositories;
 
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -18,4 +19,10 @@ public interface PlanRepo extends JpaRepository<Plan, Long> {
 
     @Query("SELECT p FROM Plan p WHERE :username MEMBER OF p.usernames")
     List<Plan> findPlansByUsername(@Param("username") String username);
+
+    @EntityGraph(attributePaths = {"places.placeLocations"})
+    List<Plan> findAll();
+
+    @Query("SELECT p FROM Plan p WHERE :username MEMBER OF p.usernames")
+    List<Plan> findByUsernamesContaining(@Param("username") String username);
 }

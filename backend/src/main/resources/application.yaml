@@ -24,6 +24,10 @@ springdoc:
   writer-with-order-by-keys: true
 
 spring:
+  servlet:
+    multipart:
+      max-file-size: 2MB
+      max-request-size: 2MB
   config:
     import: "optional:configtree:/mnt/secrets/rpe/"
   application:

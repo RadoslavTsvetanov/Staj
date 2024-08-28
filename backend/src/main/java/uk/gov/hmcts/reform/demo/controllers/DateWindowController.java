@@ -27,11 +27,4 @@ public class DateWindowController {
         DateWindow savedDateWindow = dateWindowService.save(dateWindow);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedDateWindow);
     }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<DateWindow> getDateWindowById(@PathVariable Long id) {
-        return dateWindowService.findById(id)
-            .map(dateWindow -> ResponseEntity.ok(dateWindow))
-            .orElseGet(() -> ResponseEntity.notFound().build());
-    }
 }
