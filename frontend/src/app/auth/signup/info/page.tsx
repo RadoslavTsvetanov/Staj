@@ -58,8 +58,13 @@ const InfoRoute: React.FC = () => {
         }
     };
 
+    const handleOtherInterest = (event: React.FormEvent<HTMLInputElement>) => {
+        setOtherInterest(event.currentTarget.value);
+    }
+
     const addOtherInterest = async () => {
         if(otherInterest) {
+            setSelectedInterests([...selectedInterests, otherInterest]);
             try {
                 const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/interests/process`, {
                     method: 'POST',
@@ -82,8 +87,40 @@ const InfoRoute: React.FC = () => {
         }
     };
 
+    const calculateAge = (dob: string) => {
+        const birthDate = new Date(dob);
+        const today = new Date();
+        let age = today.getFullYear() - birthDate.getFullYear();
+        const monthDifference = today.getMonth() - birthDate.getMonth();
+
+        if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDate.getDate())) {
+            age--;
+        }
+        return age;
+    };
+
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
+        
+        if (name.length < 2 || name.length > 40) {
+            setError('Name should be between 2 and 40 characters long');
+            return;
+        }
+        const age = calculateAge(dateOfBirth);
+        if (age < 13) {
+            setError('Womp womp too young');
+            return;
+        }
+        if (age > 100) {
+            setError('Womp womp too old');
+            return;
+        }
+        if (selectedInterests.length === 0) {
+            setError('Please select at least one interest')
+            return;
+        }
+        setError('');
+
         try {
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/auth/register/complete`, {
               method: 'POST',
@@ -106,12 +143,12 @@ const InfoRoute: React.FC = () => {
               setError(data);
             }
         } catch (err) {
-            setError('An error occurred while completing registration. Please try again.');
+            console.error('Error:', error);
         }
     };
 
     return (
-        <div className="relative flex flex-col justify-center py-12 sm:px-6 lg:px-8 bg-[#0e6cc4] w-full h-screen">
+        <div className="relative flex flex-col justify-center py-12 sm:px-6 lg:px-8 bg-blue-100 w-full h-screen">
             {/* Wave animation */}
             <div className='box'>
                 <div className='wave -one'></div>
@@ -204,6 +241,13 @@ const InfoRoute: React.FC = () => {
                                 )}
                             </div>
                         </div>
+
+                        {/* {error && <p className="text-red-500 text-sm mt-2">{error}</p>} */}
+                        {error && (
+                            <p className={`mt-2 text-sm ${error === 'Womp womp too old' ? "text-xl text-red-600" : "text-red-500"}`}>
+                                {error}
+                            </p>
+                        )}
 
                         <div className="mt-4">
                             <button

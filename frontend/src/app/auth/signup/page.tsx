@@ -43,8 +43,17 @@ export default function SignUpRoute() {
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    
+    if (username.length < 5 || username.length > 20) {
+      setError("Username should be between 5 and 20 characters long");
+      return;
+    }
     if (password !== confirmPassword) {
       setError('Passwords do not match');
+      return;
+    }
+    if (password.length < 8) {
+      setError("Password should be at least 8 characters long");
       return;
     }
     setError('');
@@ -81,7 +90,7 @@ export default function SignUpRoute() {
   };
 
   return (
-    <div className="relative flex flex-col justify-center py-12 sm:px-6 lg:px-8 bg-[#0e6cc4] w-full h-full">
+    <div className="relative flex flex-col justify-center py-12 sm:px-6 lg:px-8 bg-blue-100 w-full h-full">
       <div className='box'>
         <div className='wave -one'></div>
         <div className='wave -two'></div>

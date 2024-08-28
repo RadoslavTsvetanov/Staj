@@ -3,9 +3,9 @@
 import { NextPage } from 'next';
 import Head from 'next/head';
 import Image from 'next/image';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
-import Charles from "./charles-leclerc-ferrari.jpg";
+import DefaultPfp from "./buffpfp.webp";
 import LArrow from "./left.png";
 import { Popup } from "../../components/ui/Popup";
 import { useRouter } from 'next/navigation';
@@ -26,11 +26,16 @@ const AccountPage: NextPage = () => {
     const [username, setUsername] = useState<string>('');
     const [email, setEmail] = useState<string>('');
     const [dob, setDob] = useState<string>('');
+    const [password, setPassword] = useState<string>('');
     const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
     const [showFoodSubInterests, setShowFoodSubInterests] = useState<boolean>(false);
+    const [profilePicture, setProfilePicture] = useState<File | null>(null);
+    const [profilePictureUrl, setProfilePictureUrl] = useState<string>(DefaultPfp.src);
     const [isPopupVisible, setIsPopupVisible] = useState<boolean>(false);
-    const [password, setPassword] = useState<string>('');
+    const [initialState, setInitialState] = useState<any>(null);
+    const [isDirty, setIsDirty] = useState<boolean>(false);
     const router = useRouter();
+    const fileInputRef = useRef<HTMLInputElement | null>(null);
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -43,19 +48,25 @@ const AccountPage: NextPage = () => {
                 });
                 const userData = profileResponse.data;
 
-                setName(userData.name || '');
-                setUsername(userData.username || '');
-                setEmail(userData.credentials?.email || '');
-                setDob(userData.dateOfBirth || '');
-                setPassword(userData.credentials?.password || '');
+                const userInitialState = {
+                    name: userData.name || '',
+                    username: userData.username || '',
+                    email: userData.credentials?.email || '',
+                    dob: userData.dateOfBirth || '',
+                    password: userData.credentials?.password || '',
+                    profilePictureUrl: userData.profilePictureUrl || DefaultPfp,
+                    selectedInterests: userData.preferences?.interests || []
+                };
 
-                if (userData.preferences && userData.preferences.interests) {
-                    setSelectedInterests(userData.preferences.interests);
-                    setShowFoodSubInterests(userData.preferences.interests.includes('Food'));
-                } else {
-                    setSelectedInterests([]);
-                    setShowFoodSubInterests(false);
-                }
+                setName(userInitialState.name);
+                setUsername(userInitialState.username);
+                setEmail(userInitialState.email);
+                setDob(userInitialState.dob);
+                setPassword(userInitialState.password);
+                setProfilePictureUrl(userInitialState.profilePictureUrl);
+                setSelectedInterests(userInitialState.selectedInterests);
+                setShowFoodSubInterests(userInitialState.selectedInterests.includes('Food'));
+                setInitialState(userInitialState);
             } catch (error) {
                 console.error('Error fetching user data:', error);
                 alert('Failed to fetch user data. Please try again.');
@@ -65,6 +76,33 @@ const AccountPage: NextPage = () => {
         fetchUserData();
     }, []);
 
+    useEffect(() => {
+        if (initialState) {
+            if (
+                name !== initialState.name ||
+                username !== initialState.username ||
+                email !== initialState.email ||
+                dob !== initialState.dob ||
+                password !== initialState.password ||
+                profilePictureUrl !== initialState.profilePictureUrl ||
+                JSON.stringify(selectedInterests) !== JSON.stringify(initialState.selectedInterests)
+            ) {
+                setIsDirty(true);
+            } else {
+                setIsDirty(false);
+            }
+        }
+    }, [name, username, email, dob, password, profilePictureUrl, selectedInterests, initialState]);
+
+    const handleProfilePictureChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files[0]) {
+            const newProfilePicture = e.target.files[0];
+            setProfilePicture(newProfilePicture);
+            setProfilePictureUrl(URL.createObjectURL(newProfilePicture));
+            setIsDirty(true);
+        }
+    }
+
     const handleSave = async () => {
         try {
             const token = cookies.authToken.get();
@@ -72,6 +110,21 @@ const AccountPage: NextPage = () => {
                 throw new Error("No auth token found.");
             }
     
+            let profilePictureUploadUrl = profilePictureUrl;
+
+            if (profilePicture) {
+                const formData = new FormData();
+                formData.append('file', profilePicture);
+
+                const uploadResponse = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_URL}/user-access/profile/upload`, formData, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    },
+                });
+
+                profilePictureUploadUrl = uploadResponse.data;  
+            }
+
             const updatedUser = {
                 name,
                 username,
@@ -82,7 +135,8 @@ const AccountPage: NextPage = () => {
                 credentials: {
                     email,
                     password
-                }
+                },
+                profilePictureUrl: profilePictureUploadUrl,
             };
     
             const response = await fetch(
@@ -113,12 +167,13 @@ const AccountPage: NextPage = () => {
             }
     
             alert('Profile updated successfully!');
+            setInitialState(updatedUserData);
+            setIsDirty(false);
         } catch (error) {
             console.error('Error updating user profile:', error);
             alert('Failed to update profile. Please try again.');
         }
     };
-      
     
     const handleDelete = () => {
         setIsPopupVisible(true);
@@ -155,7 +210,6 @@ const AccountPage: NextPage = () => {
         }
     };
     
-
     const togglePopup = () => {
         setIsPopupVisible(!isPopupVisible);
     };
@@ -176,6 +230,12 @@ const AccountPage: NextPage = () => {
         }
     };
 
+    const handleProfilePictureClick = () => {
+        if (fileInputRef.current) {
+            fileInputRef.current.click();
+        }
+    };
+
     return (
         <>
             <Head>
@@ -183,8 +243,13 @@ const AccountPage: NextPage = () => {
                 <meta name="description" content="Your account page" />
             </Head>
 
-            <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-                <div className="w-full max-w-md bg-white shadow-md rounded-lg p-6">
+            <div className="min-h-screen bg-blue-100 flex items-center justify-center w-full h-screen">
+                <div className='box'>
+                    <div className='wave -one'></div>
+                    <div className='wave -two'></div>
+                    <div className='wave -three'></div>
+                </div>
+                <div className="w-full max-w-md bg-white shadow-md rounded-lg p-6 z-10">
                     <div className="flex items-center justify-center mb-4 relative">
                         <div className="absolute left-0 max-w-7">
                             <Image
@@ -199,26 +264,39 @@ const AccountPage: NextPage = () => {
                         </h1>
                         <div className='absolute right-0'>
                             <button
-                                className="text-white-500 bg-green-300 rounded-md px-3 py-1 hover:text-white-700 hover:bg-green-500"
+                                className={`text-white-500 rounded-md px-3 py-1 ${isDirty ? 'font-bold' : 'bg-transparent'}`}
                                 onClick={handleSave}
                                 type="button"
+                                disabled={!isDirty}
                             >
                                 Save
                             </button>
                         </div>
                     </div>
 
-                    <div className="flex items-center float-left mb-4">
-                        <Image
-                            src={Charles}
-                            alt="Profile Picture"
-                            width={90}
-                            height={90}
-                            className="rounded-full"
+                    <div className="flex items-center float-left mb-30">
+                        <div
+                            onClick={handleProfilePictureClick}
+                            className="cursor-pointer"
+                        >
+                            <Image
+                                src={profilePictureUrl}
+                                alt="Profile Picture"
+                                width={70}
+                                height={70}
+                                className="rounded-full"
+                            />
+                        </div>
+                        <input
+                            type='file'
+                            accept="image/*"
+                            className='absolute flex left-0 top-0 opacity-0'
+                            onChange={handleProfilePictureChange}
+                            ref={fileInputRef}
                         />
                     </div>
                     <form className="space-y-4">
-                        <div>
+                        <div className='ml-20'>
                             <label htmlFor="name" className="block text-sm font-medium text-gray-600">Name</label>
                             <input
                                 type="text"
@@ -248,6 +326,19 @@ const AccountPage: NextPage = () => {
                                     id="dob"
                                     value={dob}
                                     onChange={(e) => setDob(e.target.value)}
+                                />
+                            </div>
+                        </div>
+                        <div className='flex'>
+                            <div className='w-full'>
+                                <label className='block text-sm font-medium text-gray-700'>Email</label>
+                                <input
+                                    className="mt-1 block w-full px-3 py-2 border border-gray-300 text-gray-500 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                                    type="email"
+                                    name='email'
+                                    id="email"
+                                    value={email}
+                                    readOnly
                                 />
                             </div>
                         </div>
@@ -287,12 +378,14 @@ const AccountPage: NextPage = () => {
                         </div>
                     </form>
 
-                    <button
-                        onClick={handleDelete}
-                        className="mt-4 bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600"
-                    >
-                        Delete Account
-                    </button>
+                    <div className='flex float-right'>
+                        <button
+                            onClick={handleDelete}
+                            className="mt-4 bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600"
+                        >
+                            Delete Account
+                        </button>
+                    </div>
 
                     <Popup
                         visible={isPopupVisible}
@@ -301,6 +394,111 @@ const AccountPage: NextPage = () => {
                         message="Are you sure you want to delete your profile? This action cannot be undone."
                     />
                 </div>
+
+                <style jsx>{`
+                    .bg-main-bg {
+                        background-color: #0e6cc4;
+                    }
+
+                    .box {
+                        position: fixed;
+                        top: 0;
+                        transform: rotate(80deg);
+                        left: 0;
+                    }
+
+                    .wave {
+                        position: fixed;
+                        top: 0;
+                        left: 0;
+                        opacity: .4;
+                        position: absolute;
+                        top: 3%;
+                        left: 10%;
+                        background: #0af;
+                        width: 1500px;
+                        height: 1300px;
+                        margin-left: -150px;
+                        margin-top: -250px;
+                        transform-origin: 50% 48%;
+                        border-radius: 43%;
+                        animation: drift 7000ms infinite linear;
+                    }
+
+                    .wave.-three {
+                        animation: drift 7500ms infinite linear;
+                        position: fixed;
+                        background-color: #77daff;
+                    }
+
+                    .wave.-two {
+                        animation: drift 3000ms infinite linear;
+                        opacity: .1;
+                        background: black;
+                        position: fixed;
+                    }
+
+                    .box:after {
+                        content: '';
+                        display: block;
+                        left: 0;
+                        top: 0;
+                        width: 100%;
+                        height: 100%;
+                        z-index: 11;
+                        transform: translate3d(0, 0, 0);
+                    }
+
+                    @keyframes drift {
+                        from { transform: rotate(0deg); }
+                        to { transform: rotate(360deg); }
+                    }
+
+                    .contain {
+                        animation-delay: 4s;
+                        z-index: 1000;
+                        position: fixed;
+                        top: 0;
+                        left: 0;
+                        bottom: 0;
+                        right: 0;
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        background: #25a7d7;
+                        background: linear-gradient(#25a7d7, #25a7d7);
+                    }
+
+                    .icon {
+                        width: 100px;
+                        height: 100px;
+                        margin: 0 5px;
+                    }
+
+                    .icon:nth-child(2) img { animation-delay: 0.2s; }
+                    .icon:nth-child(3) img { animation-delay: 0.3s; }
+                    .icon:nth-child(4) img { animation-delay: 0.4s; }
+
+                    .icon img {
+                        animation: anim 2s ease infinite;
+                        transform: scale(0,0) rotateZ(180deg);
+                    }
+
+                    @keyframes anim {
+                        0% {
+                            transform: scale(0,0) rotateZ(-90deg); opacity:0;
+                        }
+                        30% {
+                            transform: scale(1,1) rotateZ(0deg); opacity:1;
+                        }
+                        50% {
+                            transform: scale(1,1) rotateZ(0deg); opacity:1;
+                        }
+                        80% {
+                            transform: scale(0,0) rotateZ(90deg); opacity:0;
+                        }
+                    }
+                `}</style>
             </div>
         </>
     );
