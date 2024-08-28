@@ -79,6 +79,7 @@ public class UserAccessController {
         return planDTO;
     }
 
+
     @GetMapping("/profile")
     public ResponseEntity<User> getUserProfile(@RequestHeader(value = "Authorization", required = false) String authorizationHeader) {
         if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {

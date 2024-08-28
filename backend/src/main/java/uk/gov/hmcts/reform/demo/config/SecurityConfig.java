@@ -52,10 +52,10 @@ public class SecurityConfig {
             .csrf(AbstractHttpConfigurer::disable)
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
             .authorizeHttpRequests(request -> request
-                .requestMatchers(new AntPathRequestMatcher("/api/auth/register/basic")).permitAll()
-                .requestMatchers(new AntPathRequestMatcher("/api/auth/register/complete")).permitAll()
-                .requestMatchers(new AntPathRequestMatcher("/api/auth/signin")).permitAll()
                 .requestMatchers("/uploads/**").permitAll()
+                .requestMatchers(new AntPathRequestMatcher("/auth/register/basic")).permitAll()
+                .requestMatchers(new AntPathRequestMatcher("/auth/register/complete")).permitAll()
+                .requestMatchers(new AntPathRequestMatcher("/auth/signin")).permitAll()
                 .requestMatchers(HttpMethod.POST, "/user-access/profile/update").permitAll()
                 .requestMatchers(HttpMethod.POST, "/user-access/profile/upload-picture").permitAll()
                 .requestMatchers(HttpMethod.GET, "/user-access/profile").permitAll()
@@ -68,9 +68,9 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.PUT, "/plans/{planId}/places/{placeId}/locations").permitAll()
                 .requestMatchers(HttpMethod.POST, "/plans").permitAll()
                 .requestMatchers(HttpMethod.POST, "/memory/upload").permitAll()
+                .requestMatchers(HttpMethod.POST,"/maps/nearby").permitAll()
                 .anyRequest().hasRole("ADMIN")
-            )
-        ;
+            );
 
         return http.build();
     }
