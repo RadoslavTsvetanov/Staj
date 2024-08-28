@@ -258,7 +258,7 @@ public class MapsController {
 @RequestParam("lat") String lat
     ){
         try{
-
+            System.out.println("bgtgt4"+googleApi.reverseGeocoding());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
