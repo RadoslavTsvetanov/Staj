@@ -1,12 +1,18 @@
 package uk.gov.hmcts.reform.demo.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.hibernate.mapping.Any;
 import org.springframework.web.client.RestTemplate;
 import uk.gov.hmcts.reform.demo.secrets.Secrets;
 import uk.gov.hmcts.reform.demo.types.NearbyPlacesResponse;
 import uk.gov.hmcts.reform.demo.utils.Utils;
 
+import java.io.IOException;
 import java.lang.reflect.Array;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -23,7 +29,7 @@ public class GoogleApi {
     *
     *
     * Note: Adding both `keyword` and `type` with the same value (`keyword=cafe&type=cafe` or `keyword=parking&type=parking`) can yield `ZERO_RESULTS`.
-     *
+    *
     *
     * */
 
@@ -74,4 +80,36 @@ public class GoogleApi {
 
         return res.getPlaces();
     }
+
+
+
+
+    public String reverseGeocoding(){
+        String latitude = "40.714224";
+        String longitude = "-73.961452";
+        String apiKey = "AIzaSyCl1ONEKSrMWbNlMuGmQnZsEDWVMDU9GmU";
+
+        String url = String.format("https://maps.googleapis.com/maps/api/geocode/json?latlng=%s,%s&key=%s",
+                                   latitude, longitude, apiKey);
+
+        HttpClient client = HttpClient.newHttpClient();
+        HttpRequest request = HttpRequest.newBuilder()
+            .uri(URI.create(url))
+            .GET()
+            .build();
+
+        try {
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            System.out.println("Response status code: " + response.statusCode());
+            System.out.println("Response body: " + response.body());
+            return response.body();
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+            return "b";
+        }
+
+
+    }
+
+
 }

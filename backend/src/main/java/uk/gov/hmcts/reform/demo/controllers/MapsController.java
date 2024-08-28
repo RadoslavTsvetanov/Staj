@@ -249,4 +249,18 @@ public class MapsController {
         }catch (Exception e){}
         return "ResponseEntity(HttpStatus.MULTI_STATUS);";
     }
+
+
+
+    @GetMapping("/geolocate")
+    public void geolocate(
+@RequestParam("lon") String lon,
+@RequestParam("lat") String lat
+    ){
+        try{
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
