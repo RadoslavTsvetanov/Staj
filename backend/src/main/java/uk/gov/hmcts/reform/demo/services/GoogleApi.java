@@ -2,6 +2,7 @@ package uk.gov.hmcts.reform.demo.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.web.client.RestTemplate;
+import uk.gov.hmcts.reform.demo.secrets.Secrets;
 import uk.gov.hmcts.reform.demo.types.NearbyPlacesResponse;
 import uk.gov.hmcts.reform.demo.utils.Utils;
 
