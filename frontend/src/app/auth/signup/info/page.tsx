@@ -61,7 +61,7 @@ const InfoRoute: React.FC = () => {
     const addOtherInterest = async () => {
         if(otherInterest) {
             try {
-                const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/match-interest`, {
+                const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/interests/process`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

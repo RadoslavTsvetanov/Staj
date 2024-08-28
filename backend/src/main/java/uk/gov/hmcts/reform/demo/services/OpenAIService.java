@@ -29,23 +29,34 @@ public class OpenAIService {
         "Relax", "Religion", "Flora"
     };
 
-    public List<String> checkForCustomInterest(String customInterest) {
-        if (cache.containsKey(customInterest)) {
-            return cache.get(customInterest);
+    public List<String> processCustomInterest(String customInterest) {
+        String normalizedInterest = customInterest.trim().toLowerCase();
+
+        if (cache.containsKey(normalizedInterest)) {
+            return cache.get(normalizedInterest);
         }
 
         String matchedInterests = getMatchedInterests(customInterest, predefinedInterests);
 
         if (matchedInterests != null && !matchedInterests.isEmpty()) {
-            List<String> specificTypes = getSpecificTypesForCustomInterest(customInterest, matchedInterests);
+            String cleanedInterests = matchedInterests
+                .replaceAll("^-\\s*", "")
+                .replaceAll("\\s*-\\s*", ", ")
+                .replaceAll("\\s*,\\s*,\\s*", ", ")
+                .trim();
 
-            if (specificTypes != null && !specificTypes.isEmpty()) {
-                cache.put(customInterest, specificTypes);
-            }
+            List<String> specificTypes = getSpecificTypesForCustomInterest(customInterest, cleanedInterests);
+            specificTypes = formatSpecificTypes(specificTypes);
 
-            return specificTypes != null && !specificTypes.isEmpty() ? specificTypes : Arrays.asList("No specific types found.");
+            List<String> result = !specificTypes.isEmpty() ? specificTypes : List.of("No specific types found.");
+
+            cache.put(normalizedInterest, result);
+
+            return result;
         } else {
-            return List.of("No matched interests found.");
+            List<String> noMatch = List.of("No matched interests found.");
+            cache.put(normalizedInterest, noMatch);
+            return noMatch;
         }
     }
 
@@ -145,31 +156,9 @@ public class OpenAIService {
         return parseTypesFromResponse(response);
     }
 
-    public List<String> processCustomInterest(String customInterest) {
-
-        String matchedInterests = getMatchedInterests(customInterest, predefinedInterests);
-
-        if (matchedInterests != null && !matchedInterests.isEmpty()) {
-            String cleanedInterests = matchedInterests
-                .replaceAll("^-\\s*", "")
-                .replaceAll("\\s*-\\s*", ", ")
-                .replaceAll("\\s*,\\s*,\\s*", ", ")
-                .trim();
-
-            List<String> specificTypes = getSpecificTypesForCustomInterest(customInterest, cleanedInterests);
-            specificTypes = formatSpecificTypes(specificTypes);
-
-            return !specificTypes.isEmpty() ? specificTypes : List.of("No specific types found.");
-        } else {
-            return List.of("No matched interests found.");
-        }
-    }
-
     private String executeRequest(Request request) {
         try (Response response = client.newCall(request).execute()) {
             if (!response.isSuccessful()) {
-                System.err.println("Unexpected code: " + response);
-                System.err.println("Response body: " + response.body().string());
                 throw new IOException("Unexpected code " + response);
             }
 
