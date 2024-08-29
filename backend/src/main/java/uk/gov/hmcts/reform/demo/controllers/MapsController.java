@@ -246,7 +246,9 @@ public class MapsController {
         try {
             byte[] b = file.getBytes();
             return Utils.uploadFile(b, LocalDate.now().toString(), "staj");
-        }catch (Exception e){}
+        }catch (Exception e){
+            System.out.println(e.toString());
+        }
         return "didnt upload";
     }
 
