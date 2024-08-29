@@ -24,6 +24,7 @@ import uk.gov.hmcts.reform.demo.utils.Utils;
 import java.io.Console;
 import java.io.InputStream;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.Period;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
@@ -245,7 +246,7 @@ public class MapsController {
         @RequestParam("keyPrefix") String keyPrefix) {
         try {
             byte[] b = file.getBytes();
-            return Utils.uploadFile(b, LocalDate.now().toString(), "staj");
+            return Utils.uploadFile(b, LocalDateTime.now().toString(), "staj"); // make it so that it gives time also
         }catch (Exception e){
             System.out.println(e.toString());
         }
