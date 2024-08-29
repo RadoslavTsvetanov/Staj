@@ -253,12 +253,12 @@ public class MapsController {
 
 
     @GetMapping("/geolocate")
-    public void geolocate(
-@RequestParam("lon") String lon,
-@RequestParam("lat") String lat
+    public String geolocate(
+@RequestParam("lon") Float lon,
+@RequestParam("lat") Float lat
     ){
         try{
-            System.out.println("bgtgt4"+googleApi.reverseGeocoding());
+             return googleApi.reverseGeocoding(lat,lon);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
