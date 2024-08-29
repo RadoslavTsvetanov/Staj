@@ -62,3 +62,14 @@ spring:
 azure:
   application-insights:
     instrumentation-key: ${rpe.AppInsightsInstrumentationKey:00000000-0000-0000-0000-000000000000}
+
+redis:
+  host: 4550
+  port: 6379
+  database: 0
+  jedis:
+    pool:
+      max-active: 10
+      max-idle: 10
+      min-idle: 5
+      max-wait: -1
