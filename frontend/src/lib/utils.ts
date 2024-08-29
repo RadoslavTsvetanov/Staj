@@ -44,3 +44,19 @@ class CookieManager {
 
 // Export the cookie manager instance
 export const cookies = new CookieManager();
+
+export async function handleLogout() {
+
+  localStorage.removeItem("authToken");
+  document.cookie = "authToken=; Max-Age=0; path=/;";
+
+  //da notifivame li backend?
+  // try {
+  //   await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/logout`, {
+  //     method: "POST",
+  //     credentials: "include",
+  //   });
+  // } catch (error) {
+  //   console.error("Error logging out:", error);
+  // }
+}
