@@ -245,9 +245,9 @@ public class MapsController {
         @RequestParam("keyPrefix") String keyPrefix) {
         try {
             byte[] b = file.getBytes();
-            Utils.uploadFile(b, file.getName(), "staj");
+            return Utils.uploadFile(b, LocalDate.now().toString(), "staj");
         }catch (Exception e){}
-        return "ResponseEntity(HttpStatus.MULTI_STATUS);";
+        return "didnt upload";
     }
 
 
