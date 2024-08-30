@@ -1,8 +1,10 @@
+"use client";
+
 import React, { useLayoutEffect } from 'react';
 import Header from '@/components/ui/Header';
 import DateLabel from '@/components/ui/DateLabel';
 import ActivityCard from '@/components/ui/ActivityCard';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import { isAuthenticated } from '@/lib/utils';
 
 const HomePage: React.FC = () => {
