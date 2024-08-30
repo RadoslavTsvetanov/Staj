@@ -238,8 +238,6 @@ public class MapsController {
         }
     }
 
-
-    private final String externalServiceUrl = "https://3wvp0z6w-3005.asse.devtunnels.ms/upload";
     @PostMapping("/upload")
     public String uploadFile(
         @RequestParam("file") MultipartFile file,
