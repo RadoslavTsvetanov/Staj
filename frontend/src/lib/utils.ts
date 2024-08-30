@@ -46,9 +46,8 @@ class CookieManager {
 export const cookies = new CookieManager();
 
 export async function handleLogout() {
-
   localStorage.removeItem("authToken");
-  document.cookie = "authToken=; Max-Age=0; path=/;";
+  document.cookie = "authToken=; Max-Age=0; path=/; domain=" + window.location.hostname;
 
   //da notifivame li backend?
   // try {
@@ -59,4 +58,9 @@ export async function handleLogout() {
   // } catch (error) {
   //   console.error("Error logging out:", error);
   // }
+}
+
+export function isAuthenticated(): boolean {
+  const userToken = cookies.authToken.get(); // Using the CookieManager to get the auth token
+  return !!userToken;
 }

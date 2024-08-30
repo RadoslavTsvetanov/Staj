@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useLayoutEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { isAuthenticated } from '@/lib/utils';
 
 const interestsList = [
     "Art",
@@ -150,6 +151,13 @@ const InfoRoute: React.FC = () => {
             console.error('Error:', error);
         }
     };
+
+    useLayoutEffect(() => {
+        const isAuth = isAuthenticated();
+        if(!isAuth){
+          router.push('/auth/signin');
+        }
+    }, [router]);
 
     return (
         <div className="relative flex flex-col justify-center py-12 sm:px-6 lg:px-8 bg-blue-100 w-full h-screen">

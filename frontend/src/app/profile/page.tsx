@@ -3,13 +3,13 @@
 import { NextPage } from 'next';
 import Head from 'next/head';
 import Image from 'next/image';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useLayoutEffect } from 'react';
 import axios from 'axios';
 import DefaultPfp from "./buffpfp.webp";
 import LArrow from "./left.png";
 import { Popup } from "../../components/ui/Popup";
 import { useRouter } from 'next/navigation';
-import { cookies } from '../../lib/utils';
+import { cookies, isAuthenticated } from '../../lib/utils';
 
 const interestsList = [
     "Art", "Sports", "Books", "Education", "Entertainment", "Hiking",
@@ -235,6 +235,13 @@ const AccountPage: NextPage = () => {
             fileInputRef.current.click();
         }
     };
+
+    useLayoutEffect(() => {
+        const isAuth = isAuthenticated();
+        if(!isAuth){
+          router.push('/auth/signin');
+        }
+      }, [router]);
 
     return (
         <>
