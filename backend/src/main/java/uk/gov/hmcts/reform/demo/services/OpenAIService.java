@@ -34,6 +34,7 @@ public class OpenAIService {
         String normalizedInterest = customInterest.trim().toLowerCase();
 
         List<String> cachedResult = cache.get(normalizedInterest);
+
         if (cachedResult != null) {
             return cachedResult;
         }
