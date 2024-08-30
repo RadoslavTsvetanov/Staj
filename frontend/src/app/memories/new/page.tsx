@@ -1,7 +1,6 @@
 "use client"
 import React, { useState, useLayoutEffect } from "react";
-import { useRouter } from "next/navigation";
-import { isAuthenticated } from "@/lib/utils";
+
 
 const FileUploadForm = () => {
   const [file, setFile] = useState(null);
@@ -9,7 +8,6 @@ const FileUploadForm = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
-  const router = useRouter();
 
   const handleFileChange = (event) => {
     setFile(event.target.files[0]);
@@ -53,13 +51,6 @@ const FileUploadForm = () => {
       setIsSubmitting(false);
     }
   };
-
-  useLayoutEffect(() => {
-    const isAuth = isAuthenticated();
-    if(!isAuth){
-      router.push('/auth/signin');
-    }
-  }, [router]);
 
   return (
     <div>

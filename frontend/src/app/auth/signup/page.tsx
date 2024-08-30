@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
-import Earth from '../../../../public/Earth';
+import Earth from '../../../components/ui/Earth';
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
 
 export default function SignUpRoute() {

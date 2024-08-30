@@ -9,7 +9,7 @@ import DefaultPfp from "./buffpfp.webp";
 import LArrow from "./left.png";
 import { Popup } from "../../components/ui/Popup";
 import { useRouter } from 'next/navigation';
-import { cookies, isAuthenticated } from '../../lib/utils';
+import { cookies } from '../../lib/utils';
 
 const interestsList = [
     "Art", "Sports", "Books", "Education", "Entertainment", "Hiking",
@@ -235,13 +235,6 @@ const AccountPage: NextPage = () => {
             fileInputRef.current.click();
         }
     };
-
-    useLayoutEffect(() => {
-        const isAuth = isAuthenticated();
-        if(!isAuth){
-          router.push('/auth/signin');
-        }
-      }, [router]);
 
     return (
         <>

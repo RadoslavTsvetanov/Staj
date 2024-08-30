@@ -152,13 +152,6 @@ const InfoRoute: React.FC = () => {
         }
     };
 
-    useLayoutEffect(() => {
-        const isAuth = isAuthenticated();
-        if(!isAuth){
-          router.push('/auth/signin');
-        }
-    }, [router]);
-
     return (
         <div className="relative flex flex-col justify-center py-12 sm:px-6 lg:px-8 bg-blue-100 w-full h-screen">
             {/* Wave animation */}

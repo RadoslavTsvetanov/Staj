@@ -3,22 +3,8 @@
 import Plan from "@/components/ui/plan";
 import Navbar from "@/components/ui/NavbarHome";
 import HomePageMap from "@/components/ui/HomePageMap";
-import { useRouter } from "next/navigation";
-import { useLayoutEffect } from "react";
-import { isAuthenticated } from "@/lib/utils";
 
 export default function HomePage() {
-  const router = useRouter();
-
-  useLayoutEffect(() => {
-    const isAuth = isAuthenticated();
-    console.log("isAuthenticated:", isAuth); // Debugging line
-
-    if(!isAuth){
-      router.push('/auth/signin');
-    }
-  }, [router]);
-
   return (
     <div>
       

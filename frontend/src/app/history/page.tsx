@@ -1,22 +1,11 @@
 "use client";
 
-import React, { useLayoutEffect } from 'react';
+import React from 'react';
 import Header from '@/components/ui/Header';
 import DateLabel from '@/components/ui/DateLabel';
 import ActivityCard from '@/components/ui/ActivityCard';
-import { useRouter } from 'next/navigation';
-import { isAuthenticated } from '@/lib/utils';
 
 const HomePage: React.FC = () => {
-  const router = useRouter();
-
-  useLayoutEffect(() => {
-    const isAuth = isAuthenticated();
-    if(!isAuth){
-      router.push('/auth/signin');
-    }
-  }, [router]);
-
   return (
     <div className="bg-gray-100 min-h-screen flex flex-col items-center">
       <Header />
