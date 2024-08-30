@@ -2,16 +2,42 @@ package uk.gov.hmcts.reform.demo.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.entity.mime.content.StringBody;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.*;
+import org.springframework.http.client.MultipartBodyBuilder;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.entity.mime.content.StringBody;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.*;
+import org.springframework.http.client.MultipartBodyBuilder;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.util.UriComponentsBuilder;
 import uk.gov.hmcts.reform.demo.models.Preferences;
 import uk.gov.hmcts.reform.demo.models.User;
 import uk.gov.hmcts.reform.demo.services.GoogleApi;
 import uk.gov.hmcts.reform.demo.services.UserService;
 import uk.gov.hmcts.reform.demo.utils.ApiTypes;
 import uk.gov.hmcts.reform.demo.utils.JwtUtil;
+import uk.gov.hmcts.reform.demo.services.UserService;
+import uk.gov.hmcts.reform.demo.utils.ApiTypes;
+import uk.gov.hmcts.reform.demo.utils.JwtUtil;
 import uk.gov.hmcts.reform.demo.utils.Utils;
 
 import java.io.Console;
+import java.io.InputStream;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.*;
@@ -224,5 +250,18 @@ public class MapsController {
             return ResponseEntity.ofNullable("not found or internal error idk, check code" + "error is "+ e.toString());
 
         }
+    }
+
+
+    private final String externalServiceUrl = "http://localhost:3005/upload";
+    @PostMapping("/upload")
+    public String uploadFile(
+        @RequestParam("file") MultipartFile file,
+        @RequestParam("keyPrefix") String keyPrefix) {
+        try {
+            byte[] b = file.getBytes();
+            Utils.uploadFile(b, file.getName(), "staj");
+        }catch (Exception e){}
+        return "ResponseEntity(HttpStatus.MULTI_STATUS);";
     }
 }

@@ -1,4 +1,6 @@
 import DropdownItem from "./DropdownItem";
+import LogoutButton from "./LogoutButton";
+
 type DropMenuProps = {
     onMouseLeave: () => void;
 };
@@ -11,7 +13,7 @@ const DropMenu: React.FC<DropMenuProps>=({onMouseLeave})=>
             <ul>
                 <DropdownItem text={"My profile"} img={"/images/user.png"} href={"/profile"}/>
                 <DropdownItem text={"Friends"} img={"/images/friends.png"} href={"#"}/>
-                <DropdownItem text={"Log out"} img={"/images/log-out.png"} href={'#'}/>
+                <LogoutButton/>
             </ul>
 
         </div> 

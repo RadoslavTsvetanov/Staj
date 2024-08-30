@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useLayoutEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { isAuthenticated } from '@/lib/utils';
 
 const interestsList = [
     "Art",
@@ -62,9 +63,26 @@ const InfoRoute: React.FC = () => {
         setOtherInterest(event.currentTarget.value);
     }
 
-    const addOtherInterest = () => {
+    const addOtherInterest = async () => {
         if(otherInterest) {
             setSelectedInterests([...selectedInterests, otherInterest]);
+            try {
+                const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/interests/process`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        customInterest: otherInterest
+                    })
+                });
+        
+                const matchedInterests = await response.json();
+        
+                setSelectedInterests([...selectedInterests, ...matchedInterests]);
+            } catch (err) {
+                console.error('Error matching interest:', err);
+            }
             setShowOtherInput(false);
             setOtherInterest('');
         }
@@ -90,8 +108,12 @@ const InfoRoute: React.FC = () => {
             return;
         }
         const age = calculateAge(dateOfBirth);
-        if (age < 13) {
+        if (age < 13 && age >= 0) {
             setError('Womp womp too young');
+            return;
+        }
+        if (age < 0) {
+            setError("You aren't born yet wdym 💀");
             return;
         }
         if (age > 100) {
@@ -105,7 +127,7 @@ const InfoRoute: React.FC = () => {
         setError('');
 
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/auth/register/complete`, {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/register/complete`, {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
@@ -131,7 +153,7 @@ const InfoRoute: React.FC = () => {
     };
 
     return (
-        <div className="relative flex flex-col justify-center py-12 sm:px-6 lg:px-8 bg-[#0e6cc4] w-full h-screen">
+        <div className="relative flex flex-col justify-center py-12 sm:px-6 lg:px-8 bg-blue-100 w-full h-screen">
             {/* Wave animation */}
             <div className='box'>
                 <div className='wave -one'></div>

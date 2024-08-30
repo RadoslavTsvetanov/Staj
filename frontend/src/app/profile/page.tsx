@@ -3,7 +3,7 @@
 import { NextPage } from 'next';
 import Head from 'next/head';
 import Image from 'next/image';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useLayoutEffect } from 'react';
 import axios from 'axios';
 import DefaultPfp from "./buffpfp.webp";
 import LArrow from "./left.png";
@@ -325,7 +325,7 @@ const AccountPage: NextPage = () => {
                                     name="dob"
                                     id="dob"
                                     value={dob}
-                                    onChange={(e) => setDob(e.target.value)}
+                                    readOnly
                                 />
                             </div>
                         </div>

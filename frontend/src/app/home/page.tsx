@@ -6,7 +6,6 @@ import HomePageMap from "@/components/ui/HomePageMap";
 import Plan from "@/components/ui/plan";
 
 export default function HomePage() {
-
   return (
     <div>
       <NavbarHome />

@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
-import Earth from '../../../../public/Earth';
+import Earth from '../../../components/ui/Earth';
 import { cookies } from '@/lib/utils';
 import { useRouter } from 'next/navigation';
 
@@ -18,7 +18,7 @@ export default function SignUpRoute() {
     const password = event.target.password.value;
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/auth/signin`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/signin`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -46,7 +46,7 @@ export default function SignUpRoute() {
   };
 
   return (
-    <div className="relative flex flex-col justify-center py-12 sm:px-6 lg:px-8 bg-[#0e6cc4] w-full h-screen">
+    <div className="relative flex flex-col justify-center py-12 sm:px-6 lg:px-8 bg-blue-100 w-full h-screen">
       {/* Wave animation */}
       <div className='box'>
         <div className='wave -one'></div>

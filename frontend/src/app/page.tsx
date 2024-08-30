@@ -4,9 +4,6 @@ import React, { useEffect } from 'react';
 import './styles.css';
 import { NavbarLanding } from "../components/ui/NavbarLanding";
 import { cookies } from '@/lib/utils';
-import { Model } from '../../public/Landing';
-import { Canvas } from "@react-three/fiber";
-import { OrbitControls } from "@react-three/drei";
 
 const Landing = () => {
   useEffect(() => {
