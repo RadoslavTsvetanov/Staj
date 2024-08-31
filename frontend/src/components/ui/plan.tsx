@@ -3,21 +3,22 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 
 interface PlanProps {
+    id: number,
     name: string;
     isEditable: boolean;
 };
 
-const Plan: React.FC<PlanProps> = ({ name, isEditable }) => {
+const Plan: React.FC<PlanProps> = ({ id,name, isEditable }) => {
     const [isHovered, setIsHovered] = useState(false);
     const router = useRouter();
     
     const handleClickHistory = () => {
-        const query = new URLSearchParams({ name }).toString();
+        const query = new URLSearchParams({  id: id.toString()  }).toString();
         router.push(`/history?${query}`);
     };
 
     const handleClickPlanning = () => {
-        const query = new URLSearchParams({ name }).toString();
+        const query = new URLSearchParams({  id: id.toString()  }).toString();
         router.push(`/planning?${query}`);
     };
 
