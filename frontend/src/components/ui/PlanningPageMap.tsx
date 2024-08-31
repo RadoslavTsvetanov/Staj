@@ -26,7 +26,7 @@ interface PlanningPageMapProps {
     setMapLoaded(loaded);
   }, []);
 
-  function handleDragEnd(event: google.maps.MapMouseEvent) 
+  function MarkerChange(event: google.maps.MapMouseEvent)
   {
     if (event.latLng) {
       let lat = event.latLng.lat();
@@ -35,8 +35,11 @@ interface PlanningPageMapProps {
       console.log("The final lng", lng);
       setPositionMarker({lat, lng});
       console.log(positionMarker);
+      if (onAddressChange) {
+        onAddressChange("");
+      } 
   }
-  }
+}
 
   useEffect(() => {
     if (mapLoaded && lat && lng) {
@@ -44,10 +47,10 @@ interface PlanningPageMapProps {
       let address = '';
 
       geocoder
-        .geocode({ location: { lat: center.lat, lng: center.lng } })
+        .geocode({ location: { lat: positionMarker.lat, lng: positionMarker.lng } })
         .then((response) => {
           if (response.results[0]) {
-            address = response.results[0].formatted_address;
+            address =response.results[0].formatted_address;
             console.log(response);
             if (onAddressChange) {
               onAddressChange(address);
@@ -62,9 +65,9 @@ interface PlanningPageMapProps {
 
   return (
     <div className="relative h-screen w-full">
-      <Map className="h-full w-full" center={{lat: center.lat,lng: center.lng}} onMapLoad={handleMapLoad}>
+      <Map className="h-full w-full" center={{lat: center.lat,lng: center.lng}} onMapLoad={handleMapLoad} onClick={MarkerChange}>
         <Region center={positionMarker} radius={radius} />
-        <MarkerPin positionMarker={positionMarker} draggable={true} onDragEnd={handleDragEnd}/>
+        <MarkerPin positionMarker={positionMarker} draggable={true} onDragEnd={MarkerChange} />
       </Map>
       <div className="absolute bottom-10 left-1/4 transform -translate-x-1/2">
         <Slider radius={radius} setRadius={setRadius} />
