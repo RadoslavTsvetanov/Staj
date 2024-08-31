@@ -9,7 +9,7 @@ const containerStyle = {
 };
 
 const mapOptions = {
-  zoom: 15,
+  zoom: 12,
   mapId: "MY_NEXTJS_MAP_ID",
   mapTypeControl: false,
   zoomControl: false,
