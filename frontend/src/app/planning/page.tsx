@@ -8,6 +8,8 @@ import PlanningPageMap from "@/components/ui/PlanningPageMap";
 export default function PlanningPage() {
   const [address, setAddress] = useState<string>("");
 
+  const [name, setName] = useState<string>("");
+
   const handleAddressChange = (newAddress: string) => {
     setAddress(newAddress);
   };
