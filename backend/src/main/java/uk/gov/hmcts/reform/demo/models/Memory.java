@@ -2,8 +2,10 @@ package uk.gov.hmcts.reform.demo.models;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 import java.time.LocalDate;
 
@@ -22,13 +24,24 @@ public class Memory {
     @NotNull(message = "Date cannot be null")
     private LocalDate date;
 
-    @NotBlank(message = "Location cannot be blank")
-    private String location;
+    public @NotBlank(message = "Place cannot be blank") String getPlace() {
+        return place;
+    }
+
+    public void setPlace(@NotBlank(message = "Place cannot be blank") String place) {
+        this.place = place;
+    }
+
+    @NotBlank(message = "Place cannot be blank")
+    private String place;
 
     @ManyToOne
     @JoinColumn(name = "history_id")
     @JsonBackReference
     private History history;
+
+    @Size(max = 500, message = "Description can't be longer than 500 characters")
+    private String description;
 
     // Getters and setters
     public Long getId() {
@@ -55,19 +68,19 @@ public class Memory {
         this.image = image;
     }
 
-    public String getLocation() {
-        return location;
-    }
-
-    public void setLocation(String location) {
-        this.location = location;
-    }
-
     public History getHistory() {
         return history;
     }
 
     public void setHistory(History history) {
         this.history = history;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

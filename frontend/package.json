@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@googlemaps/js-api-loader": "1.16.8",
+    "@heroicons/react": "^2.1.5",
     "@radix-ui/react-slot": "^1.1.0",
     "@react-google-maps/api": "2.19.3",
     "@react-three/drei": "^9.109.2",

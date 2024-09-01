@@ -1,50 +1,50 @@
 import React, { useState } from 'react';
-import Link from "next/link";
+import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 
-type PlanProps = {
+interface PlanProps {
+    id: number,
     name: string;
     isEditable: boolean;
 };
 
-const Plan: React.FC<PlanProps> = ({ name, isEditable }) => {
+const Plan: React.FC<PlanProps> = ({ id,name, isEditable }) => {
     const [isHovered, setIsHovered] = useState(false);
+    const router = useRouter();
+    
+    const handleClickHistory = () => {
+        const query = new URLSearchParams({  id: id.toString()  }).toString();
+        router.push(`/history?${query}`);
+    };
 
-    const styles = {
-        button: {
-            backgroundColor: isEditable ? '#C2E6F4' : '#F58F92', 
-            color: 'black',
-            padding: '10px 20px',
-            borderRadius: '8px',
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            border: '1px solid black',
-            cursor: 'pointer',
-            width: '100%',
-            boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
-        },
-        arrow: {
-            marginLeft: '10px',
-            color: 'black',
-        },
-        editIcon: {
-            marginLeft: '10px',
-            color: 'white',
-        },
+    const handleClickPlanning = () => {
+        const query = new URLSearchParams({  id: id.toString()  }).toString();
+        router.push(`/planning?${query}`);
+    };
+
+    const handleClick = () => {
+        if (isEditable) {
+            handleClickPlanning();
+        } else {
+            handleClickHistory();
+        }
     };
 
     return (
         <button
-            style={styles.button}
+            className={`w-full flex justify-between items-center p-2.5 rounded-lg border border-black cursor-pointer shadow-md 
+                ${isEditable ? 'bg-[#C2E6F4]' : 'bg-[#F58F92]'} 
+                ${isHovered ? 'text-black' : 'text-black'}`}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
+            onClick={handleClick}
         >
             <span>{name}</span>
             {isHovered && (
                 isEditable ? (
-                    <span style={styles.editIcon}>✏️</span>
+                    <Image className="ml-2" src="/images/edit.png" alt="edit" width={20} height={20} />
                 ) : (
-                    <span style={styles.arrow}>&#x25B6;</span>
+                    <span className="ml-2">&#x25B6;</span>
                 )
             )}
         </button>
@@ -52,4 +52,3 @@ const Plan: React.FC<PlanProps> = ({ name, isEditable }) => {
 };
 
 export default Plan;
-

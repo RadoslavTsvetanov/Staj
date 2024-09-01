@@ -18,7 +18,7 @@ import java.util.Collections;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/auth")
 public class RegistrationContoller {
 
     @Autowired

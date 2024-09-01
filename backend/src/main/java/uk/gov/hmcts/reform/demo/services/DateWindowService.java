@@ -18,8 +18,13 @@ public class DateWindowService {
         return dateWindowRepository.findAll();
     }
 
-    public Optional<DateWindow> findById(Long id) {
-        return dateWindowRepository.findById(id);
+    public DateWindow findById(Long id) {
+        Optional<DateWindow> dateWindow = dateWindowRepository.findById(id);
+        if (dateWindow.isPresent()) {
+            return dateWindow.get();
+        } else {
+            throw new RuntimeException("DateWindow not found with id: " + id);
+        }
     }
 
     public DateWindow save(DateWindow dateWindow) {

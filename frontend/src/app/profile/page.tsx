@@ -3,7 +3,7 @@
 import { NextPage } from 'next';
 import Head from 'next/head';
 import Image from 'next/image';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useLayoutEffect } from 'react';
 import axios from 'axios';
 import DefaultPfp from "./buffpfp.webp";
 import LArrow from "./left.png";
@@ -249,7 +249,7 @@ const AccountPage: NextPage = () => {
                     <div className='wave -two'></div>
                     <div className='wave -three'></div>
                 </div>
-                <div className="w-full max-w-md bg-white shadow-md rounded-lg p-6">
+                <div className="w-full max-w-md bg-white shadow-md rounded-lg p-6 z-10">
                     <div className="flex items-center justify-center mb-4 relative">
                         <div className="absolute left-0 max-w-7">
                             <Image
@@ -325,7 +325,7 @@ const AccountPage: NextPage = () => {
                                     name="dob"
                                     id="dob"
                                     value={dob}
-                                    onChange={(e) => setDob(e.target.value)}
+                                    readOnly
                                 />
                             </div>
                         </div>

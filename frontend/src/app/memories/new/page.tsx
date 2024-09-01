@@ -1,5 +1,6 @@
 "use client"
-import React, { useState } from "react";
+import React, { useState, useLayoutEffect } from "react";
+
 
 const FileUploadForm = () => {
   const [file, setFile] = useState(null);
@@ -34,7 +35,7 @@ const FileUploadForm = () => {
     formData.append("username", username);
 
     try {
-      const response = await fetch("http://localhost:4550/api/files/upload", {
+      const response = await fetch("http://localhost:4550/files/upload", {
         method: "POST",
         body: formData,
       });

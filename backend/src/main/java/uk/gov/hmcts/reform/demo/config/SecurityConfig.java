@@ -40,7 +40,6 @@ public class SecurityConfig {
 
         http.authorizeHttpRequests(authorize -> authorize
                 .requestMatchers(HttpMethod.GET, "/users/search").hasRole("USER")
-                .requestMatchers(HttpMethod.POST, "/memory/upload").hasRole("USER")
                 .requestMatchers(HttpMethod.PUT, "/plans/{planId}/date-window").hasRole("USER")
                 .requestMatchers(HttpMethod.POST, "/history/{historyId}/memories").hasRole("USER")
                 .requestMatchers(HttpMethod.GET, "/history/{id}").hasRole("USER")
@@ -53,19 +52,27 @@ public class SecurityConfig {
             .csrf(AbstractHttpConfigurer::disable)
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
             .authorizeHttpRequests(request -> request
-                .requestMatchers(new AntPathRequestMatcher("/api/auth/register/basic")).permitAll()
-                .requestMatchers(new AntPathRequestMatcher("/api/auth/register/complete")).permitAll()
-                .requestMatchers(new AntPathRequestMatcher("/api/auth/signin")).permitAll()
+                .requestMatchers("/uploads/**").permitAll()
+                .requestMatchers(new AntPathRequestMatcher("/auth/register/basic")).permitAll()
+                .requestMatchers(new AntPathRequestMatcher("/auth/register/complete")).permitAll()
+                .requestMatchers(new AntPathRequestMatcher("/auth/signin")).permitAll()
                 .requestMatchers(HttpMethod.POST, "/user-access/profile/update").permitAll()
+                .requestMatchers(HttpMethod.POST, "/user-access/profile/upload-picture").permitAll()
                 .requestMatchers(HttpMethod.GET, "/user-access/profile").permitAll()
                 .requestMatchers(HttpMethod.GET, "/user-access/plans").permitAll()
-                .requestMatchers(HttpMethod.POST, "/plans").permitAll()
                 .requestMatchers(HttpMethod.DELETE, "/users/profile/delete").permitAll()
                 .requestMatchers(HttpMethod.POST, "/plans/{planId}/users").permitAll()
                 .requestMatchers(HttpMethod.POST, "/places").permitAll() //tova ne trqbwa userite da go prawqt, ama posle shte se promeni
+                .requestMatchers(HttpMethod.POST, "/api/interests/process").permitAll()
+                .requestMatchers(HttpMethod.POST, "/date-window").permitAll()
+                .requestMatchers(HttpMethod.POST, "/locations").permitAll()
+                .requestMatchers(HttpMethod.PUT, "/plans/{planId}/places/{placeId}/locations").permitAll()
+                .requestMatchers(HttpMethod.POST, "/plans").permitAll()
+                .requestMatchers(HttpMethod.POST, "/memory/upload").permitAll()
+                .requestMatchers(HttpMethod.POST,"/maps/nearby").permitAll()
+                .requestMatchers(HttpMethod.POST,"/maps/upload").permitAll()
                 .anyRequest().hasRole("ADMIN")
-            )
-        ;
+            );
 
         return http.build();
     }
