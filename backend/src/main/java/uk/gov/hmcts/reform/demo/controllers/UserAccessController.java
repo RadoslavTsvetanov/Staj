@@ -82,7 +82,7 @@ public class UserAccessController {
         String username = jwtUtil.getUsernameFromToken(token);
 
         if (username == null) {
-            return ResponseEntity.status(401).build(); // Unauthorized
+            return ResponseEntity.status(401).build();
         }
 
         List<Plan> plans = planService.findPlansByUsername(username);
@@ -92,18 +92,22 @@ public class UserAccessController {
 
         return ResponseEntity.ok(planDTOs);
     }
-
-    private PlanDTO toPlanDTO(Plan plan) {
-        PlanDTO planDTO = new PlanDTO();
-        planDTO.setId(plan.getId());
-        planDTO.setEstCost(plan.getEstCost());
-        planDTO.setBudget(plan.getBudget());
-        planDTO.setName(plan.getName());
-        planDTO.setPlaces(plan.getPlaces().stream()
-                              .map(EntityToDtoMapper::toPlaceDTO)
-                              .collect(Collectors.toList()));
-        return planDTO;
-    }
+//
+//
+//    private PlanDTO toPlanDTO(Plan plan) {
+//        PlanDTO planDTO = new PlanDTO();
+//        planDTO.setId(plan.getId());
+//        planDTO.setEstCost(plan.getEstCost());
+//        planDTO.setBudget(plan.getBudget());
+//        planDTO.setName(plan.getName());
+//        if (plan.getDateWindow() != null) {
+//            planDTO.setDateWindow(plan.getDateWindow());
+//        }
+//        planDTO.setPlaces(plan.getPlaces().stream()
+//                              .map(EntityToDtoMapper::toPlaceDTO)
+//                              .collect(Collectors.toList()));
+//        return planDTO;
+//    }
 
     @PostMapping("/friends/add")
     public ResponseEntity<?> addFriend(
@@ -212,11 +216,9 @@ public class UserAccessController {
             if (updatedUser.getPreferences() != null) {
                 Preferences updatedPreferences = updatedUser.getPreferences();
                 if (updatedPreferences.getId() == null) {
-                    // New preferences, save them
                     preferencesRepo.save(updatedPreferences);
                     existingUser.setPreferences(updatedPreferences);
                 } else {
-                    // Existing preferences, update them
                     preferencesRepo.save(updatedPreferences);
                     existingUser.setPreferences(updatedPreferences);
                 }
@@ -273,10 +275,8 @@ public class UserAccessController {
             User existingUser = existingUserOpt.get();
 
             try {
-                // Call the utility method to upload the file
                 String response = Utils.uploadFile(file.getBytes(), file.getOriginalFilename(), username);
 
-                // Set the profile picture to the user and save
                 existingUser.setProfilePicture(file.getOriginalFilename());
                 userService.save(existingUser);
 

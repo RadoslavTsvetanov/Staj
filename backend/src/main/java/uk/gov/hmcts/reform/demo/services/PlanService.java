@@ -1,5 +1,6 @@
 package uk.gov.hmcts.reform.demo.services;
 
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.reform.demo.models.*;
@@ -103,7 +104,12 @@ public class PlanService {
     }
 
     public List<Plan> findPlansByUsername(String username) {
-        return planRepo.findAllByUsernamesContaining(username);
+        List<Plan> plans = planRepo.findPlansByUsername(username);
+        for (Plan plan : plans) {
+            Hibernate.initialize(plan.getDateWindow());
+            Hibernate.initialize(plan.getUsernames());
+        }
+        return plans;
     }
 
     public boolean isUserInPlan(Long planId, String username) {
