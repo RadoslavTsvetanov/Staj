@@ -107,7 +107,6 @@ public class PlanController {
         return ResponseEntity.status(HttpStatus.CREATED).body(savedPlan);
     }
 
-
     @PostMapping("/{planId}/users")
     public ResponseEntity<String> addUserToPlan(
         @PathVariable Long planId,
@@ -132,50 +131,65 @@ public class PlanController {
     @PutMapping("/{planId}/places")
     public ResponseEntity<String> addPlacesToPlan(
         @PathVariable Long planId,
-        @RequestBody List<String> placeNames,
+        @RequestBody List<Place> places,
         @RequestHeader(value = "Authorization", required = false) String authorizationHeader
     ) {
         if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
-            return ResponseEntity.status(401).body("Unauthorized");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized");
         }
 
         String token = authorizationHeader.substring(7);
         String username = jwtUtil.getUsernameFromToken(token);
 
         if (username == null) {
-            return ResponseEntity.status(401).body("Unauthorized");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized");
         }
 
-        Plan updatedPlan = planService.addPlacesToPlan(planId, placeNames);
-        return ResponseEntity.ok("Places added successfully.");
+        try {
+            Plan updatedPlan = planService.addPlacesToPlan(planId, places);
+            return ResponseEntity.ok("Places added successfully.");
+        } catch (RuntimeException ex) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+        }
     }
 
     @PutMapping("/{planId}/places/{placeId}/locations")
     public ResponseEntity<String> addLocationsToPlace(
         @PathVariable Long planId,
         @PathVariable Long placeId,
-        @RequestBody List<String> locationNames,
+        @RequestBody List<Location> locations,
         @RequestHeader(value = "Authorization", required = false) String authorizationHeader
     ) {
+        // Authorization check
         if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
-            return ResponseEntity.status(401).body("Unauthorized");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized");
         }
 
         String token = authorizationHeader.substring(7);
         String username = jwtUtil.getUsernameFromToken(token);
 
         if (username == null) {
-            return ResponseEntity.status(401).body("Unauthorized");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized");
         }
 
-        for (String locationName : locationNames) {
-            Optional<Location> location = Optional.ofNullable(locationService.findByName(locationName));
-            if (location.isEmpty()) {
-                return ResponseEntity.status(404).body("Location not found: " + locationName);
-            }
+        Plan plan = planService.findById(planId);
+        if (plan == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Plan not found");
         }
 
-        Plan updatedPlan = planService.addLocationsToPlace(planId, placeId, locationNames);
+        Place place = placeService.findById(placeId);
+        if (place == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Place not found");
+        }
+
+        for (Location location : locations) {
+            location = locationService.save(location);
+
+            place.getPlaceLocations().add(new PlaceLocation(place, location));
+        }
+
+        placeService.save(place);
+
         return ResponseEntity.ok("Locations added to place successfully.");
     }
 

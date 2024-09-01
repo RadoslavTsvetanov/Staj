@@ -63,6 +63,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET, "/user-access/profile").permitAll()
                 .requestMatchers(HttpMethod.GET, "/user-access/plans").permitAll()
                 .requestMatchers(HttpMethod.DELETE, "/users/profile/delete").permitAll()
+                .requestMatchers(HttpMethod.PUT, "/plans/{planId}/places").permitAll()
                 .requestMatchers(HttpMethod.POST, "/plans/{planId}/users").permitAll()
                 .requestMatchers(HttpMethod.POST, "/places").permitAll() //tova ne trqbwa userite da go prawqt, ama posle shte se promeni
                 .requestMatchers(HttpMethod.POST, "/api/interests/process").permitAll()

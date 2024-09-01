@@ -42,17 +42,45 @@ public class PlanService {
         return planRepo.save(plan);
     }
 
-    public Plan addPlacesToPlan(Long planId, List<String> placeNames) {
+    public Plan addPlacesToPlan(Long planId, List<Place> places) {
         Plan plan = planRepo.findById(planId)
             .orElseThrow(() -> new NoSuchElementException("Plan not found with id " + planId));
 
-        for (String placeName : placeNames) {
-            Place place = new Place();
-            place.setName(placeName); // Set the place name
-            placeService.addPlaceToPlan(planId, place);
+        DateWindow planDateWindow = plan.getDateWindow();
+
+        for (Place place : places) {
+            DateWindow placeDateWindow = place.getDateWindow();
+
+            if (placeDateWindow != null) {
+                Long dateWindowId = place.getDateWindow().getId();
+                if (dateWindowId == null || !dateWindowRepo.existsById(dateWindowId)) {
+                    place.setDateWindow(dateWindowRepo.save(place.getDateWindow()));
+                }
+            }
+
+            if (!isDateWindowWithinPlan(planDateWindow, placeDateWindow)) {
+                throw new RuntimeException("Place date window is not within the plan's date window");
+            }
+
+            place.setPlan(plan);
+            placeService.save(place);
+            plan.getPlaces().add(place);
         }
 
         return planRepo.save(plan);
+    }
+
+    public boolean isDateWindowWithinPlan(DateWindow planDateWindow, DateWindow placeDateWindow) {
+        if (planDateWindow == null || placeDateWindow == null) {
+            return true;
+        }
+
+        LocalDate planStartDate = planDateWindow.getStartDate();
+        LocalDate planEndDate = planDateWindow.getEndDate();
+        LocalDate placeStartDate = placeDateWindow.getStartDate();
+        LocalDate placeEndDate = placeDateWindow.getEndDate();
+
+        return !placeStartDate.isBefore(planStartDate) && !placeEndDate.isAfter(planEndDate);
     }
 
     public Plan addLocationsToPlace(Long planId, Long placeId, List<String> locationNames) {
@@ -60,6 +88,12 @@ public class PlanService {
             .orElseThrow(() -> new NoSuchElementException("Plan not found with id " + planId));
 
         Place place = placeService.findById(placeId);
+        DateWindow planDateWindow = plan.getDateWindow();
+        DateWindow placeDateWindow = place.getDateWindow();
+
+        if (!isDateWindowWithinPlan(planDateWindow, placeDateWindow)) {
+            throw new RuntimeException("Place date window is not within the plan's date window");
+        }
 
         List<Location> locations = locationNames.stream()
             .map(locationName -> locationRepo.findByName(locationName))
@@ -98,6 +132,13 @@ public class PlanService {
         } else {
             DateWindow savedDateWindow = dateWindowRepo.save(newDateWindow);
             plan.setDateWindow(savedDateWindow);
+        }
+
+        for (Place place : plan.getPlaces()) {
+            DateWindow placeDateWindow = place.getDateWindow();
+            if (placeDateWindow != null && !isDateWindowWithinPlan(plan.getDateWindow(), placeDateWindow)) {
+                throw new RuntimeException("Place date window is not within the updated plan's date window");
+            }
         }
 
         return planRepo.save(plan);
