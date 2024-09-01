@@ -35,6 +35,8 @@ public class OpenAIService {
 
         List<String> cachedResult = cache.get(normalizedInterest);
 
+        System.out.println(cachedResult);
+
         if (cachedResult != null) {
             return cachedResult;
         }
