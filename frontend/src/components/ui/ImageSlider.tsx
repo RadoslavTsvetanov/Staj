@@ -11,10 +11,10 @@ const ImageSlider: React.FC = () => {
   const [currentSlide, setCurrentSlide] = useState<number>(0);
   const [slides, setSlides] = useState<Slide[]>([
     { id: 1, src: "/images/memory1.png", alt: "Image 1" },
-    { id: 2, src: "/images/memory1.png", alt: "Image 2" },
-    { id: 3, src: "/images/memory1.png", alt: "Image 3" },
+    { id: 2, src: "/images/memory2.png", alt: "Image 2" },
+    { id: 3, src: "/images/memory3.png", alt: "Image 3" },
     { id: 4, src: "/images/memory1.png", alt: "Image 4" },
-    { id: 5, src: "/images/memory1.png", alt: "Image 5" },
+    { id: 5, src: "/images/memory2.png", alt: "Image 5" },
     { id: 6, src: "/images/memory1.png", alt: "Image 6" },
     { id: 7, src: "/images/memory1.png", alt: "Image 7" },
   ]);
