@@ -1,11 +1,10 @@
-// components/Popup.tsx
-import { FC } from "react";
-import FriendItem from "./FriendItem"; // Import the FriendItem component
+import { FC , useState} from "react";
+import FriendItem from "./FriendItem";
 
 interface Friend {
   id: number;
   name: string;
-  img: string; // Add imgSrc to the interface to handle profile pictures
+  img: string; 
 }
 
 interface PopupProps {
@@ -15,6 +14,22 @@ interface PopupProps {
 }
 
 const FriendsList: FC<PopupProps> = ({ friends, isOpen, onClose }) => {
+  const [friendsList, setFriendsList] = useState<Friend[]>(friends);
+  const [newFriendName, setNewFriendName] = useState<string>("");
+
+  const handleAddFriend = () => {
+    if (newFriendName.trim() === "") return;
+
+    const newFriend: Friend = {
+      id: friendsList.length + 1, // Simple id assignment; you may need to handle ids differently in a real app
+      name: newFriendName,
+      img: "/images/user.png",
+    };
+
+    setFriendsList([...friendsList, newFriend]);
+    setNewFriendName("");
+  };
+
   if (!isOpen) return null;
 
   return (
@@ -30,11 +45,27 @@ const FriendsList: FC<PopupProps> = ({ friends, isOpen, onClose }) => {
         <h2 className="text-2xl font-bold mb-6 text-center">Friends List</h2>
         <div className="h-[calc(8*51px)] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-transparent">
           <ul className="space-y-4">
-            {friends.map((friend) => (
+            {friendsList.map((friend) => (
               <li key={friend.id}>
                 <FriendItem name={friend.name} img={friend.img} />
               </li>
             ))}
+            {/* Input and Button for Adding a New Friend */}
+            <li className="flex items-center space-x-2">
+              <input
+                type="text"
+                value={newFriendName}
+                onChange={(e) => setNewFriendName(e.target.value)}
+                placeholder="Enter username"
+                className="flex-grow p-2 border rounded-md outline-none focus:border-blue-500"
+              />
+              <button
+                onClick={handleAddFriend}
+                className="bg-blue-500 text-white px-4 py-2 mr-2 rounded-md hover:bg-blue-600"
+              >
+                Add Friend
+              </button>
+            </li>
           </ul>
         </div>
       </div>

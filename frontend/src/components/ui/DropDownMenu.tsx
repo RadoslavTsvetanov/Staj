@@ -15,12 +15,6 @@ const friends = [
   { id: 1, name: "Alice", img: "/images/user.png" },
   { id: 2, name: "Bob", img: "/images/user.png" },
   { id: 3, name: "Charlie", img: "/images/user.png" },
-  { id: 1, name: "Alice", img: "/images/user.png" },
-  { id: 2, name: "Bob", img: "/images/user.png" },
-  { id: 3, name: "Charlie", img: "/images/user.png" },
-  { id: 1, name: "Alice", img: "/images/user.png" },
-  { id: 2, name: "Bob", img: "/images/user.png" },
-  { id: 3, name: "Charlie", img: "/images/user.png" },
 ];
 
 const DropMenu: React.FC<DropMenuProps> = ({ onMouseLeave }) => {
