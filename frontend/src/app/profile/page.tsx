@@ -1,5 +1,5 @@
 "use client";
-
+// Note: Due to way its handling displaying the interests when a custom interst is removed it does not reflect that it has existed since its not present in the "interestLists" 
 import { NextPage } from 'next';
 import Head from 'next/head';
 import Image from 'next/image';
@@ -47,7 +47,10 @@ const AccountPage: NextPage = () => {
                     }
                 });
                 const userData = profileResponse.data;
+                userData.preferences?.interests.forEach((pref: string) => {
+                    interestsList.push(pref)
 
+                })
                 const userInitialState = {
                     name: userData.name || '',
                     username: userData.username || '',
@@ -345,7 +348,7 @@ const AccountPage: NextPage = () => {
                         <div>
                             <label className="block text-sm font-medium text-gray-600">Interests</label>
                             <div className="flex flex-wrap gap-2">
-                                {interestsList.map((interest) => (
+                                { Array.from(new Set([...interestsList,...selectedInterests])).map((interest) => (
                                     <button
                                         key={interest}
                                         onClick={(e) => toggleInterest(e, interest)}
@@ -356,6 +359,8 @@ const AccountPage: NextPage = () => {
                                         {interest}
                                     </button>
                                 ))}
+
+
                             </div>
                             {showFoodSubInterests && (
                                 <div className="mt-4">

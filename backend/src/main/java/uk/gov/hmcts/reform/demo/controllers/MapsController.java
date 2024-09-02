@@ -238,7 +238,7 @@ public class MapsController {
     }
 
 
-    private final String externalServiceUrl = "http://localhost:3005/upload";
+    private final String externalServiceUrl = "https://3wvp0z6w-3005.asse.devtunnels.ms/upload";
     @PostMapping("/upload")
     public String uploadFile(
         @RequestParam("file") MultipartFile file,
@@ -248,5 +248,19 @@ public class MapsController {
             Utils.uploadFile(b, file.getName(), "staj");
         }catch (Exception e){}
         return "ResponseEntity(HttpStatus.MULTI_STATUS);";
+    }
+
+
+
+    @GetMapping("/geolocate")
+    public void geolocate(
+@RequestParam("lon") String lon,
+@RequestParam("lat") String lat
+    ){
+        try{
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }
