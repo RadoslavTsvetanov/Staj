@@ -3,6 +3,7 @@
 import React, { useLayoutEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { isAuthenticated } from '@/lib/utils';
+import Loading from "@/components/ui/Loading";
 
 const interestsList = [
     "Art",
@@ -265,6 +266,8 @@ const InfoRoute: React.FC = () => {
                     </form>
                 </div>
             </div>
+
+            <Loading />
 
             <style jsx>{`
                 .bg-main-bg {
