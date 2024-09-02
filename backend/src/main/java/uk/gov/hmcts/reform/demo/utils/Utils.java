@@ -67,13 +67,21 @@ public class Utils {
             int responseCode = connection.getResponseCode();
             if (responseCode == HttpURLConnection.HTTP_OK) {
                 try (BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()))) {
-                    String response = reader.lines().reduce("", String::concat);
-                    return response;
+                    ObjectMapper objectMapper = new ObjectMapper();
+                    s3Response response = objectMapper.readValue(reader, s3Response.class);
+                    return response.location;
                 }
             } else {
                 throw new IOException("Server returned non-OK status: " + responseCode);
             }
         }
+
+
+        public static class s3Response {
+            public String message;
+            public String location;
+        }
+
 
 //        public static void main(String[] args) {
 //            try {
