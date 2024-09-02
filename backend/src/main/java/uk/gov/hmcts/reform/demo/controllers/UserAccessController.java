@@ -16,6 +16,7 @@ import uk.gov.hmcts.reform.demo.services.PlanService;
 import uk.gov.hmcts.reform.demo.services.UserService;
 import uk.gov.hmcts.reform.demo.utils.EnvThingies;
 import uk.gov.hmcts.reform.demo.utils.JwtUtil;
+import uk.gov.hmcts.reform.demo.utils.Utils;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -225,8 +226,11 @@ public class UserAccessController {
                 Path filePath = uploadPath.resolve(filename);
                 Files.write(filePath, file.getBytes());
 
-                existingUser.setProfilePicture(filename);
+                String picUrl = Utils.uploadFile(file.getBytes(),"","staj");
+
+                existingUser.setProfilePicture(picUrl);
                 userService.save(existingUser);
+
 
                 return ResponseEntity.ok("Profile picture uploaded successfully!");
             } catch (IOException e) {
