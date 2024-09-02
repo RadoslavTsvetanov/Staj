@@ -33,14 +33,14 @@ class OpenAIServiceTest {
 
     @Test
     void testProcessCustomInterest_withCachedResult() {
-        String customInterest = "Books";
+        String customInterest = "Museums";
         List<String> cachedResult = List.of("Cached Interest");
         when(cache.get(anyString())).thenReturn(cachedResult);
 
         List<String> result = openAIService.processCustomInterest(customInterest);
 
         assertEquals(cachedResult, result);
-        verify(cache, times(1)).get("books");
+        verify(cache, times(1)).get("museums");
     }
 
     @Test
@@ -58,25 +58,25 @@ class OpenAIServiceTest {
 
     @Test
     void testGetMatchedInterests_success() throws IOException {
-        String customInterest = "Books";
-        String expectedResponse = "Books, Education, Entertainment, Relax";
+        String customInterest = "Museums";
+        String expectedResponse = "Art, History, Education, Entertainment";
         mockOkHttpResponse(200, createMockOpenAIResponse(expectedResponse));
 
-        String matchedInterests = openAIService.getMatchedInterests(customInterest, new String[]{"Books", "Education", "Entertainment", "Relax"});
+        String matchedInterests = openAIService.getMatchedInterests(customInterest, new String[]{"Art", "History", "Education", "Entertainment"});
 
         assertEquals(expectedResponse, matchedInterests);
     }
 
     @Test
     void testGetSpecificTypesForCustomInterest_success() throws IOException {
-        String customInterest = "Books";
-        String matchedInterests = "Books, Education";
-        String expectedResponse = "\"library\", \"bookstore\"";
+        String customInterest = "Museums";
+        String matchedInterests = "Art, History";
+        String expectedResponse = "\"museum\"";
         mockOkHttpResponse(200, createMockOpenAIResponse(expectedResponse));
 
         List<String> specificTypes = openAIService.getSpecificTypesForCustomInterest(customInterest, matchedInterests);
 
-        assertEquals(List.of("library", "bookstore"), specificTypes);
+        assertEquals(List.of("museum"), specificTypes);
     }
 
     private void mockOkHttpResponse(int statusCode, String responseBody) throws IOException {
