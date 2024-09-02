@@ -34,10 +34,8 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/maps")
 public class MapsController {
-
-    MapsHelper mapsHelper = new MapsHelper();
     @Autowired
-    UserService userService;
+    MapsHelper mapsHelper;
     // TODO : make it cleaner since its not easy tp read and functionns are all over the place
     GoogleApi googleApi = new GoogleApi();
     Utils u = new Utils();
@@ -45,17 +43,19 @@ public class MapsController {
 
     @PostMapping("/nearby")
     public ResponseEntity<String> getMaps(@RequestBody MapsHelper.LocationRequest loc) {
+        System.out.println("00000000000000000000000000000000000000000000");
 
-//         Extract users from the tokens
+        // Extract users from the tokens
         List<Optional<User>> users = mapsHelper.extractUsersFromTokens(loc.authTokens);
+        System.out.println("users"+users);
         // Determine if age restriction should apply
         Boolean isAgeRestrictionRequired = mapsHelper.ShouldAgeRestrictionApply(users);
-
+        System.out.println("isAge"+isAgeRestrictionRequired);
         // Gather all users' interests
         List<List<String>> listWithAllUsersInterests = mapsHelper.gatherUserInterests(users);
 
         System.out.println("list, " + listWithAllUsersInterests);
-
+        System.out.println("00000000000000000000000000000000000000000000");
         try {
             // Query nearby places
             List<uk.gov.hmcts.reform.demo.types.NearbyPlacesResponse.Result> nearbyPlaces = mapsHelper.queryNearbyPlaces(loc);

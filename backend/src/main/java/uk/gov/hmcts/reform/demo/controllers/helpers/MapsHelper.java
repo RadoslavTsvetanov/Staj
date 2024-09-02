@@ -1,6 +1,8 @@
 package uk.gov.hmcts.reform.demo.controllers.helpers;
 
+import groovyjarjarpicocli.CommandLine;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import uk.gov.hmcts.reform.demo.controllers.MapsController;
 import uk.gov.hmcts.reform.demo.models.Preferences;
 import uk.gov.hmcts.reform.demo.models.User;
@@ -13,7 +15,7 @@ import java.time.Period;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
-
+@Service
 public class MapsHelper {
 
 
@@ -93,7 +95,6 @@ public class MapsHelper {
         public double lon;
         public double lat;
     }
-
     @Autowired
     UserService userService;
     public List<Optional<User>> extractUsersFromTokens(List<String> authTokens) {
