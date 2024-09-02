@@ -113,7 +113,7 @@ const InfoRoute: React.FC = () => {
             return;
         }
         if (age < 0) {
-            setError("You aren't born yet wdym 💀");
+            setError("You aren't born yet?");
             return;
         }
         if (age > 100) {
