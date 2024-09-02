@@ -43,6 +43,8 @@ public class OpenAIService {
 
         String matchedInterests = getMatchedInterests(customInterest, predefinedInterests);
 
+        System.out.println(matchedInterests);
+
         if (matchedInterests != null && !matchedInterests.isEmpty()) {
             String cleanedInterests = matchedInterests
                 .replaceAll("^-\\s*", "")
