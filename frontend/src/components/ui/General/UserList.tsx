@@ -1,15 +1,18 @@
 import React, { useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import UserModal from './UserModal'; // Adjust the path based on your file structure
+import UserModal from './UserModal'; 
 
-// Define the User type with a photo property
 type User = {
   id: string;
   username: string;
   photo: string;
 };
 
-const UserList: React.FC = () => {
+interface UserListProps{
+    className?: string,
+}
+
+const UserList: React.FC<UserListProps> = () => {
   const [users, setUsers] = useState<User[]>([
     { id: uuidv4(), username: 'Alice', photo: 'https://via.placeholder.com/40/FF0000/FFFFFF?text=A' },
     { id: uuidv4(), username: 'Bob', photo: 'https://via.placeholder.com/40/00FF00/FFFFFF?text=B' },
@@ -50,16 +53,16 @@ const UserList: React.FC = () => {
           key={user.id}
           src={user.photo}
           alt={user.username}
-          className="w-10 h-10 rounded-full border-2 border-black"
+          className="w-8 h-8 rounded-full border-2 border-black"
         />
       ))}
       <button
         onClick={openModal}
-        className="w-10 h-10 flex items-center justify-center rounded-full bg-gray-600 border-2 border-black text-white text-xl font-bold"
+        className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-600 border-2 border-black text-white text-xl font-bold"
       >
         +
       </button>
-      
+
       <UserModal
         isOpen={isModalOpen}
         newUsername={newUsername}

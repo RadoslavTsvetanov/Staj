@@ -2,12 +2,10 @@ import React, {useState} from 'react';
 import Image from 'next/image';
 import ImageSlider from './ImageSlider';
 
-type ActivityCardProps = {
+const ActivityCard = ({ name, imageUrl }: {
   name: string;
   imageUrl: string;
-};
-
-const ActivityCard: React.FC<ActivityCardProps> = ({ name, imageUrl }) => {
+}) => {
 
   const [images, setImages] = useState([
     '/images/memory.png',

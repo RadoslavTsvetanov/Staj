@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
-import Earth from './Earth';
+import Earth from '../Earth';
 
 export const NavbarLanding = () => {
     return (

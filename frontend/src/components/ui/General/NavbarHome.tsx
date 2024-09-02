@@ -4,7 +4,7 @@ import React, {useState} from "react";
 import Image from "next/image";
 import DropMenu from "./DropDownMenu";
 import { OrbitControls } from "@react-three/drei";
-import Earth from "./Earth";
+import Earth from "../Earth";
 import { Canvas } from "@react-three/fiber";
 import Link from "next/link";
 

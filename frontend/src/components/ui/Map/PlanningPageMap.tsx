@@ -1,10 +1,11 @@
 "use client";
 
 import { useState, useCallback, useEffect } from "react";
-import Map from "@/components/ui/map";
-import MarkerPin from "@/components/ui/marker";
-import Region from "@/components/ui/Region";
-import Slider from "@/components/ui/Slider";
+import Map from "@/components/ui/Map/map";
+import MarkerPin from "@/components/ui/Map/marker";
+import PlacePin from "./PlacePin";
+import Region from "@/components/ui/Map/Region";
+import Slider from "@/components/ui/Map/Slider";
 import { useSearchParams } from "next/navigation";
 
 interface PlanningPageMapProps {
@@ -68,6 +69,7 @@ interface PlanningPageMapProps {
       <Map className="h-full w-full" center={{lat: center.lat,lng: center.lng}} onMapLoad={handleMapLoad} onClick={MarkerChange}>
         <Region center={positionMarker} radius={radius} />
         <MarkerPin positionMarker={positionMarker} draggable={true} onDragEnd={MarkerChange} />
+        <PlacePin positionMarker={positionMarker}/>
       </Map>
       <div className="absolute bottom-10 left-1/4 transform -translate-x-1/2">
         <Slider radius={radius} setRadius={setRadius} />

@@ -1,8 +1,8 @@
 "use client";
 
 import Planning from "@/components/ui/Planning";
-import NavbarHome from "@/components/ui/NavbarHome";
-import HomePageMap from "@/components/ui/HomePageMap";
+import NavbarHome from "@/components/ui/General/NavbarHome";
+import HomePageMap from "@/components/ui/Map/HomePageMap";
 
 export default function HomePage() {
   return (
