@@ -1,6 +1,7 @@
 import React, {useState} from "react";
 import { useSearchParams } from "next/navigation";
-import UserList from "./UserList";
+import UserList from "../General/UserList";
+import DateLabel from "./DateLabel";
 
 const Header: React.FC = () => {
   const searchParams = useSearchParams();
@@ -9,7 +10,7 @@ const Header: React.FC = () => {
   return (
     <div className="p-4 bg-white flex flex-col items-center">
       <h1 className="text-xl font-bold">{name}</h1>
-      <p className="text-sm text-gray-500">dates from - to</p>
+      <DateLabel startDate="2024-08-28" endDate="2024-09-29" />
       <div className="flex mt-2">
       <UserList />
         </div>

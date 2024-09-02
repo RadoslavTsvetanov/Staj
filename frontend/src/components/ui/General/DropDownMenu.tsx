@@ -2,7 +2,7 @@ import { useState } from "react";
 import Link from "next/link";
 import DropdownItem from "./DropdownItem";
 import LogoutButton from "./LogoutButton";
-import FriendsList from "./Friends"; 
+import FriendsList from "../Friends"; 
 
 type DropMenuProps = {
   onMouseLeave: () => void;
@@ -10,12 +10,6 @@ type DropMenuProps = {
 
 const friends = [
   { id: 1, name: "Alice", img: "/images/user.png"},
-  { id: 2, name: "Bob", img: "/images/user.png" },
-  { id: 3, name: "Charlie", img: "/images/user.png" },
-  { id: 1, name: "Alice", img: "/images/user.png" },
-  { id: 2, name: "Bob", img: "/images/user.png" },
-  { id: 3, name: "Charlie", img: "/images/user.png" },
-  { id: 1, name: "Alice", img: "/images/user.png" },
   { id: 2, name: "Bob", img: "/images/user.png" },
   { id: 3, name: "Charlie", img: "/images/user.png" },
   { id: 1, name: "Alice", img: "/images/user.png" },
