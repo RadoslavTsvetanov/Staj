@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useLayoutEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { isAuthenticated } from '@/lib/utils';
 
 const interestsList = [
     "Art",
@@ -112,7 +113,7 @@ const InfoRoute: React.FC = () => {
             return;
         }
         if (age < 0) {
-            setError("You aren't born yet wdym 💀");
+            setError("You aren't born yet?");
             return;
         }
         if (age > 100) {

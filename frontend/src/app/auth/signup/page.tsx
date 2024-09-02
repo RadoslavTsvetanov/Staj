@@ -4,7 +4,8 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
-import Earth from '../../../../public/Earth';
+import Earth from '../../../components/ui/Earth';
+import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
 
 export default function SignUpRoute() {
   const [username, setUsername] = useState('');
@@ -12,6 +13,8 @@ export default function SignUpRoute() {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const router = useRouter();
 
@@ -74,7 +77,6 @@ export default function SignUpRoute() {
       });
 
       console.log(response);
-      console.log()
 
       if (response.ok) {
         router.push(`/auth/signup/info?username=${encodeURIComponent(username)}`);
@@ -151,17 +153,28 @@ export default function SignUpRoute() {
               <label className="block text-sm font-medium text-gray-700" htmlFor="password">
                 Password
               </label>
-              <div className="mt-1">
+              <div className="mt-1 relative">
                 <input
                   className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                   required
                   autoComplete="current-password"
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   name="password"
                   id="password"
                   value={password}
                   onChange={handlePasswordChange}
                 />
+                <button
+                  type="button"
+                  className="absolute inset-y-0 right-0 flex items-center px-2"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? (
+                    <EyeIcon className='h-5 w-5 text-gray-500' />
+                  ) : (
+                    <EyeSlashIcon className='h-5 w-5 text-gray-500'/>
+                  )}
+                </button>
               </div>
             </div>
 
@@ -169,7 +182,7 @@ export default function SignUpRoute() {
               <label className="block text-sm font-medium text-gray-700" htmlFor="confirm-password">
                 Confirm Password
               </label>
-              <div className="mt-1">
+              <div className="mt-1 relative">
                 <input
                   className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                   required
@@ -180,6 +193,17 @@ export default function SignUpRoute() {
                   value={confirmPassword}
                   onChange={handleConfirmPasswordChange}
                 />
+                <button
+                  type="button"
+                  className="absolute inset-y-0 right-0 flex items-center px-2"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                >
+                  {showConfirmPassword ? (
+                    <EyeIcon className='h-5 w-5 text-gray-500' />
+                  ) : (
+                    <EyeSlashIcon className='h-5 w-5 text-gray-500'/>
+                  )}
+                </button>
               </div>
             </div>
 

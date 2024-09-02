@@ -1,5 +1,6 @@
 "use client"
-import React, { useState } from "react";
+import React, { useState, useLayoutEffect } from "react";
+
 
 const FileUploadForm = () => {
   const [file, setFile] = useState(null);
