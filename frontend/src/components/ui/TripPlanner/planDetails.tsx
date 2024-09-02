@@ -1,6 +1,6 @@
 import React from 'react';
 import Day from './Day';
-import Place from '../Place';
+import Place from './Place';
 
 const PlanDetails: React.FC = () => {
   return (

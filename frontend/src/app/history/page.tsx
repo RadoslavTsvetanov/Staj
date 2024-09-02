@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Header from '@/components/ui/history/Header';
-import DateLabel from '@/components/ui/DateLabel';
+import DateLabel from '@/components/ui/history/DateLabel';
 import ActivityCard from '@/components/ui/history/ActivityCard';
 import BackButton from '@/components/ui/General/BackButton';
 

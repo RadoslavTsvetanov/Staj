@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 import { useSearchParams } from "next/navigation";
 import UserList from "../General/UserList";
-import DateLabel from "../DateLabel";
+import DateLabel from "./DateLabel";
 
 const Header: React.FC = () => {
   const searchParams = useSearchParams();
