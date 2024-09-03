@@ -14,7 +14,7 @@ export default function LogoutButton() {
     return (
         <button
             onClick={onLogout}>
-            <DropdownItem text={"Log out"} img={"/images/log-out.png"} href={'#'} />
+            <DropdownItem text={"Log out"} img={"/images/log-out.png"}/>
         </button>
     );
 }

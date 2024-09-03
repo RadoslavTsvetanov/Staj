@@ -1,5 +1,17 @@
 package uk.gov.hmcts.reform.demo.controllers;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.entity.mime.content.StringBody;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.*;
+import org.springframework.http.client.MultipartBodyBuilder;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.bind.annotation.*;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.entity.mime.content.StringBody;
@@ -16,6 +28,9 @@ import org.springframework.web.util.UriComponentsBuilder;
 import uk.gov.hmcts.reform.demo.models.Preferences;
 import uk.gov.hmcts.reform.demo.models.User;
 import uk.gov.hmcts.reform.demo.services.GoogleApi;
+import uk.gov.hmcts.reform.demo.services.UserService;
+import uk.gov.hmcts.reform.demo.utils.ApiTypes;
+import uk.gov.hmcts.reform.demo.utils.JwtUtil;
 import uk.gov.hmcts.reform.demo.services.UserService;
 import uk.gov.hmcts.reform.demo.utils.ApiTypes;
 import uk.gov.hmcts.reform.demo.utils.JwtUtil;

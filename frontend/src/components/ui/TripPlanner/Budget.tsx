@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
-import Image from 'next/image';
 
-const BudgetSelector = () => {
+interface BudgetProps{
+  id?:number,
+}
+
+const BudgetSelector: React.FC<BudgetProps> = ({id}) => {
   const [selectedBudget, setSelectedBudget] = useState(0);
 
 
@@ -12,12 +15,8 @@ const BudgetSelector = () => {
 
   const handleBudgetChange = (budget: number) => {
     console.log('Selected Budget:', budget);
+    //saveBudget?? id za tova
   };
-
-  // const handleEditClick = () => {
-  //   selectBudget(false); 
-  //   setSelectedBudget(4);
-  // };
 
   return (
     <div className="p-4 bg-blue-100 rounded-lg shadow-md flex items-center space-x-2">
@@ -37,7 +36,6 @@ const BudgetSelector = () => {
               </span>
             ))}
           </div>
-      {/* <Image src="/images/edit.png" alt="editB" onClick={handleEditClick} width={20} height={20} /> */}
     </div>
     </form>
     </div>
