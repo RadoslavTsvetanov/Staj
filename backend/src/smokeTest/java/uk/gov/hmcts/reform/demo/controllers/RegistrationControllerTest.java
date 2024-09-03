@@ -14,7 +14,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import uk.gov.hmcts.reform.demo.models.Credentials;
 import uk.gov.hmcts.reform.demo.models.Preferences;
-import uk.gov.hmcts.reform.demo.controllers.RegistrationContoller;
 import uk.gov.hmcts.reform.demo.models.User;
 import uk.gov.hmcts.reform.demo.repositories.CredentialsRepo;
 import uk.gov.hmcts.reform.demo.repositories.PreferencesRepo;
