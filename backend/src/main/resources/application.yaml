@@ -62,3 +62,14 @@ spring:
 azure:
   application-insights:
     instrumentation-key: ${rpe.AppInsightsInstrumentationKey:00000000-0000-0000-0000-000000000000}
+
+redis:
+  host: 'redis-19730.c311.eu-central-1-1.ec2.redns.redis-cloud.com'
+  port: 19730
+  password: 'pXSPF9gthQCWEBJKHDSHLoIu2eLR16B4'
+  jedis:
+    pool:
+      max-active: 10      # Max number of connections
+      max-idle: 5         # Max number of idle connections
+      min-idle: 1         # Min number of idle connections
+      max-wait: 2000

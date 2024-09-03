@@ -1,15 +1,15 @@
 "use client";
-
+// Note: Due to way its handling displaying the interests when a custom interst is removed it does not reflect that it has existed since its not present in the "interestLists" 
 import { NextPage } from 'next';
 import Head from 'next/head';
 import Image from 'next/image';
 import { useState, useEffect, useRef, useLayoutEffect } from 'react';
-import axios from 'axios';
-import DefaultPfp from "./buffpfp.webp";
-import LArrow from "./left.png";
+import DefaultPfp from "../../../public/images/buffpfp.webp";
+import LArrow from "../../../public/images/left.png";
 import { Popup } from "../../components/ui/Popup";
 import { useRouter } from 'next/navigation';
 import { cookies } from '../../lib/utils';
+import WaveBackground from '@/components/ui/WaveBackground';
 
 const interestsList = [
     "Art", "Sports", "Books", "Education", "Entertainment", "Hiking",
@@ -41,13 +41,19 @@ const AccountPage: NextPage = () => {
         const fetchUserData = async () => {
             try {
                 const token = cookies.authToken.get();
-                const profileResponse = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/user-access/profile`, {
+                const profileResponse = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/user-access/profile`, {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
                 });
-                const userData = profileResponse.data;
+                if (!profileResponse.ok) {
+                    throw new Error('Failed to fetch user data');
+                }
 
+                const userData = await profileResponse.json();
+                userData.preferences?.interests.forEach((pref: string) => {
+                    interestsList.push(pref)
+                })
                 const userInitialState = {
                     name: userData.name || '',
                     username: userData.username || '',
@@ -116,13 +122,19 @@ const AccountPage: NextPage = () => {
                 const formData = new FormData();
                 formData.append('file', profilePicture);
 
-                const uploadResponse = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_URL}/user-access/profile/upload`, formData, {
+                const uploadResponse = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/user-access/profile/upload`, {
+                    method: 'POST',
                     headers: {
                         'Authorization': `Bearer ${token}`
                     },
+                    body: formData
                 });
 
-                profilePictureUploadUrl = uploadResponse.data;  
+                if (!uploadResponse.ok) {
+                    throw new Error('Failed to upload profile picture');
+                }
+
+                profilePictureUploadUrl = await uploadResponse.json();  
             }
 
             const updatedUser = {
@@ -244,11 +256,7 @@ const AccountPage: NextPage = () => {
             </Head>
 
             <div className="min-h-screen bg-blue-100 flex items-center justify-center w-full h-screen">
-                <div className='box'>
-                    <div className='wave -one'></div>
-                    <div className='wave -two'></div>
-                    <div className='wave -three'></div>
-                </div>
+                <WaveBackground />
                 <div className="w-full max-w-md bg-white shadow-md rounded-lg p-6 z-10">
                     <div className="flex items-center justify-center mb-4 relative">
                         <div className="absolute left-0 max-w-7">
@@ -345,7 +353,7 @@ const AccountPage: NextPage = () => {
                         <div>
                             <label className="block text-sm font-medium text-gray-600">Interests</label>
                             <div className="flex flex-wrap gap-2">
-                                {interestsList.map((interest) => (
+                                { Array.from(new Set([...interestsList,...selectedInterests])).map((interest) => (
                                     <button
                                         key={interest}
                                         onClick={(e) => toggleInterest(e, interest)}
@@ -356,6 +364,8 @@ const AccountPage: NextPage = () => {
                                         {interest}
                                     </button>
                                 ))}
+
+
                             </div>
                             {showFoodSubInterests && (
                                 <div className="mt-4">

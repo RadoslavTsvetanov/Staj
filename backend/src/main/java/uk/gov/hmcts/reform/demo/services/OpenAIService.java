@@ -46,11 +46,16 @@ public class OpenAIService {
         String normalizedInterest = customInterest.trim().toLowerCase();
 
         List<String> cachedResult = cache.get(normalizedInterest);
+
+        System.out.println(cachedResult);
+
         if (cachedResult != null) {
             return cachedResult;
         }
 
         String matchedInterests = getMatchedInterests(customInterest, predefinedInterests);
+
+        System.out.println(matchedInterests);
 
         if (matchedInterests != null && !matchedInterests.isEmpty()) {
             String cleanedInterests = matchedInterests
