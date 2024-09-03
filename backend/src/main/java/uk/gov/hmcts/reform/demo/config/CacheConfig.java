@@ -11,7 +11,7 @@ import java.util.List;
 @Configuration
 public class CacheConfig {
 
-    @Bean
+    @Bean(name = "redisCache")
     public Cache cache(RedisTemplate<String, List<String>> redisTemplate) {
         return new RedisCache(redisTemplate);
     }
