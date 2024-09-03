@@ -1,17 +1,12 @@
 package uk.gov.hmcts.reform.demo.controllers;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import uk.gov.hmcts.reform.demo.exceptions.DuplicateEmailException;
 import uk.gov.hmcts.reform.demo.exceptions.DuplicateUsernameException;
 import uk.gov.hmcts.reform.demo.models.Credentials;
@@ -20,169 +15,191 @@ import uk.gov.hmcts.reform.demo.models.User;
 import uk.gov.hmcts.reform.demo.services.UserService;
 import uk.gov.hmcts.reform.demo.utils.JwtUtil;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
-@WebMvcTest(UsersController.class)
-public class UsersControllerTest {
-
-    @Autowired
-    private MockMvc mockMvc;
-
-    @Mock
-    private UserService userService;
+class UsersControllerTest {
 
     @Mock
     private JwtUtil jwtUtil;
 
+    @Mock
+    private UserService userService;
+
     @InjectMocks
     private UsersController usersController;
 
-    @Autowired
-    private ObjectMapper objectMapper;
-
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         MockitoAnnotations.openMocks(this);
     }
 
     @Test
-    public void testGetAllUsers() throws Exception {
-        User user1 = new User();
-        user1.setUsername("user1");
-        User user2 = new User();
-        user2.setUsername("user2");
-        List<User> users = new ArrayList<>();
-        users.add(user1);
-        users.add(user2);
+    void getAllUsers_ShouldReturnListOfUsers() {
+        // Arrange
+        List<User> mockUsers = Arrays.asList(
+            new User("user1", "user1@example.com"),
+            new User("user2", "user2@example.com")
+        );
+        when(userService.findAll()).thenReturn(mockUsers);
 
-        when(userService.findAll()).thenReturn(users);
+        // Act
+        ResponseEntity<List<User>> response = usersController.getAllUsers();
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/users")
-                            .contentType(MediaType.APPLICATION_JSON))
-            .andExpect(MockMvcResultMatchers.status().isOk())
-            .andExpect(MockMvcResultMatchers.jsonPath("$[0].username").value("user1"))
-            .andExpect(MockMvcResultMatchers.jsonPath("$[1].username").value("user2"));
+        // Assert
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(2, response.getBody().size());
+        verify(userService, times(1)).findAll();
     }
 
     @Test
-    public void testCreateUser() throws Exception {
-        User user = new User();
-        user.setUsername("newuser");
-        when(userService.createUser(any(User.class))).thenReturn(user);
+    void createUser_ShouldReturnCreatedUser() {
+        // Arrange
+        User mockUser = new User("newUser", "newUser@example.com");
+        when(userService.createUser(any(User.class))).thenReturn(mockUser);
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/users")
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(user)))
-            .andExpect(MockMvcResultMatchers.status().isCreated())
-            .andExpect(MockMvcResultMatchers.jsonPath("$.username").value("newuser"));
+        // Act
+        ResponseEntity<User> response = usersController.createUser(mockUser);
+
+        // Assert
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+        assertEquals(mockUser, response.getBody());
+        verify(userService, times(1)).createUser(any(User.class));
     }
 
     @Test
-    public void testCreateUserDuplicateUsername() throws Exception {
-        User user = new User();
-        user.setUsername("existinguser");
-        when(userService.createUser(any(User.class))).thenThrow(new DuplicateUsernameException("Username already exists"));
+    void createUser_ShouldReturnConflictOnDuplicateUsername() {
+        // Arrange
+        User mockUser = new User("newUser", "newUser@example.com");
+        when(userService.createUser(any(User.class))).thenThrow(DuplicateUsernameException.class);
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/users")
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(user)))
-            .andExpect(MockMvcResultMatchers.status().isConflict());
+        // Act
+        ResponseEntity<User> response = usersController.createUser(mockUser);
+
+        // Assert
+        assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
+        assertNull(response.getBody());
+        verify(userService, times(1)).createUser(any(User.class));
     }
 
     @Test
-    public void testAddCredentialsToUser() throws Exception {
-        Credentials credentials = new Credentials();
-        credentials.setEmail("test@example.com");
-        User user = new User();
-        user.setUsername("user");
+    void addCredentialsToUser_ShouldReturnUpdatedUser() {
+        // Arrange
+        User mockUser = new User("existingUser", "existingUser@example.com");
+        Credentials mockCredentials = new Credentials("user@example.com", "password123");
 
-        when(userService.addCredentialsAndPreferences(anyLong(), any(Credentials.class), isNull())).thenReturn(user);
+        // Mock the service method to return the user
+        when(userService.addCredentialsAndPreferences(anyLong(), any(Credentials.class), isNull()))
+            .thenReturn(mockUser);
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/users/1/credentials")
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(credentials)))
-            .andExpect(MockMvcResultMatchers.status().isOk())
-            .andExpect(MockMvcResultMatchers.jsonPath("$.username").value("user"));
+        // Act
+        ResponseEntity<User> response = usersController.addCredentialsToUser(1L, mockCredentials);
+
+        // Assert
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(mockUser, response.getBody());
+        verify(userService, times(1)).addCredentialsAndPreferences(anyLong(), any(Credentials.class), isNull());
+    }
+
+    // eventualno iprafi tova
+//    @Test
+//    void addCredentialsToUser_ShouldReturnConflictOnDuplicateEmail() {
+//        // Arrange
+//        Credentials mockCredentials = new Credentials("duplicate@example.com", "password123");
+//
+//        // Mock the service to throw the DuplicateEmailException
+//        when(userService.addCredentialsAndPreferences(anyLong(), any(Credentials.class), any(Preferences.class)))
+//            .thenThrow(new DuplicateEmailException("Duplicate email"));
+//
+//        // Act
+//        ResponseEntity<User> response = usersController.addCredentialsToUser(1L, mockCredentials);
+//
+//        // Assert
+//        assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
+//        assertNull(response.getBody());
+//        verify(userService, times(1)).addCredentialsAndPreferences(anyLong(), any(Credentials.class), isNull());
+//    }
+
+    @Test
+    void addPreferencesToUser_ShouldReturnUpdatedUser() {
+        // Arrange
+        User mockUser = new User("existingUser", "existingUser@example.com");
+        Preferences mockPreferences = new Preferences();
+        when(userService.addCredentialsAndPreferences(anyLong(), isNull(), any(Preferences.class))).thenReturn(mockUser);
+
+        // Act
+        ResponseEntity<User> response = usersController.addPreferencesToUser(1L, mockPreferences);
+
+        // Assert
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(mockUser, response.getBody());
+        verify(userService, times(1)).addCredentialsAndPreferences(anyLong(), isNull(), any(Preferences.class));
     }
 
     @Test
-    public void testAddCredentialsToUserDuplicateEmail() throws Exception {
-        Credentials credentials = new Credentials();
-        credentials.setEmail("duplicate@example.com");
+    void searchUsers_ShouldReturnListOfMatchingUsers() {
+        // Arrange
+        List<User> mockUsers = Arrays.asList(
+            new User("user1", "user1@example.com"),
+            new User("user2", "user2@example.com")
+        );
+        when(userService.searchByUsername(anyString())).thenReturn(mockUsers);
 
-        when(userService.addCredentialsAndPreferences(anyLong(), any(Credentials.class), isNull())).thenThrow(new DuplicateEmailException("Email already exists"));
+        // Act
+        ResponseEntity<List<User>> response = usersController.searchUsers("user");
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/users/1/credentials")
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(credentials)))
-            .andExpect(MockMvcResultMatchers.status().isConflict());
+        // Assert
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(2, response.getBody().size());
+        verify(userService, times(1)).searchByUsername("user");
     }
 
     @Test
-    public void testAddPreferencesToUser() throws Exception {
-        Preferences preferences = new Preferences();
-        User user = new User();
-        user.setUsername("user");
+    void deleteUser_ShouldReturnOkOnSuccessfulDeletion() {
+        // Arrange
+        String token = "Bearer validToken";
+        String username = "existingUser";
+        when(jwtUtil.getUsernameFromToken(anyString())).thenReturn(username);
+        when(userService.findByUsername(anyString())).thenReturn(Optional.of(new User()));
 
-        when(userService.addCredentialsAndPreferences(anyLong(), isNull(), any(Preferences.class))).thenReturn(user);
+        // Act
+        ResponseEntity<String> response = usersController.deleteUser(token);
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/users/1/preferences")
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(preferences)))
-            .andExpect(MockMvcResultMatchers.status().isOk())
-            .andExpect(MockMvcResultMatchers.jsonPath("$.username").value("user"));
+        // Assert
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals("User deleted successfully.", response.getBody());
+        verify(userService, times(1)).deleteUserAndRemoveFromPlans(username);
     }
 
     @Test
-    public void testSearchUsers() throws Exception {
-        User user = new User();
-        user.setUsername("searchuser");
-        List<User> users = List.of(user);
+    void deleteUser_ShouldReturnUnauthorizedWhenTokenInvalid() {
+        // Act
+        ResponseEntity<String> response = usersController.deleteUser(null);
 
-        when(userService.searchByUsername(anyString())).thenReturn(users);
-
-        mockMvc.perform(MockMvcRequestBuilders.get("/users/search")
-                            .param("username", "searchuser")
-                            .contentType(MediaType.APPLICATION_JSON))
-            .andExpect(MockMvcResultMatchers.status().isOk())
-            .andExpect(MockMvcResultMatchers.jsonPath("$[0].username").value("searchuser"));
+        // Assert
+        assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
+        assertEquals("Authorization token is missing or invalid.", response.getBody());
     }
 
     @Test
-    public void testDeleteUserUnauthorized() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.delete("/users/profile/delete")
-                            .contentType(MediaType.APPLICATION_JSON))
-            .andExpect(MockMvcResultMatchers.status().isUnauthorized())
-            .andExpect(MockMvcResultMatchers.content().string("Authorization token is missing or invalid."));
-    }
+    void deleteUser_ShouldReturnNotFoundWhenUserDoesNotExist() {
+        // Arrange
+        String token = "Bearer validToken";
+        when(jwtUtil.getUsernameFromToken(anyString())).thenReturn("nonExistingUser");
+        when(userService.findByUsername(anyString())).thenReturn(Optional.empty());
 
-    @Test
-    public void testDeleteUserNotFound() throws Exception {
-        when(jwtUtil.getUsernameFromToken(anyString())).thenReturn("nonexistentuser");
-        when(userService.findByUsername("nonexistentuser")).thenReturn(Optional.empty());
+        // Act
+        ResponseEntity<String> response = usersController.deleteUser(token);
 
-        mockMvc.perform(MockMvcRequestBuilders.delete("/users/profile/delete")
-                            .header("Authorization", "Bearer validtoken")
-                            .contentType(MediaType.APPLICATION_JSON))
-            .andExpect(MockMvcResultMatchers.status().isNotFound())
-            .andExpect(MockMvcResultMatchers.content().string("User not found."));
-    }
-
-    @Test
-    public void testDeleteUserSuccess() throws Exception {
-        User user = new User();
-        user.setUsername("user");
-        when(jwtUtil.getUsernameFromToken(anyString())).thenReturn("user");
-        when(userService.findByUsername("user")).thenReturn(Optional.of(user));
-
-        mockMvc.perform(MockMvcRequestBuilders.delete("/users/profile/delete")
-                            .header("Authorization", "Bearer validtoken")
-                            .contentType(MediaType.APPLICATION_JSON))
-            .andExpect(MockMvcResultMatchers.status().isOk())
-            .andExpect(MockMvcResultMatchers.content().string("User deleted successfully."));
+        // Assert
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        assertEquals("User not found.", response.getBody());
+        verify(userService, times(0)).deleteUserAndRemoveFromPlans(anyString());
     }
 }

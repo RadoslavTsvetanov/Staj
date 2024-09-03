@@ -1,31 +1,22 @@
 package uk.gov.hmcts.reform.demo.controllers;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.http.ResponseEntity;
 import uk.gov.hmcts.reform.demo.models.Credentials;
 import uk.gov.hmcts.reform.demo.models.User;
 import uk.gov.hmcts.reform.demo.repositories.CredentialsRepo;
 import uk.gov.hmcts.reform.demo.repositories.UserRepo;
 import uk.gov.hmcts.reform.demo.services.AuthService;
+import uk.gov.hmcts.reform.demo.controllers.SignInController.SignInRequest;
 
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(SignInController.class)
-public class SignInControllerTest {
-
-    @Autowired
-    private MockMvc mockMvc;
+class SignInControllerTest {
 
     @Mock
     private CredentialsRepo credentialsRepo;
@@ -39,96 +30,96 @@ public class SignInControllerTest {
     @InjectMocks
     private SignInController signInController;
 
-    @Autowired
-    private ObjectMapper objectMapper;
-
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         MockitoAnnotations.openMocks(this);
     }
 
     @Test
-    public void testSignInInvalidCredentials() throws Exception {
-        SignInController.SignInRequest request = new SignInController.SignInRequest();
-        request.setEmail("user@example.com");
-        request.setPassword("wrongpassword");
-
-        when(credentialsRepo.findByEmail(anyString())).thenReturn(null);
-
-        mockMvc.perform(MockMvcRequestBuilders.post("/auth/signin")
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(request)))
-            .andExpect(status().isUnauthorized())
-            .andExpect(content().string("Invalid email or password"));
-    }
-
-    @Test
-    public void testSignInUserNotFound() throws Exception {
-        SignInController.SignInRequest request = new SignInController.SignInRequest();
-        request.setEmail("user@example.com");
-        request.setPassword("password");
+    void testSignIn_Success() {
+        String email = "test@example.com";
+        String password = "password";
+        String username = "testuser";
 
         Credentials credentials = new Credentials();
-        credentials.setId(1L);
-        credentials.setPassword("password");
-
-        when(credentialsRepo.findByEmail(anyString())).thenReturn(credentials);
-        when(userRepo.findByCredentialsId(anyLong())).thenReturn(null);
-
-        mockMvc.perform(MockMvcRequestBuilders.post("/auth/signin")
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(request)))
-            .andExpect(status().isNotFound())
-            .andExpect(content().string("User not found"));
-    }
-
-    @Test
-    public void testSignInSuccessful() throws Exception {
-        SignInController.SignInRequest request = new SignInController.SignInRequest();
-        request.setEmail("user@example.com");
-        request.setPassword("password");
-
-        Credentials credentials = new Credentials();
-        credentials.setId(1L);
-        credentials.setPassword("password");
+        credentials.setEmail(email);
+        credentials.setPassword(password);
 
         User user = new User();
-        user.setUsername("testuser");
+        user.setUsername(username);
+        user.setCredentials(credentials);
 
-        when(credentialsRepo.findByEmail(anyString())).thenReturn(credentials);
-        when(userRepo.findByCredentialsId(anyLong())).thenReturn(user);
-        when(authService.issueToken(anyString())).thenReturn("valid-token");
+        when(credentialsRepo.findByEmail(email)).thenReturn(credentials);
+        when(userRepo.findByCredentialsId(credentials.getId())).thenReturn(user);
+        when(authService.issueToken(username)).thenReturn("token123");
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/auth/signin")
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(request)))
-            .andExpect(status().isOk())
-            .andExpect(content().string("valid-token"));
+        SignInRequest request = new SignInRequest();
+        request.setEmail(email);
+        request.setPassword(password);
+
+        ResponseEntity<?> response = signInController.signIn(request);
+        assertEquals(200, response.getStatusCodeValue());
+        assertEquals("token123", response.getBody());
     }
 
     @Test
-    public void testCheckTokenValid() throws Exception {
-        String token = "valid-token";
+    void testSignIn_InvalidEmailOrPassword() {
+        String email = "test@example.com";
+        String password = "wrongpassword";
 
-        when(authService.checkIfTokenExists(anyString())).thenReturn(true);
+        when(credentialsRepo.findByEmail(email)).thenReturn(null);
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/auth/check")
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(token)))
-            .andExpect(status().isOk())
-            .andExpect(content().string("Token is valid"));
+        SignInRequest request = new SignInRequest();
+        request.setEmail(email);
+        request.setPassword(password);
+
+        ResponseEntity<?> response = signInController.signIn(request);
+
+        assertEquals(401, response.getStatusCodeValue());
+        assertEquals("Invalid email or password", response.getBody());
     }
 
     @Test
-    public void testCheckTokenInvalid() throws Exception {
-        String token = "invalid-token";
+    void testSignIn_UserNotFound() {
+        String email = "test@example.com";
+        String password = "password";
 
-        when(authService.checkIfTokenExists(anyString())).thenReturn(false);
+        Credentials credentials = new Credentials();
+        credentials.setEmail(email);
+        credentials.setPassword(password);
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/auth/check")
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(token)))
-            .andExpect(status().isUnauthorized())
-            .andExpect(content().string("Invalid token"));
+        when(credentialsRepo.findByEmail(email)).thenReturn(credentials);
+        when(userRepo.findByCredentialsId(credentials.getId())).thenReturn(null);
+
+        SignInRequest request = new SignInRequest();
+        request.setEmail(email);
+        request.setPassword(password);
+
+        ResponseEntity<?> response = signInController.signIn(request);
+
+        assertEquals(404, response.getStatusCodeValue());
+        assertEquals("User not found", response.getBody());
+    }
+
+    @Test
+    void testCheckToken_ValidToken() {
+        String token = "validToken";
+        when(authService.checkIfTokenExists(token)).thenReturn(true);
+
+        ResponseEntity<?> response = signInController.checkToken(token);
+
+        assertEquals(200, response.getStatusCodeValue());
+        assertEquals("Token is valid", response.getBody());
+    }
+
+    @Test
+    void testCheckToken_InvalidToken() {
+        String token = "invalidToken";
+        when(authService.checkIfTokenExists(token)).thenReturn(false);
+
+        ResponseEntity<?> response = signInController.checkToken(token);
+
+        assertEquals(401, response.getStatusCodeValue());
+        assertEquals("Invalid token", response.getBody());
     }
 }

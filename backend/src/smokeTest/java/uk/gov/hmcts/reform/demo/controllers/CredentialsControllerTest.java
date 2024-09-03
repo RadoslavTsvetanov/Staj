@@ -1,127 +1,109 @@
 package uk.gov.hmcts.reform.demo.controllers;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import uk.gov.hmcts.reform.demo.exceptions.DuplicateEmailException;
 import uk.gov.hmcts.reform.demo.models.Credentials;
 import uk.gov.hmcts.reform.demo.services.CredentialsService;
 
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
-@WebMvcTest(CredentialsController.class)
-public class CredentialsControllerTest {
-
-    @Autowired
-    private MockMvc mockMvc;
-
-    @Mock
-    private CredentialsService credentialsService;
+class CredentialsControllerTest {
 
     @InjectMocks
     private CredentialsController credentialsController;
 
-    @Autowired
-    private ObjectMapper objectMapper;
+    @Mock
+    private CredentialsService credentialsService;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         MockitoAnnotations.openMocks(this);
     }
 
     @Test
-    public void testGetCredentialsByEmailSuccess() throws Exception {
+    void getCredentialsByEmail_Success_ReturnsCredentials() {
+        String email = "test@example.com";
         Credentials credentials = new Credentials();
-        credentials.setEmail("user@example.com");
-        credentials.setPassword("password123");
+        credentials.setEmail(email);
 
-        when(credentialsService.findByEmail(anyString())).thenReturn(credentials);
+        when(credentialsService.findByEmail(email)).thenReturn(credentials);
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/credentials/email/{email}", "user@example.com")
-                            .contentType(MediaType.APPLICATION_JSON))
-            .andExpect(MockMvcResultMatchers.status().isOk())
-            .andExpect(MockMvcResultMatchers.jsonPath("$.email").value("user@example.com"))
-            .andExpect(MockMvcResultMatchers.jsonPath("$.password").value("password123"));
+        ResponseEntity<Credentials> response = credentialsController.getCredentialsByEmail(email);
 
-        verify(credentialsService, times(1)).findByEmail(anyString());
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(credentials, response.getBody());
+        verify(credentialsService, times(1)).findByEmail(email);
     }
 
     @Test
-    public void testGetCredentialsByEmailNotFound() throws Exception {
-        when(credentialsService.findByEmail(anyString())).thenReturn(null);
+    void getCredentialsByEmail_NotFound_ReturnsNotFound() {
+        String email = "test@example.com";
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/credentials/email/{email}", "nonexistent@example.com")
-                            .contentType(MediaType.APPLICATION_JSON))
-            .andExpect(MockMvcResultMatchers.status().isNotFound());
+        when(credentialsService.findByEmail(email)).thenReturn(null);
 
-        verify(credentialsService, times(1)).findByEmail(anyString());
+        ResponseEntity<Credentials> response = credentialsController.getCredentialsByEmail(email);
+
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        assertEquals(null, response.getBody());
+        verify(credentialsService, times(1)).findByEmail(email);
     }
 
     @Test
-    public void testCreateCredentialsSuccess() throws Exception {
+    void createCredentials_Success_ReturnsCreatedCredentials() {
         Credentials credentials = new Credentials();
-        credentials.setEmail("newuser@example.com");
-        credentials.setPassword("password123");
+        credentials.setEmail("test@example.com");
 
         when(credentialsService.save(any(Credentials.class))).thenReturn(credentials);
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/credentials")
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(credentials)))
-            .andExpect(MockMvcResultMatchers.status().isCreated())
-            .andExpect(MockMvcResultMatchers.jsonPath("$.email").value("newuser@example.com"))
-            .andExpect(MockMvcResultMatchers.jsonPath("$.password").value("password123"));
+        ResponseEntity<Credentials> response = credentialsController.createCredentials(credentials);
 
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+        assertEquals(credentials, response.getBody());
         verify(credentialsService, times(1)).save(any(Credentials.class));
     }
 
     @Test
-    public void testCreateCredentialsConflict() throws Exception {
+    void createCredentials_DuplicateEmail_ReturnsConflict() {
         Credentials credentials = new Credentials();
-        credentials.setEmail("existinguser@example.com");
-        credentials.setPassword("password123");
+        credentials.setEmail("test@example.com");
 
         when(credentialsService.save(any(Credentials.class)))
-            .thenThrow(new DuplicateEmailException("Email existinguser@example.com already exists"));
+            .thenThrow(new DuplicateEmailException("Email already exists"));
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/credentials")
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(credentials)))
-            .andExpect(MockMvcResultMatchers.status().isConflict());
+        ResponseEntity<Credentials> response = credentialsController.createCredentials(credentials);
 
+        assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
+        assertEquals(null, response.getBody());
         verify(credentialsService, times(1)).save(any(Credentials.class));
     }
 
     @Test
-    public void testGetAllCredentials() throws Exception {
-        Credentials credentials = new Credentials();
-        credentials.setEmail("user1@example.com");
-        credentials.setPassword("password123");
+    void getAllCredentials_Success_ReturnsAllCredentials() {
+        Credentials credentials1 = new Credentials();
+        credentials1.setEmail("test1@example.com");
 
-        List<Credentials> credentialsList = Collections.singletonList(credentials);
+        Credentials credentials2 = new Credentials();
+        credentials2.setEmail("test2@example.com");
+
+        List<Credentials> credentialsList = Arrays.asList(credentials1, credentials2);
 
         when(credentialsService.findAll()).thenReturn(credentialsList);
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/credentials")
-                            .contentType(MediaType.APPLICATION_JSON))
-            .andExpect(MockMvcResultMatchers.status().isOk())
-            .andExpect(MockMvcResultMatchers.jsonPath("$[0].email").value("user1@example.com"))
-            .andExpect(MockMvcResultMatchers.jsonPath("$[0].password").value("password123"));
+        ResponseEntity<List<Credentials>> response = credentialsController.getAllCredentials();
 
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(credentialsList, response.getBody());
         verify(credentialsService, times(1)).findAll();
     }
 }

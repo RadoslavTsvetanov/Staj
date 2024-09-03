@@ -5,6 +5,7 @@ import jakarta.validation.constraints.*;
 import uk.gov.hmcts.reform.demo.validators.ValidAge;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -42,13 +43,21 @@ public class User {
     private Set<Role> roles;
 
     private String profilePicture;
+
     @ManyToMany
     @JoinTable(
         name = "user_friends",
         joinColumns = @JoinColumn(name = "user_id"),
         inverseJoinColumns = @JoinColumn(name = "friend_id")
     )
-    private Set<User> friends;
+    private Set<User> friends = new HashSet<>();
+
+    public User(String user1, String mail) {
+    }
+
+    public User() {
+
+    }
 
     public Set<User> getFriends() {
         return friends;

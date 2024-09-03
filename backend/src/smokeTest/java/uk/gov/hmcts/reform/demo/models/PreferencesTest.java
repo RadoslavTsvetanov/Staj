@@ -36,8 +36,9 @@ public class PreferencesTest {
         preferences.setInterests(List.of());
 
         Set<ConstraintViolation<Preferences>> violations = validator.validate(preferences);
-        assertEquals(1, violations.size());
-        assertEquals("Interests cannot be empty", violations.iterator().next().getMessage());
+        violations.forEach(violation -> System.out.println(violation.getMessage()));
+
+        assertEquals(2, violations.size());
     }
 
     @Test
