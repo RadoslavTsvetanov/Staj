@@ -15,6 +15,7 @@ import uk.gov.hmcts.reform.demo.utils.JwtUtil;
 import uk.gov.hmcts.reform.demo.utils.Utils;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -164,7 +165,6 @@ public class UserAccessController {
             return ResponseEntity.notFound().build();
         }
     }
-
 
     @PostMapping("/profile/update")
     public ResponseEntity<?> updateUserProfile(

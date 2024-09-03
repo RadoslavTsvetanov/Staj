@@ -11,8 +11,10 @@ import uk.gov.hmcts.reform.demo.models.*;
 import uk.gov.hmcts.reform.demo.services.*;
 import uk.gov.hmcts.reform.demo.utils.JwtUtil;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/plans")
@@ -232,5 +234,81 @@ public class PlanController {
 
         Plan updatedPlan = planService.save(plan);
         return ResponseEntity.ok(updatedPlan);
+    }
+
+    @PostMapping("/update")
+    public ResponseEntity<?> updatePlan(
+        @RequestHeader(value = "Authorization", required = false) String authorizationHeader,
+        @RequestBody Plan updatedPlan) {
+
+        if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authorization token is missing or invalid.");
+        }
+
+        String token = authorizationHeader.substring(7);
+        String username = jwtUtil.getUsernameFromToken(token);
+
+        if (username == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid token.");
+        }
+
+        Long planId = updatedPlan.getId();
+
+        if (!planService.isUserInPlan(planId, username)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("User is not authorized to update this plan.");
+        }
+
+        Optional<Plan> existingPlanOpt = Optional.ofNullable(planService.findById(planId));
+        if (existingPlanOpt.isPresent()) {
+            Plan existingPlan = existingPlanOpt.get();
+
+            existingPlan.setEstCost(updatedPlan.getEstCost());
+            existingPlan.setBudget(updatedPlan.getBudget());
+            existingPlan.setName(updatedPlan.getName());
+            existingPlan.setDateWindow(updatedPlan.getDateWindow());
+
+            DateWindow dateWindow = updatedPlan.getDateWindow();
+            if (dateWindow != null) {
+                if (dateWindow.getId() == null) {
+                    dateWindow = planService.saveDateWindow(dateWindow);
+                } else {
+                    Optional<DateWindow> existingDateWindow = planService.findDateWindowById(dateWindow.getId());
+                    if (!existingDateWindow.isPresent()) {
+                        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("DateWindow not found.");
+                    }
+                }
+                existingPlan.setDateWindow(dateWindow);
+            }
+
+            List<Place> updatedPlaces = updatedPlan.getPlaces();
+            for (Place place : updatedPlaces) {
+                DateWindow placeDateWindow = place.getDateWindow();
+                if (placeDateWindow != null) {
+                    if (placeDateWindow.getId() == null) {
+                        // Save new DateWindow
+                        placeDateWindow = planService.saveDateWindow(placeDateWindow);
+                    } else {
+                        // Check if the DateWindow already exists
+                        Optional<DateWindow> existingPlaceDateWindow = planService.findDateWindowById(placeDateWindow.getId());
+                        if (!existingPlaceDateWindow.isPresent()) {
+                            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Place DateWindow not found.");
+                        }
+                    }
+                    place.setDateWindow(placeDateWindow);
+                }
+            }
+
+            existingPlan.getPlaces().clear();
+            existingPlan.getPlaces().addAll(updatedPlaces);
+
+            Set<String> updatedUsernames = new HashSet<>(updatedPlan.getUsernames());
+            existingPlan.setUsernames(updatedUsernames);
+
+            planService.save(existingPlan);
+
+            return ResponseEntity.ok("Plan updated successfully.");
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 }
