@@ -89,7 +89,7 @@ const InfoRoute: React.FC = () => {
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-debugger
+
         if (name.length < 2 || name.length > 40) {
             setError('Name should be between 2 and 40 characters long');
             return;
