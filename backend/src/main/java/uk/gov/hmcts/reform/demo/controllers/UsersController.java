@@ -85,7 +85,7 @@ public class UsersController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
         }
 
-        userService.deleteUser(userToDeleteOptional.get().getUsername());
+        userService.deleteUserAndRemoveFromPlans(currentUsername);
         return ResponseEntity.ok("User deleted successfully.");
     }
 

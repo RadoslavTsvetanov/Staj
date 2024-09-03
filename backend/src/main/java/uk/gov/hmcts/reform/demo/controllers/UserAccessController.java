@@ -92,22 +92,6 @@ public class UserAccessController {
 
         return ResponseEntity.ok(planDTOs);
     }
-//
-//
-//    private PlanDTO toPlanDTO(Plan plan) {
-//        PlanDTO planDTO = new PlanDTO();
-//        planDTO.setId(plan.getId());
-//        planDTO.setEstCost(plan.getEstCost());
-//        planDTO.setBudget(plan.getBudget());
-//        planDTO.setName(plan.getName());
-//        if (plan.getDateWindow() != null) {
-//            planDTO.setDateWindow(plan.getDateWindow());
-//        }
-//        planDTO.setPlaces(plan.getPlaces().stream()
-//                              .map(EntityToDtoMapper::toPlaceDTO)
-//                              .collect(Collectors.toList()));
-//        return planDTO;
-//    }
 
     @PostMapping("/friends/add")
     public ResponseEntity<?> addFriend(
