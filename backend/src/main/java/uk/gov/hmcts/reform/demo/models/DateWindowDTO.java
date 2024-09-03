@@ -13,6 +13,14 @@ public class DateWindowDTO {
     @FutureOrPresent(message = "End date must be in the present or future")
     private LocalDate endDate;
 
+    public DateWindowDTO() {
+    }
+
+    public DateWindowDTO(LocalDate startDate, LocalDate endDate) {
+        this.startDate = startDate;
+        this.endDate = endDate;
+    }
+
     public @NotNull LocalDate getStartDate() {
         return startDate;
     }
