@@ -33,14 +33,14 @@ class OpenAIServiceTest {
 
     @Test
     void testProcessCustomInterest_withCachedResult() {
-        String customInterest = "Museums";
+        String customInterest = "Libraries";
         List<String> cachedResult = List.of("Cached Interest");
         when(cache.get(anyString())).thenReturn(cachedResult);
 
         List<String> result = openAIService.processCustomInterest(customInterest);
 
         assertEquals(cachedResult, result);
-        verify(cache, times(1)).get("museums");
+        verify(cache, times(1)).get("libraries");
     }
 
     @Test
@@ -58,25 +58,25 @@ class OpenAIServiceTest {
 
     @Test
     void testGetMatchedInterests_success() throws IOException {
-        String customInterest = "Museums";
-        String expectedResponse = "Art, History, Education, Entertainment";
+        String customInterest = "Libraries";
+        String expectedResponse = "Books, Education, History";
         mockOkHttpResponse(200, createMockOpenAIResponse(expectedResponse));
 
-        String matchedInterests = openAIService.getMatchedInterests(customInterest, new String[]{"Art", "History", "Education", "Entertainment"});
+        String matchedInterests = openAIService.getMatchedInterests(customInterest, new String[]{"Books", "Education", "History"});
 
         assertEquals(expectedResponse, matchedInterests);
     }
 
     @Test
     void testGetSpecificTypesForCustomInterest_success() throws IOException {
-        String customInterest = "Museums";
-        String matchedInterests = "Art, History";
-        String expectedResponse = "\"museum\"";
+        String customInterest = "Libraries";
+        String matchedInterests = "Books, Education";
+        String expectedResponse = "\"library\"";
         mockOkHttpResponse(200, createMockOpenAIResponse(expectedResponse));
 
         List<String> specificTypes = openAIService.getSpecificTypesForCustomInterest(customInterest, matchedInterests);
 
-        assertEquals(List.of("museum"), specificTypes);
+        assertEquals(List.of("library"), specificTypes);
     }
 
     private void mockOkHttpResponse(int statusCode, String responseBody) throws IOException {
