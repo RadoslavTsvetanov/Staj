@@ -29,6 +29,13 @@ public class PlaceLocation {
     @Max(28)
     private Integer day;
 
+    public PlaceLocation() {}
+
+    public PlaceLocation(Place place, Location location) {
+        this.place = place;
+        this.location = location;
+    }
+
     public Long getId() {
         return id;
     }

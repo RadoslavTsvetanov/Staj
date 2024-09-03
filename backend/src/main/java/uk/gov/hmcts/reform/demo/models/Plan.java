@@ -93,8 +93,8 @@ public class Plan {
         this.dateWindow = dateWindow;
     }
 
-    public Set<String> getUsernames() {
-        return usernames;
+    public List<String> getUsernames() {
+        return new ArrayList<>(usernames);
     }
 
     public void setUsernames(Set<String> usernames) {

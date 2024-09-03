@@ -2,10 +2,7 @@ package uk.gov.hmcts.reform.demo.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
-import org.springframework.http.client.MultipartBodyBuilder;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 import uk.gov.hmcts.reform.demo.models.*;
 import uk.gov.hmcts.reform.demo.repositories.CredentialsRepo;
@@ -14,16 +11,13 @@ import uk.gov.hmcts.reform.demo.services.AuthService;
 import uk.gov.hmcts.reform.demo.services.EntityToDtoMapper;
 import uk.gov.hmcts.reform.demo.services.PlanService;
 import uk.gov.hmcts.reform.demo.services.UserService;
-import uk.gov.hmcts.reform.demo.utils.EnvThingies;
 import uk.gov.hmcts.reform.demo.utils.JwtUtil;
+import uk.gov.hmcts.reform.demo.utils.Utils;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @RestController
@@ -50,6 +44,34 @@ public class UserAccessController {
 
     private static final String UPLOAD_DIR = "uploads/profile_pictures";
 
+    @GetMapping("/friends")
+    public ResponseEntity<List<FriendDTO>> getUserFriends(@RequestHeader(value = "Authorization", required = false) String authorizationHeader) {
+        if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        }
+
+        String token = authorizationHeader.substring(7);
+        String username = jwtUtil.getUsernameFromToken(token);
+
+        if (username == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        }
+
+        Optional<User> userOptional = userService.findByUsername(username);
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            Set<User> friends = user.getFriends();
+
+            List<FriendDTO> friendDTOs = friends.stream()
+                .map(friend -> new FriendDTO(friend.getUsername(), friend.getProfilePicture()))
+                .collect(Collectors.toList());
+
+            return ResponseEntity.ok(friendDTOs);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+    }
+
     @GetMapping("/plans")
     public ResponseEntity<List<PlanDTO>> getUserPlans(@RequestHeader(value = "Authorization", required = false) String authorizationHeader) {
         if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
@@ -60,7 +82,7 @@ public class UserAccessController {
         String username = jwtUtil.getUsernameFromToken(token);
 
         if (username == null) {
-            return ResponseEntity.status(401).build(); // Unauthorized
+            return ResponseEntity.status(401).build();
         }
 
         List<Plan> plans = planService.findPlansByUsername(username);
@@ -70,17 +92,64 @@ public class UserAccessController {
 
         return ResponseEntity.ok(planDTOs);
     }
+//
+//
+//    private PlanDTO toPlanDTO(Plan plan) {
+//        PlanDTO planDTO = new PlanDTO();
+//        planDTO.setId(plan.getId());
+//        planDTO.setEstCost(plan.getEstCost());
+//        planDTO.setBudget(plan.getBudget());
+//        planDTO.setName(plan.getName());
+//        if (plan.getDateWindow() != null) {
+//            planDTO.setDateWindow(plan.getDateWindow());
+//        }
+//        planDTO.setPlaces(plan.getPlaces().stream()
+//                              .map(EntityToDtoMapper::toPlaceDTO)
+//                              .collect(Collectors.toList()));
+//        return planDTO;
+//    }
 
-    private PlanDTO toPlanDTO(Plan plan) {
-        PlanDTO planDTO = new PlanDTO();
-        planDTO.setId(plan.getId());
-        planDTO.setEstCost(plan.getEstCost());
-        planDTO.setBudget(plan.getBudget());
-        planDTO.setName(plan.getName());
-        planDTO.setPlaces(plan.getPlaces().stream()
-                              .map(EntityToDtoMapper::toPlaceDTO)
-                              .collect(Collectors.toList()));
-        return planDTO;
+    @PostMapping("/friends/add")
+    public ResponseEntity<?> addFriend(
+        @RequestHeader(value = "Authorization", required = false) String authorizationHeader,
+        @RequestParam("friendUsername") String friendUsername) {
+
+        if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authorization token is missing or invalid.");
+        }
+
+        String token = authorizationHeader.substring(7);
+        String currentUsername = jwtUtil.getUsernameFromToken(token);
+
+        if (currentUsername == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid token.");
+        }
+
+        Optional<User> currentUserOpt = userService.findByUsername(currentUsername);
+        Optional<User> friendUserOpt = userService.findByUsername(friendUsername);
+
+        if (!currentUserOpt.isPresent()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Current user not found.");
+        }
+
+        if (!friendUserOpt.isPresent()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Friend user not found.");
+        }
+
+        User currentUser = currentUserOpt.get();
+        User friendUser = friendUserOpt.get();
+
+        if (currentUser.getFriends().contains(friendUser)) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Already friends.");
+        }
+
+        currentUser.getFriends().add(friendUser);
+        userService.save(currentUser);
+
+        friendUser.getFriends().add(currentUser);
+        userService.save(friendUser);
+
+        return ResponseEntity.ok("Friend added successfully.");
     }
 
 
@@ -147,11 +216,9 @@ public class UserAccessController {
             if (updatedUser.getPreferences() != null) {
                 Preferences updatedPreferences = updatedUser.getPreferences();
                 if (updatedPreferences.getId() == null) {
-                    // New preferences, save them
                     preferencesRepo.save(updatedPreferences);
                     existingUser.setPreferences(updatedPreferences);
                 } else {
-                    // Existing preferences, update them
                     preferencesRepo.save(updatedPreferences);
                     existingUser.setPreferences(updatedPreferences);
                 }
@@ -192,14 +259,12 @@ public class UserAccessController {
         @RequestHeader(value = "Authorization", required = false) String authorizationHeader,
         @RequestParam("file") MultipartFile file) {
 
-        System.out.println("AAAA");
         if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authorization token is missing or invalid.");
         }
 
         String token = authorizationHeader.substring(7);
         String username = jwtUtil.getUsernameFromToken(token);
-        System.out.println("username");
 
         if (username == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid token.");
@@ -210,25 +275,12 @@ public class UserAccessController {
             User existingUser = existingUserOpt.get();
 
             try {
-                Path uploadPath = Paths.get(UPLOAD_DIR);
-                if (!Files.exists(uploadPath)) {
-                    Files.createDirectories(uploadPath);
-                }
+                String response = Utils.uploadFile(file.getBytes(), file.getOriginalFilename(), username);
 
-                String oldFilename = existingUser.getProfilePicture();
-                if (oldFilename != null) {
-                    Path oldFilePath = uploadPath.resolve(oldFilename);
-                    Files.deleteIfExists(oldFilePath);
-                }
-
-                String filename = username + "_" + file.getOriginalFilename();
-                Path filePath = uploadPath.resolve(filename);
-                Files.write(filePath, file.getBytes());
-
-                existingUser.setProfilePicture(filename);
+                existingUser.setProfilePicture(file.getOriginalFilename());
                 userService.save(existingUser);
 
-                return ResponseEntity.ok("Profile picture uploaded successfully!");
+                return ResponseEntity.ok("Profile picture uploaded successfully! Server response: " + response);
             } catch (IOException e) {
                 e.printStackTrace();
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to upload file.");
@@ -237,6 +289,4 @@ public class UserAccessController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
         }
     }
-
-
 }
