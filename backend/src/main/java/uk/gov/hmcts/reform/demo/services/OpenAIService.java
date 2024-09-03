@@ -72,6 +72,10 @@ public class OpenAIService {
             .append(customInterest)
             .append("'. Please match it with one or more of the following predefined interests: ");
 
+        if (predefinedInterests == null) {
+            return null;
+        }
+
         for(String interest : predefinedInterests) {
             promptBuilder.append(interest).append(", ");
         }
