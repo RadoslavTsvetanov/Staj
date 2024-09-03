@@ -3,7 +3,7 @@ import { useGLTF } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber';
 
 export default function Model(props) {
-  const { nodes, materials, scene } = useGLTF('/earth.gltf');
+  const { nodes, materials, scene } = useGLTF('/static/earth.gltf');
   
   const earthRef = useRef(null);
   const [isInteracting, setInteracting] = useState(false);
@@ -28,4 +28,4 @@ export default function Model(props) {
   );
 }
 
-useGLTF.preload('/earth.gltf')
+useGLTF.preload('/static/earth.gltf')

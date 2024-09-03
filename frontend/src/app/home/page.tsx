@@ -1,13 +1,13 @@
 "use client";
 
 import Plan from "@/components/ui/plan";
-import Navbar from "@/components/ui/navbar";
+import Navbar from "@/components/ui/NavbarHome";
 import HomePageMap from "@/components/ui/HomePageMap";
 
 export default function HomePage() {
-
   return (
     <div>
+      
       <Navbar />
 
       <div className="flex h-[90vh]">

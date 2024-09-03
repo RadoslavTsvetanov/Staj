@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
-import Earth from '../../../../public/Earth';
+import Earth from '../../../components/ui/Earth';
 import { cookies } from '@/lib/utils';
 import { useRouter } from 'next/navigation';
 

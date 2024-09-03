@@ -1,3 +1,5 @@
+"use client";
+
 import React from 'react';
 import Header from '@/components/ui/Header';
 import DateLabel from '@/components/ui/DateLabel';

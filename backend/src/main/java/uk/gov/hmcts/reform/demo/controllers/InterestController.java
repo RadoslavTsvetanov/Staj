@@ -9,7 +9,7 @@ import uk.gov.hmcts.reform.demo.models.CustomInterestRequest;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/interests")
+@RequestMapping("/interests")
 public class InterestController {
 
     private final OpenAIService openAIService;

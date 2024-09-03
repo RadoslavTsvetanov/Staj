@@ -66,7 +66,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.PUT, "/plans/{planId}/places").permitAll()
                 .requestMatchers(HttpMethod.POST, "/plans/{planId}/users").permitAll()
                 .requestMatchers(HttpMethod.POST, "/places").permitAll() //tova ne trqbwa userite da go prawqt, ama posle shte se promeni
-                .requestMatchers(HttpMethod.POST, "/api/interests/process").permitAll()
+                .requestMatchers(HttpMethod.POST, "/interests/process").permitAll()
                 .requestMatchers(HttpMethod.POST, "/date-window").permitAll()
                 .requestMatchers(HttpMethod.POST, "/locations").permitAll()
                 .requestMatchers(HttpMethod.PUT, "/plans/{planId}/places/{placeId}/locations").permitAll()
