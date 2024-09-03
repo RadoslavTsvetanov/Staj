@@ -9,6 +9,7 @@ import LArrow from "../../../public/images/left.png";
 import { Popup } from "../../components/ui/Popup";
 import { useRouter } from 'next/navigation';
 import { cookies } from '../../lib/utils';
+import WaveBackground from '@/components/ui/WaveBackground';
 
 const interestsList = [
     "Art", "Sports", "Books", "Education", "Entertainment", "Hiking",
@@ -255,11 +256,7 @@ const AccountPage: NextPage = () => {
             </Head>
 
             <div className="min-h-screen bg-blue-100 flex items-center justify-center w-full h-screen">
-                <div className='box'>
-                    <div className='wave -one'></div>
-                    <div className='wave -two'></div>
-                    <div className='wave -three'></div>
-                </div>
+                <WaveBackground />
                 <div className="w-full max-w-md bg-white shadow-md rounded-lg p-6 z-10">
                     <div className="flex items-center justify-center mb-4 relative">
                         <div className="absolute left-0 max-w-7">
