@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uk.gov.hmcts.reform.demo.models.CustomInterestRequest;
+import uk.gov.hmcts.reform.demo.services.OpenAIService;
 
 import java.util.List;
 
