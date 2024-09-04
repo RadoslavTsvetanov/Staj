@@ -81,10 +81,10 @@ public class GoogleApi {
 
 
 
-    public String reverseGeocoding(){
-        String latitude = "40.714224";
-        String longitude = "-73.961452";
-        String apiKey = "AIzaSyCl1ONEKSrMWbNlMuGmQnZsEDWVMDU9GmU";
+    public String reverseGeocoding(Float lat, Float lon){
+        String latitude = lat.toString(); // refsctor
+        String longitude = lon.toString();
+        String apiKey = Secrets.OPEN_API_KEY;
 
         String url = String.format("https://maps.googleapis.com/maps/api/geocode/json?latlng=%s,%s&key=%s",
                                    latitude, longitude, apiKey);

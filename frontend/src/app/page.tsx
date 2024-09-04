@@ -2,8 +2,8 @@
 
 import React, { useEffect } from 'react';
 import './styles.css';
+import { NavbarLanding } from "../components/ui/General/NavbarLanding";
 import { cookies } from '@/lib/utils';
-import { NavbarLanding } from "../components/ui/NavbarLanding";
 
 const Landing = () => {
   useEffect(() => {

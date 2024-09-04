@@ -75,6 +75,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.POST, "/memory/upload").permitAll()
                 .requestMatchers(HttpMethod.POST,"/maps/nearby").permitAll()
                 .requestMatchers(HttpMethod.POST,"/maps/upload").permitAll()
+                .requestMatchers(HttpMethod.GET, "/maps/geolocate").permitAll()
                 .anyRequest().hasRole("ADMIN")
             );
 

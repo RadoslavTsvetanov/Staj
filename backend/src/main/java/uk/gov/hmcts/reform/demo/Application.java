@@ -32,9 +32,6 @@ public class Application {
         };
     }
 
-    @Autowired
-    private OpenAIService openAIService;
-
     public static void main(final String[] args) {
         SpringApplication.run(Application.class, args);
     }
