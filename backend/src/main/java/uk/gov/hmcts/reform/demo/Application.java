@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import uk.gov.hmcts.reform.demo.services.OpenAIService;
+import java.util.List;
 
 @SpringBootApplication(scanBasePackages = {"uk.gov.hmcts.reform.demo", "uk.gov.hmcts.reform.exceptions" })
 @SuppressWarnings("HideUtilityClassConstructor") // Spring needs a constructor, its not a utility class
