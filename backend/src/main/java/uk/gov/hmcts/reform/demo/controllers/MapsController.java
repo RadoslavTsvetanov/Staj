@@ -51,25 +51,43 @@ import java.util.stream.Collectors;
 public class MapsController {
 
     MapsHelper mapsHelper = new MapsHelper();
+
     @Autowired
     UserService userService;
+
+    @Autowired
+    private JwtUtil jwtUtil;
     // TODO : make it cleaner since its not easy tp read and functionns are all over the place
     GoogleApi googleApi = new GoogleApi();
     Utils u = new Utils();
 
 
     @PostMapping("/nearby")
-    public ResponseEntity<String> getMaps(@RequestBody MapsHelper.LocationRequest loc) {
+    public ResponseEntity<String> getMaps(@RequestBody MapsHelper.LocationRequest loc,
+                                          @RequestHeader(value = "Authorization", required = false) String authorizationHeader ) {
 
-//         Extract users from the tokens
-        List<Optional<User>> users = mapsHelper.extractUsersFromTokens(loc.authTokens);
-        // Determine if age restriction should apply
-        Boolean isAgeRestrictionRequired = mapsHelper.ShouldAgeRestrictionApply(users);
+        if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authorization token is missing or invalid.");
+        }
 
-        // Gather all users' interests
-        List<List<String>> listWithAllUsersInterests = mapsHelper.gatherUserInterests(users);
+        String token = authorizationHeader.substring(7);
+        String currentUsername = jwtUtil.getUsernameFromToken(token);
 
-        System.out.println("list, " + listWithAllUsersInterests);
+        if (currentUsername == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid token.");
+        }
+
+        Optional<User> userOpt = userService.findByUsername(currentUsername);
+        if (userOpt.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
+        }
+        User currentUser = userOpt.get();
+
+        Preferences preferences = userService.getPreferencesByUserId(currentUser.getId());
+        LocalDate birthDate = currentUser.getDateOfBirth(); // Assuming the User class has a getBirthDate() method
+        Boolean isAgeRestrictionRequired = isUserUnder18(birthDate);
+
+        System.out.println("list, " + preferences);
 
         try {
             // Query nearby places
@@ -89,7 +107,15 @@ public class MapsController {
         }
     }
 
+    private Boolean isUserUnder18(LocalDate birthDate) {
+        if (birthDate == null) {
+            return false; // Assuming no restriction if birthDate is not available
+        }
 
+        LocalDate today = LocalDate.now();
+        Period age = Period.between(birthDate, today);
+        return age.getYears() < 18;
+    }
 
     @PostMapping("/upload")
     public String uploadFile(
@@ -108,12 +134,12 @@ public class MapsController {
 
     @GetMapping("/geolocate")
     public String geolocate(
-@RequestParam("lon") Float lon,
-@RequestParam("lat") Float lat
+        @RequestParam("lon") Float lon,
+        @RequestParam("lat") Float lat
     ){
         try{
             System.out.println("ok[");
-             return googleApi.reverseGeocoding(lat,lon);
+            return googleApi.reverseGeocoding(lat,lon);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
