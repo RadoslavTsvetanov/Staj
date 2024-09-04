@@ -92,22 +92,6 @@ public class UserAccessController {
 
         return ResponseEntity.ok(planDTOs);
     }
-//
-//
-//    private PlanDTO toPlanDTO(Plan plan) {
-//        PlanDTO planDTO = new PlanDTO();
-//        planDTO.setId(plan.getId());
-//        planDTO.setEstCost(plan.getEstCost());
-//        planDTO.setBudget(plan.getBudget());
-//        planDTO.setName(plan.getName());
-//        if (plan.getDateWindow() != null) {
-//            planDTO.setDateWindow(plan.getDateWindow());
-//        }
-//        planDTO.setPlaces(plan.getPlaces().stream()
-//                              .map(EntityToDtoMapper::toPlaceDTO)
-//                              .collect(Collectors.toList()));
-//        return planDTO;
-//    }
 
     @PostMapping("/friends/add")
     public ResponseEntity<?> addFriend(
@@ -181,7 +165,6 @@ public class UserAccessController {
         }
     }
 
-
     @PostMapping("/profile/update")
     public ResponseEntity<?> updateUserProfile(
         @RequestHeader(value = "Authorization", required = false) String authorizationHeader,
@@ -202,11 +185,22 @@ public class UserAccessController {
         if (existingUserOpt.isPresent()) {
             User existingUser = existingUserOpt.get();
 
-            if (!existingUser.getCredentials().getEmail().equals(updatedUser.getCredentials().getEmail())) {
-                boolean emailExists = userService.checkIfEmailExists(updatedUser.getCredentials().getEmail());
-                if (emailExists) {
-                    return ResponseEntity.status(409).body("Email is already registered.");
+            Credentials existingCredentials = existingUser.getCredentials();
+            Credentials updatedCredentials = updatedUser.getCredentials();
+
+            // Check for null on Credentials and Email
+            if (existingCredentials != null && updatedCredentials != null) {
+                String existingEmail = existingCredentials.getEmail();
+                String updatedEmail = updatedCredentials.getEmail();
+
+                if (existingEmail != null && updatedEmail != null && !existingEmail.equals(updatedEmail)) {
+                    boolean emailExists = userService.checkIfEmailExists(updatedEmail);
+                    if (emailExists) {
+                        return ResponseEntity.status(409).body("Email is already registered.");
+                    }
                 }
+            } else {
+                return ResponseEntity.status(400).body("Credentials information is missing.");
             }
 
             existingUser.setName(updatedUser.getName());
@@ -224,18 +218,7 @@ public class UserAccessController {
                 }
             }
 
-            Credentials updatedCredentials = updatedUser.getCredentials();
-            if (updatedCredentials.getId() != null) {
-                Credentials existingCredentials = credentialsRepo.findById(updatedCredentials.getId())
-                    .orElseThrow(() -> new IllegalArgumentException("Credentials not found"));
-
-                if (!existingCredentials.getEmail().equals(updatedCredentials.getEmail())) {
-                    boolean emailExists = userService.checkIfEmailExists(updatedCredentials.getEmail());
-                    if (emailExists) {
-                        return ResponseEntity.status(409).body("Email is already registered.");
-                    }
-                }
-
+            if (updatedCredentials != null && updatedCredentials.getId() != null) {
                 existingCredentials.setEmail(updatedCredentials.getEmail());
                 existingCredentials.setPassword(updatedCredentials.getPassword());
 

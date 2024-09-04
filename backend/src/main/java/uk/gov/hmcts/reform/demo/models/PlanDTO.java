@@ -8,9 +8,9 @@ public class PlanDTO {
     private Integer budget;
     private String name;
     private List<PlaceDTO> places;
-    private DateWindowDTO dateWindow; // Include DateWindow
+    private DateWindowDTO dateWindow;
     private List<String> usernames;
-    private HistoryDTO history; // Use HistoryDTO instead of History
+    private HistoryDTO history;
 
     public Long getId() {
         return id;
@@ -76,5 +76,3 @@ public class PlanDTO {
         this.usernames = usernames;
     }
 }
-
-

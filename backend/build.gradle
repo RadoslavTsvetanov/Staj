@@ -188,6 +188,7 @@ dependencies {
   implementation 'org.flywaydb:flyway-core'
 
   testImplementation(platform('org.junit:junit-bom:5.10.3'))
+  testImplementation 'org.springframework.boot:spring-boot-starter-test'
   testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
   testImplementation 'org.mockito:mockito-junit-jupiter'
   testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test', {
