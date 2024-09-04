@@ -25,7 +25,7 @@ class CacheConfigTest {
 
     @Test
     void testRedisCacheBean() {
-        Cache redisCache = applicationContext.getBean("redisCache", Cache.class);
+        Cache redisCache = applicationContext.getBean("redisCacheConfig", Cache.class);
         assertNotNull(redisCache);
     }
 }
