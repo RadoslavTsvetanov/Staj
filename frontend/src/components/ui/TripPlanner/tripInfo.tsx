@@ -92,20 +92,44 @@ const TripInfo: React.FC<TripInfoProps> = ({ location }) => {
         ) : (
           <h1
             onDoubleClick={handleDoubleClick}
-            className="text-black text-xl font-bold ml-2 cursor-pointer"
+            className="text-black text-xl font-bold m-auto cursor-pointer"
           >
             {name}
           </h1>
         )}
 
-        <UserList className="flex-shrink-0 mr-2" />
+        
       </div>
 
       <DateRangeSelector />
       <Location location={location} />
-      <BudgetSelector />
+      <div className="flex">
+    <div className="flex w-full">
+      <div className="w-1/2 mr-2">
+        <BudgetSelector />
+      </div>
+      <div className="w-1/2  m-auto ml-4 flex-shrink-0">
+        <UserList />
+      </div>
+    </div>
+  </div>
+
     </div>
   );
 };
 
 export default TripInfo;
+
+
+
+  <div className="flex">
+    <div className="flex w-full">
+      <div className="w-1/2 mr-2">
+        <BudgetSelector />
+      </div>
+      <div className="w-1/2 flex-shrink-0">
+        <UserList />
+      </div>
+    </div>
+  </div>
+

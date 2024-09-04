@@ -23,6 +23,7 @@
     "lucide-react": "^0.424.0",
     "next": "14.2.5",
     "react": "^18",
+    "react-beautiful-dnd": "^13.1.1",
     "react-dom": "^18",
     "styled-components": "^6.1.12",
     "tailwind-merge": "^2.4.0",
