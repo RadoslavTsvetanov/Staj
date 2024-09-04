@@ -1,12 +1,14 @@
 package uk.gov.hmcts.reform.demo.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Primary;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@Primary
 public class RedisCache implements Cache {
 
     private final RedisTemplate<String, List<String>> redisTemplate;

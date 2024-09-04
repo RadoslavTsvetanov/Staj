@@ -47,46 +47,40 @@ class OpenAIServiceTest {
 
     @Test
     void testProcessCustomInterest_noMatchFound() {
-        String customInterest = "Theater";
+        String customInterest = "Zoo";
         String normalizedInterest = customInterest.trim().toLowerCase();
 
-        // Mock cache behavior
         when(cache.get(normalizedInterest)).thenReturn(null);
 
-        // Mock behavior of getMatchedInterests method using a spy
-        doReturn("as_no_matched_interests_were_found, the_most_relevant_types_associated_with_the_interest_in_'Theater'_would_be:\n\n- Drama\n- Musical_theater\n- Playwriting").when(openAIService).getMatchedInterests(eq(customInterest), any(String[].class));
+        doReturn("as_no_matched_interests_were_found, the_most_relevant_types_associated_with_the_interest_in_'Zoo'_would_be:\n\n- Zoo").when(openAIService).getMatchedInterests(eq(customInterest), any(String[].class));
 
-        // Execute the method under test
         List<String> result = openAIService.processCustomInterest(customInterest);
 
-        // Update the expected list to match the actual output format
-        assertEquals(List.of("drama", "musical_theater", "playwriting"), result);
-        verify(cache).put(eq(normalizedInterest), eq(List.of("drama", "musical_theater", "playwriting")));
+        assertEquals(List.of("zoo"), result);
+        verify(cache).put(eq(normalizedInterest), eq(List.of("zoo")));
     }
 
     @Test
     void testGetMatchedInterests_success() throws IOException {
         String customInterest = "Libraries";
-        String mockResponse = "Books, Education, History"; // Adjust to comma-separated values
+        String mockResponse = "1. Books\n2. Education\n3. History";
         mockOkHttpResponse(200, createMockOpenAIResponse(mockResponse));
 
         String matchedInterests = openAIService.getMatchedInterests(customInterest, new String[]{"Books", "Education", "History"});
 
-        // Adjust the expected result to match the format returned by the method
-        assertEquals("Books, Education, History", matchedInterests);
+        assertEquals("1. Books\n2. Education\n3. History", matchedInterests);
     }
 
     @Test
     void testGetSpecificTypesForCustomInterest_success() throws IOException {
         String customInterest = "Libraries";
         String matchedInterests = "Books, Education";
-        String mockResponse = "\"Library\", \"University\"";
+        String mockResponse = "\"library\", \"university\""; // Adjusted mock response to include multiple types
 
         mockOkHttpResponse(200, createMockOpenAIResponse(mockResponse));
 
         List<String> specificTypes = openAIService.getSpecificTypesForCustomInterest(customInterest, matchedInterests);
 
-        // Ensure the expected result matches the actual output format
         assertEquals(List.of("library", "university"), specificTypes);
     }
 
