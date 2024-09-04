@@ -6,7 +6,7 @@ import Image from 'next/image';
 import { useState, useEffect, useRef, useLayoutEffect } from 'react';
 import DefaultPfp from "../../../public/images/buffpfp.webp";
 import LArrow from "../../../public/images/left.png";
-import { Popup } from "../../components/ui/Popup";
+import { Popup } from "../../components/ui/Profile/Popup";
 import { useRouter } from 'next/navigation';
 import { cookies } from '../../lib/utils';
 import WaveBackground from '@/components/ui/WaveBackground';
@@ -404,111 +404,6 @@ const AccountPage: NextPage = () => {
                         message="Are you sure you want to delete your profile? This action cannot be undone."
                     />
                 </div>
-
-                <style jsx>{`
-                    .bg-main-bg {
-                        background-color: #0e6cc4;
-                    }
-
-                    .box {
-                        position: fixed;
-                        top: 0;
-                        transform: rotate(80deg);
-                        left: 0;
-                    }
-
-                    .wave {
-                        position: fixed;
-                        top: 0;
-                        left: 0;
-                        opacity: .4;
-                        position: absolute;
-                        top: 3%;
-                        left: 10%;
-                        background: #0af;
-                        width: 1500px;
-                        height: 1300px;
-                        margin-left: -150px;
-                        margin-top: -250px;
-                        transform-origin: 50% 48%;
-                        border-radius: 43%;
-                        animation: drift 7000ms infinite linear;
-                    }
-
-                    .wave.-three {
-                        animation: drift 7500ms infinite linear;
-                        position: fixed;
-                        background-color: #77daff;
-                    }
-
-                    .wave.-two {
-                        animation: drift 3000ms infinite linear;
-                        opacity: .1;
-                        background: black;
-                        position: fixed;
-                    }
-
-                    .box:after {
-                        content: '';
-                        display: block;
-                        left: 0;
-                        top: 0;
-                        width: 100%;
-                        height: 100%;
-                        z-index: 11;
-                        transform: translate3d(0, 0, 0);
-                    }
-
-                    @keyframes drift {
-                        from { transform: rotate(0deg); }
-                        to { transform: rotate(360deg); }
-                    }
-
-                    .contain {
-                        animation-delay: 4s;
-                        z-index: 1000;
-                        position: fixed;
-                        top: 0;
-                        left: 0;
-                        bottom: 0;
-                        right: 0;
-                        display: flex;
-                        justify-content: center;
-                        align-items: center;
-                        background: #25a7d7;
-                        background: linear-gradient(#25a7d7, #25a7d7);
-                    }
-
-                    .icon {
-                        width: 100px;
-                        height: 100px;
-                        margin: 0 5px;
-                    }
-
-                    .icon:nth-child(2) img { animation-delay: 0.2s; }
-                    .icon:nth-child(3) img { animation-delay: 0.3s; }
-                    .icon:nth-child(4) img { animation-delay: 0.4s; }
-
-                    .icon img {
-                        animation: anim 2s ease infinite;
-                        transform: scale(0,0) rotateZ(180deg);
-                    }
-
-                    @keyframes anim {
-                        0% {
-                            transform: scale(0,0) rotateZ(-90deg); opacity:0;
-                        }
-                        30% {
-                            transform: scale(1,1) rotateZ(0deg); opacity:1;
-                        }
-                        50% {
-                            transform: scale(1,1) rotateZ(0deg); opacity:1;
-                        }
-                        80% {
-                            transform: scale(0,0) rotateZ(90deg); opacity:0;
-                        }
-                    }
-                `}</style>
             </div>
         </>
     );
