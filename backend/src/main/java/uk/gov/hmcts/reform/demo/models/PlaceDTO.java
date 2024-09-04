@@ -20,6 +20,12 @@ public class PlaceDTO {
 
     private List<PlaceLocationDTO> placeLocations;
 
+    public <T> PlaceDTO() {
+    }
+
+    public <T> PlaceDTO(long l, String place1, long l1, DateWindowDTO dateWindowDTO, List<T> ts) {
+    }
+
     public @NotBlank String getName() {
         return name;
     }

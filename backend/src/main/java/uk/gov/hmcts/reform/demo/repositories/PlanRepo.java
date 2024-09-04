@@ -25,4 +25,6 @@ public interface PlanRepo extends JpaRepository<Plan, Long> {
 
     @Query("SELECT p FROM Plan p WHERE :username MEMBER OF p.usernames")
     List<Plan> findByUsernamesContaining(@Param("username") String username);
+
+    Optional<Plan> findByUsernamesContainingAndName(String username, String name);
 }

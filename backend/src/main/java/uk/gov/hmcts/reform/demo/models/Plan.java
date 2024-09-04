@@ -6,6 +6,8 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -45,7 +47,8 @@ public class Plan {
     @Column(name = "username")
     private Set<String> usernames = new HashSet<>();
 
-    @OneToMany(mappedBy = "plan", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "plan", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @Fetch(FetchMode.SUBSELECT)
     @JsonManagedReference
     private List<Place> places = new ArrayList<>();
 
@@ -93,8 +96,8 @@ public class Plan {
         this.dateWindow = dateWindow;
     }
 
-    public Set<String> getUsernames() {
-        return usernames;
+    public List<String> getUsernames() {
+        return new ArrayList<>(usernames);
     }
 
     public void setUsernames(Set<String> usernames) {

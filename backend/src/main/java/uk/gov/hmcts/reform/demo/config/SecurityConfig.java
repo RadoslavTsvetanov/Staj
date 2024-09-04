@@ -58,9 +58,13 @@ public class SecurityConfig {
                 .requestMatchers(new AntPathRequestMatcher("/auth/signin")).permitAll()
                 .requestMatchers(HttpMethod.POST, "/user-access/profile/update").permitAll()
                 .requestMatchers(HttpMethod.POST, "/user-access/profile/upload-picture").permitAll()
+                .requestMatchers(HttpMethod.POST, "/user-access/friends/add").permitAll()
+                .requestMatchers(HttpMethod.GET, "/user-access/friends").permitAll()
                 .requestMatchers(HttpMethod.GET, "/user-access/profile").permitAll()
                 .requestMatchers(HttpMethod.GET, "/user-access/plans").permitAll()
                 .requestMatchers(HttpMethod.DELETE, "/users/profile/delete").permitAll()
+                .requestMatchers(HttpMethod.PUT, "/plans/{planId}/places").permitAll()
+                .requestMatchers(HttpMethod.POST, "/plans/update").permitAll()
                 .requestMatchers(HttpMethod.POST, "/plans/{planId}/users").permitAll()
                 .requestMatchers(HttpMethod.POST, "/places").permitAll() //tova ne trqbwa userite da go prawqt, ama posle shte se promeni
                 .requestMatchers(HttpMethod.POST, "/interests/process").permitAll()
@@ -71,6 +75,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.POST, "/memory/upload").permitAll()
                 .requestMatchers(HttpMethod.POST,"/maps/nearby").permitAll()
                 .requestMatchers(HttpMethod.POST,"/maps/upload").permitAll()
+                .requestMatchers(HttpMethod.GET, "/maps/geolocate").permitAll()
                 .anyRequest().hasRole("ADMIN")
             );
 

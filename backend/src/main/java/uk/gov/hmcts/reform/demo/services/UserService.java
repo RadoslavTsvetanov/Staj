@@ -1,11 +1,13 @@
 package uk.gov.hmcts.reform.demo.services;
 
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.reform.demo.exceptions.DuplicateEmailException;
 import uk.gov.hmcts.reform.demo.exceptions.DuplicateUsernameException;
 import uk.gov.hmcts.reform.demo.exceptions.UsernameNotFoundException;
 import uk.gov.hmcts.reform.demo.models.Credentials;
+import uk.gov.hmcts.reform.demo.models.Plan;
 import uk.gov.hmcts.reform.demo.models.User;
 import uk.gov.hmcts.reform.demo.models.Preferences;
 import uk.gov.hmcts.reform.demo.repositories.UserRepo;
@@ -95,6 +97,18 @@ public class UserService {
     public Preferences getPreferencesByUserId(Long userId) {
         User user = userRepo.findById(userId).orElse(null);
         return user != null ? user.getPreferences() : null;
+    }
+
+    @Transactional
+    public void deleteUserAndRemoveFromPlans(String username) {
+        List<Plan> plans = planService.findPlansByUsername(username);
+
+        for (Plan plan : plans) {
+            plan.removeUsername(username);
+            planService.save(plan);
+        }
+
+        userRepo.deleteByUsername(username);
     }
 
     public List<User> searchByUsername(String username) {
