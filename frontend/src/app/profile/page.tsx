@@ -1,15 +1,14 @@
 "use client";
 // Note: Due to way its handling displaying the interests when a custom interst is removed it does not reflect that it has existed since its not present in the "interestLists" 
 import { NextPage } from 'next';
-import Head from 'next/head';
-import Image from 'next/image';
 import { useState, useEffect, useRef, useLayoutEffect } from 'react';
 import DefaultPfp from "../../../public/images/buffpfp.webp";
-import LArrow from "../../../public/images/left.png";
-import { Popup } from "../../components/ui/Profile/Popup";
 import { useRouter } from 'next/navigation';
 import { cookies } from '../../lib/utils';
 import WaveBackground from '@/components/ui/WaveBackground';
+import ProfilePicture from '@/components/ui/Profile/ProfilePicture';
+import DeleteAccountButton from '@/components/ui/Profile/DeleteAccountButton';
+import ProfileHeader from '@/components/ui/Profile/ProfileHeader';
 
 const interestsList = [
     "Art", "Sports", "Books", "Education", "Entertainment", "Hiking",
@@ -250,59 +249,14 @@ const AccountPage: NextPage = () => {
 
     return (
         <>
-            <Head>
-                <title>Your profile</title>
-                <meta name="description" content="Your account page" />
-            </Head>
-
             <div className="min-h-screen bg-blue-100 flex items-center justify-center w-full h-screen">
                 <WaveBackground />
                 <div className="w-full max-w-md bg-white shadow-md rounded-lg p-6 z-10">
-                    <div className="flex items-center justify-center mb-4 relative">
-                        <div className="absolute left-0 max-w-7">
-                            <Image
-                                src={LArrow}
-                                alt="Left arrow"
-                                onClick={() => router.back()}
-                                className='cursor-pointer'
-                            />
-                        </div>
-                        <h1 className="text-2xl font-semibold text-gray-700">
-                            My profile
-                        </h1>
-                        <div className='absolute right-0'>
-                            <button
-                                className={`text-white-500 rounded-md px-3 py-1 ${isDirty ? 'font-bold' : 'bg-transparent'}`}
-                                onClick={handleSave}
-                                type="button"
-                                disabled={!isDirty}
-                            >
-                                Save
-                            </button>
-                        </div>
-                    </div>
 
-                    <div className="flex items-center float-left mb-30">
-                        <div
-                            onClick={handleProfilePictureClick}
-                            className="cursor-pointer"
-                        >
-                            <Image
-                                src={profilePictureUrl}
-                                alt="Profile Picture"
-                                width={70}
-                                height={70}
-                                className="rounded-full"
-                            />
-                        </div>
-                        <input
-                            type='file'
-                            accept="image/*"
-                            className='absolute flex left-0 top-0 opacity-0'
-                            onChange={handleProfilePictureChange}
-                            ref={fileInputRef}
-                        />
-                    </div>
+                    <ProfileHeader isDirty={isDirty} handleSave={handleSave} />
+
+                    <ProfilePicture profilePictureUrl={profilePictureUrl} handleProfilePictureChange={handleProfilePictureChange} />
+
                     <form className="space-y-4">
                         <div className='ml-20'>
                             <label htmlFor="name" className="block text-sm font-medium text-gray-600">Name</label>
@@ -388,20 +342,11 @@ const AccountPage: NextPage = () => {
                         </div>
                     </form>
 
-                    <div className='flex float-right'>
-                        <button
-                            onClick={handleDelete}
-                            className="mt-4 bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600"
-                        >
-                            Delete Account
-                        </button>
-                    </div>
-
-                    <Popup
-                        visible={isPopupVisible}
+                    <DeleteAccountButton
+                        handleDelete={handleDelete}
+                        isPopupVisible={isPopupVisible}
                         togglePopup={togglePopup}
-                        onConfirm={handleConfirmDelete}
-                        message="Are you sure you want to delete your profile? This action cannot be undone."
+                        handleConfirmDelete={handleConfirmDelete}
                     />
                 </div>
             </div>
