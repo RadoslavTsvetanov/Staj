@@ -1,15 +1,14 @@
 "use client";
 // Note: Due to way its handling displaying the interests when a custom interst is removed it does not reflect that it has existed since its not present in the "interestLists" 
 import { NextPage } from 'next';
-import Head from 'next/head';
-import Image from 'next/image';
 import { useState, useEffect, useRef, useLayoutEffect } from 'react';
 import DefaultPfp from "../../../public/images/buffpfp.webp";
-import LArrow from "../../../public/images/left.png";
-import { Popup } from "../../components/ui/Popup";
 import { useRouter } from 'next/navigation';
 import { cookies } from '../../lib/utils';
 import WaveBackground from '@/components/ui/WaveBackground';
+import ProfilePicture from '@/components/ui/Profile/ProfilePicture';
+import DeleteAccountButton from '@/components/ui/Profile/DeleteAccountButton';
+import ProfileHeader from '@/components/ui/Profile/ProfileHeader';
 
 const interestsList = [
     "Art", "Sports", "Books", "Education", "Entertainment", "Hiking",
@@ -250,59 +249,14 @@ const AccountPage: NextPage = () => {
 
     return (
         <>
-            <Head>
-                <title>Your profile</title>
-                <meta name="description" content="Your account page" />
-            </Head>
-
             <div className="min-h-screen bg-blue-100 flex items-center justify-center w-full h-screen">
                 <WaveBackground />
                 <div className="w-full max-w-md bg-white shadow-md rounded-lg p-6 z-10">
-                    <div className="flex items-center justify-center mb-4 relative">
-                        <div className="absolute left-0 max-w-7">
-                            <Image
-                                src={LArrow}
-                                alt="Left arrow"
-                                onClick={() => router.back()}
-                                className='cursor-pointer'
-                            />
-                        </div>
-                        <h1 className="text-2xl font-semibold text-gray-700">
-                            My profile
-                        </h1>
-                        <div className='absolute right-0'>
-                            <button
-                                className={`text-white-500 rounded-md px-3 py-1 ${isDirty ? 'font-bold' : 'bg-transparent'}`}
-                                onClick={handleSave}
-                                type="button"
-                                disabled={!isDirty}
-                            >
-                                Save
-                            </button>
-                        </div>
-                    </div>
 
-                    <div className="flex items-center float-left mb-30">
-                        <div
-                            onClick={handleProfilePictureClick}
-                            className="cursor-pointer"
-                        >
-                            <Image
-                                src={profilePictureUrl}
-                                alt="Profile Picture"
-                                width={70}
-                                height={70}
-                                className="rounded-full"
-                            />
-                        </div>
-                        <input
-                            type='file'
-                            accept="image/*"
-                            className='absolute flex left-0 top-0 opacity-0'
-                            onChange={handleProfilePictureChange}
-                            ref={fileInputRef}
-                        />
-                    </div>
+                    <ProfileHeader isDirty={isDirty} handleSave={handleSave} />
+
+                    <ProfilePicture profilePictureUrl={profilePictureUrl} handleProfilePictureChange={handleProfilePictureChange} />
+
                     <form className="space-y-4">
                         <div className='ml-20'>
                             <label htmlFor="name" className="block text-sm font-medium text-gray-600">Name</label>
@@ -388,127 +342,13 @@ const AccountPage: NextPage = () => {
                         </div>
                     </form>
 
-                    <div className='flex float-right'>
-                        <button
-                            onClick={handleDelete}
-                            className="mt-4 bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600"
-                        >
-                            Delete Account
-                        </button>
-                    </div>
-
-                    <Popup
-                        visible={isPopupVisible}
+                    <DeleteAccountButton
+                        handleDelete={handleDelete}
+                        isPopupVisible={isPopupVisible}
                         togglePopup={togglePopup}
-                        onConfirm={handleConfirmDelete}
-                        message="Are you sure you want to delete your profile? This action cannot be undone."
+                        handleConfirmDelete={handleConfirmDelete}
                     />
                 </div>
-
-                <style jsx>{`
-                    .bg-main-bg {
-                        background-color: #0e6cc4;
-                    }
-
-                    .box {
-                        position: fixed;
-                        top: 0;
-                        transform: rotate(80deg);
-                        left: 0;
-                    }
-
-                    .wave {
-                        position: fixed;
-                        top: 0;
-                        left: 0;
-                        opacity: .4;
-                        position: absolute;
-                        top: 3%;
-                        left: 10%;
-                        background: #0af;
-                        width: 1500px;
-                        height: 1300px;
-                        margin-left: -150px;
-                        margin-top: -250px;
-                        transform-origin: 50% 48%;
-                        border-radius: 43%;
-                        animation: drift 7000ms infinite linear;
-                    }
-
-                    .wave.-three {
-                        animation: drift 7500ms infinite linear;
-                        position: fixed;
-                        background-color: #77daff;
-                    }
-
-                    .wave.-two {
-                        animation: drift 3000ms infinite linear;
-                        opacity: .1;
-                        background: black;
-                        position: fixed;
-                    }
-
-                    .box:after {
-                        content: '';
-                        display: block;
-                        left: 0;
-                        top: 0;
-                        width: 100%;
-                        height: 100%;
-                        z-index: 11;
-                        transform: translate3d(0, 0, 0);
-                    }
-
-                    @keyframes drift {
-                        from { transform: rotate(0deg); }
-                        to { transform: rotate(360deg); }
-                    }
-
-                    .contain {
-                        animation-delay: 4s;
-                        z-index: 1000;
-                        position: fixed;
-                        top: 0;
-                        left: 0;
-                        bottom: 0;
-                        right: 0;
-                        display: flex;
-                        justify-content: center;
-                        align-items: center;
-                        background: #25a7d7;
-                        background: linear-gradient(#25a7d7, #25a7d7);
-                    }
-
-                    .icon {
-                        width: 100px;
-                        height: 100px;
-                        margin: 0 5px;
-                    }
-
-                    .icon:nth-child(2) img { animation-delay: 0.2s; }
-                    .icon:nth-child(3) img { animation-delay: 0.3s; }
-                    .icon:nth-child(4) img { animation-delay: 0.4s; }
-
-                    .icon img {
-                        animation: anim 2s ease infinite;
-                        transform: scale(0,0) rotateZ(180deg);
-                    }
-
-                    @keyframes anim {
-                        0% {
-                            transform: scale(0,0) rotateZ(-90deg); opacity:0;
-                        }
-                        30% {
-                            transform: scale(1,1) rotateZ(0deg); opacity:1;
-                        }
-                        50% {
-                            transform: scale(1,1) rotateZ(0deg); opacity:1;
-                        }
-                        80% {
-                            transform: scale(0,0) rotateZ(90deg); opacity:0;
-                        }
-                    }
-                `}</style>
             </div>
         </>
     );
