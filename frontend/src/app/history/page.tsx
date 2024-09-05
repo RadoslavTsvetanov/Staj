@@ -6,7 +6,7 @@ import DateLabel from '@/components/ui/history/DateLabel';
 import ActivityCard from '@/components/ui/history/ActivityCard';
 import BackButton from '@/components/ui/General/BackButton';
 
-const HomePage: React.FC = () => {
+const HistoryPage: React.FC = () => {
   return (
     <div className="bg-gray-100 min-h-screen flex flex-col items-center">
       <BackButton/>
@@ -20,4 +20,4 @@ const HomePage: React.FC = () => {
   );
 };
 
-export default HomePage;
+export default HistoryPage;

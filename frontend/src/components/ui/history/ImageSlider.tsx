@@ -1,5 +1,8 @@
 import React, { useState } from "react";
 import Memory from "./Memory";
+import FileUploadForm from "./Popup";
+import Image from "next/image";
+import Plus from "../../../../public/images/plus.png";
 
 interface Slide {
   id: number;
@@ -18,11 +21,12 @@ const ImageSlider: React.FC = () => {
     { id: 6, src: "/images/memory1.png", alt: "Image 6" },
     { id: 7, src: "/images/memory1.png", alt: "Image 7" },
   ]);
+  const [showPopup, setShowPopup] = useState(false);
 
   const visibleSlides = 4;
 
   const nextSlide = () => {
-    if (currentSlide < slides.length - visibleSlides) {
+    if (currentSlide < slides.length - visibleSlides + 1) {
       setCurrentSlide(currentSlide + 1);
     }
   };
@@ -33,10 +37,24 @@ const ImageSlider: React.FC = () => {
     }
   };
 
-  const addSlide = () => {
-    const newId = slides.length + 1;
-    const newSlide: Slide = { id: newId, alt: `New Image ${newId}` };
-    setSlides([...slides, newSlide]);
+  // const addSlide = () => {
+  //   const newId = slides.length + 1;
+  //   const newSlide: Slide = { id: newId, alt: `New Image ${newId}` };
+  //   setSlides([...slides, newSlide]);
+  // };
+  const addSlide = (newSlide: Slide) => {
+    setSlides((prevSlides) => [...prevSlides, newSlide]);
+  };
+
+  const handlePopup = () => {
+    setShowPopup(true);
+  };
+
+  const handleFormClose = (newSlide?: Slide) => {
+    setShowPopup(false);
+    if (newSlide) {
+      addSlide(newSlide);
+    }
   };
 
   return (
@@ -56,6 +74,16 @@ const ImageSlider: React.FC = () => {
           {slides.map((slide) => (
             <Memory key={slide.id} src={slide.src} alt={slide.alt} />
           ))}
+          {/* "+" Button for adding new slides */}
+          <div className="cursor-pointer" onClick={handlePopup}>
+            <Image
+              src="/./frontend/public/images/plus.png"
+              alt="+"
+              width={200}
+              height={200}
+              className="border border-gray-300 rounded-lg" // Added styling for better visibility
+            />
+          </div>
         </div>
       </div>
       <button
@@ -65,7 +93,13 @@ const ImageSlider: React.FC = () => {
       >
         &#x276F;
       </button>
-
+      {showPopup && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-20">
+          <div className="bg-white p-6 rounded-lg shadow-lg">
+            <FileUploadForm onClose={handleFormClose} />
+          </div>
+        </div>
+      )}
     </div>
   );
 };
