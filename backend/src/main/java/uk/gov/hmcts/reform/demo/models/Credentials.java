@@ -23,6 +23,13 @@ public class Credentials {
     @Column(unique = true)
     private String email;
 
+    public Credentials(String mail, String password123) {
+    }
+
+    public Credentials() {
+
+    }
+
     public Long getId() {
         return id;
     }

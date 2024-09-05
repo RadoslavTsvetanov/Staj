@@ -9,6 +9,12 @@ public class MemoryDTO {
     private String place;
     private String description;
 
+    public MemoryDTO() {
+    }
+
+    public MemoryDTO(long l, String image1, LocalDate now, String place1, String description1) {
+    }
+
     // Getters and Setters
     public Long getId() {
         return id;

@@ -6,9 +6,12 @@ import uk.gov.hmcts.reform.demo.secrets.Secrets;
 import uk.gov.hmcts.reform.demo.types.NearbyPlacesResponse;
 import uk.gov.hmcts.reform.demo.utils.Utils;
 
-import java.lang.reflect.Array;
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class GoogleApi {
@@ -23,7 +26,7 @@ public class GoogleApi {
     *
     *
     * Note: Adding both `keyword` and `type` with the same value (`keyword=cafe&type=cafe` or `keyword=parking&type=parking`) can yield `ZERO_RESULTS`.
-     *
+    *
     *
     * */
 
@@ -74,4 +77,36 @@ public class GoogleApi {
 
         return res.getPlaces();
     }
+
+
+
+
+    public String reverseGeocoding(Float lat, Float lon){
+        String latitude = lat.toString(); // refsctor
+        String longitude = lon.toString();
+        String apiKey = Secrets.OPEN_API_KEY;
+
+        String url = String.format("https://maps.googleapis.com/maps/api/geocode/json?latlng=%s,%s&key=%s",
+                                   latitude, longitude, apiKey);
+
+        HttpClient client = HttpClient.newHttpClient();
+        HttpRequest request = HttpRequest.newBuilder()
+            .uri(URI.create(url))
+            .GET()
+            .build();
+
+        try {
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            System.out.println("Response status code: " + response.statusCode());
+            System.out.println("Response body: " + response.body());
+            return response.body();
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+            return "b";
+        }
+
+
+    }
+
+
 }

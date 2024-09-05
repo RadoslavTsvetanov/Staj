@@ -11,8 +11,10 @@ import uk.gov.hmcts.reform.demo.models.*;
 import uk.gov.hmcts.reform.demo.services.*;
 import uk.gov.hmcts.reform.demo.utils.JwtUtil;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/plans")
@@ -87,27 +89,24 @@ public class PlanController {
         @RequestHeader(value = "Authorization", required = false) String authorizationHeader
     ) {
         if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
-            return ResponseEntity.status(401).build();
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
         String token = authorizationHeader.substring(7);
         String username = jwtUtil.getUsernameFromToken(token);
 
         if (username == null) {
-            return ResponseEntity.status(401).build();
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        if (planService.findByName(plan.getName()).isPresent()) {
-            return ResponseEntity.status(409).build();
+        if (planService.userHasPlanWithName(username, plan.getName())) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
 
-        // Add the username to the plan
         plan.addUsername(username);
-
-        // Save the Plan along with its DateWindow
         Plan savedPlan = planService.save(plan);
 
-        return ResponseEntity.status(201).body(savedPlan);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedPlan);
     }
 
     @PostMapping("/{planId}/users")
@@ -134,50 +133,65 @@ public class PlanController {
     @PutMapping("/{planId}/places")
     public ResponseEntity<String> addPlacesToPlan(
         @PathVariable Long planId,
-        @RequestBody List<String> placeNames,
+        @RequestBody List<Place> places,
         @RequestHeader(value = "Authorization", required = false) String authorizationHeader
     ) {
         if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
-            return ResponseEntity.status(401).body("Unauthorized");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized");
         }
 
         String token = authorizationHeader.substring(7);
         String username = jwtUtil.getUsernameFromToken(token);
 
         if (username == null) {
-            return ResponseEntity.status(401).body("Unauthorized");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized");
         }
 
-        Plan updatedPlan = planService.addPlacesToPlan(planId, placeNames);
-        return ResponseEntity.ok("Places added successfully.");
+        try {
+            Plan updatedPlan = planService.addPlacesToPlan(planId, places);
+            return ResponseEntity.ok("Places added successfully.");
+        } catch (RuntimeException ex) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+        }
     }
 
     @PutMapping("/{planId}/places/{placeId}/locations")
     public ResponseEntity<String> addLocationsToPlace(
         @PathVariable Long planId,
         @PathVariable Long placeId,
-        @RequestBody List<String> locationNames,
+        @RequestBody List<Location> locations,
         @RequestHeader(value = "Authorization", required = false) String authorizationHeader
     ) {
+        // Authorization check
         if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
-            return ResponseEntity.status(401).body("Unauthorized");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized");
         }
 
         String token = authorizationHeader.substring(7);
         String username = jwtUtil.getUsernameFromToken(token);
 
         if (username == null) {
-            return ResponseEntity.status(401).body("Unauthorized");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized");
         }
 
-        for (String locationName : locationNames) {
-            Optional<Location> location = Optional.ofNullable(locationService.findByName(locationName));
-            if (location.isEmpty()) {
-                return ResponseEntity.status(404).body("Location not found: " + locationName);
-            }
+        Plan plan = planService.findById(planId);
+        if (plan == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Plan not found");
         }
 
-        Plan updatedPlan = planService.addLocationsToPlace(planId, placeId, locationNames);
+        Place place = placeService.findById(placeId);
+        if (place == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Place not found");
+        }
+
+        for (Location location : locations) {
+            location = locationService.save(location);
+
+            place.getPlaceLocations().add(new PlaceLocation(place, location));
+        }
+
+        placeService.save(place);
+
         return ResponseEntity.ok("Locations added to place successfully.");
     }
 
@@ -220,5 +234,81 @@ public class PlanController {
 
         Plan updatedPlan = planService.save(plan);
         return ResponseEntity.ok(updatedPlan);
+    }
+
+    @PostMapping("/update")
+    public ResponseEntity<?> updatePlan(
+        @RequestHeader(value = "Authorization", required = false) String authorizationHeader,
+        @RequestBody Plan updatedPlan) {
+
+        if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authorization token is missing or invalid.");
+        }
+
+        String token = authorizationHeader.substring(7);
+        String username = jwtUtil.getUsernameFromToken(token);
+
+        if (username == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid token.");
+        }
+
+        Long planId = updatedPlan.getId();
+
+        if (!planService.isUserInPlan(planId, username)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("User is not authorized to update this plan.");
+        }
+
+        Optional<Plan> existingPlanOpt = Optional.ofNullable(planService.findById(planId));
+        if (existingPlanOpt.isPresent()) {
+            Plan existingPlan = existingPlanOpt.get();
+
+            existingPlan.setEstCost(updatedPlan.getEstCost());
+            existingPlan.setBudget(updatedPlan.getBudget());
+            existingPlan.setName(updatedPlan.getName());
+            existingPlan.setDateWindow(updatedPlan.getDateWindow());
+
+            DateWindow dateWindow = updatedPlan.getDateWindow();
+            if (dateWindow != null) {
+                if (dateWindow.getId() == null) {
+                    dateWindow = planService.saveDateWindow(dateWindow);
+                } else {
+                    Optional<DateWindow> existingDateWindow = planService.findDateWindowById(dateWindow.getId());
+                    if (!existingDateWindow.isPresent()) {
+                        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("DateWindow not found.");
+                    }
+                }
+                existingPlan.setDateWindow(dateWindow);
+            }
+
+            List<Place> updatedPlaces = updatedPlan.getPlaces();
+            for (Place place : updatedPlaces) {
+                DateWindow placeDateWindow = place.getDateWindow();
+                if (placeDateWindow != null) {
+                    if (placeDateWindow.getId() == null) {
+                        // Save new DateWindow
+                        placeDateWindow = planService.saveDateWindow(placeDateWindow);
+                    } else {
+                        // Check if the DateWindow already exists
+                        Optional<DateWindow> existingPlaceDateWindow = planService.findDateWindowById(placeDateWindow.getId());
+                        if (!existingPlaceDateWindow.isPresent()) {
+                            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Place DateWindow not found.");
+                        }
+                    }
+                    place.setDateWindow(placeDateWindow);
+                }
+            }
+
+            existingPlan.getPlaces().clear();
+            existingPlan.getPlaces().addAll(updatedPlaces);
+
+            Set<String> updatedUsernames = new HashSet<>(updatedPlan.getUsernames());
+            existingPlan.setUsernames(updatedUsernames);
+
+            planService.save(existingPlan);
+
+            return ResponseEntity.ok("Plan updated successfully.");
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 }

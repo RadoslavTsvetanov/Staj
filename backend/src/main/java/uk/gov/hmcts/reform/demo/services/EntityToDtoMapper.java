@@ -13,11 +13,23 @@ public class EntityToDtoMapper {
         planDTO.setEstCost(plan.getEstCost());
         planDTO.setBudget(plan.getBudget());
         planDTO.setName(plan.getName());
+        planDTO.setDateWindow(toDateWindowDTO(plan.getDateWindow()));
+        planDTO.setUsernames(plan.getUsernames());
         planDTO.setPlaces(plan.getPlaces().stream()
                               .map(EntityToDtoMapper::toPlaceDTO)
                               .collect(Collectors.toList()));
         planDTO.setHistory(toHistoryDTO(plan.getHistory()));
         return planDTO;
+    }
+
+    public static DateWindowDTO toDateWindowDTO(DateWindow dateWindow) {
+        if (dateWindow == null) {
+            return null;
+        }
+        DateWindowDTO dateWindowDTO = new DateWindowDTO();
+        dateWindowDTO.setStartDate(dateWindow.getStartDate());
+        dateWindowDTO.setEndDate(dateWindow.getEndDate());
+        return dateWindowDTO;
     }
 
     public static PlaceDTO toPlaceDTO(Place place) {
@@ -70,16 +82,5 @@ public class EntityToDtoMapper {
         memoryDTO.setPlace(memory.getPlace());
         memoryDTO.setDescription(memory.getDescription());
         return memoryDTO;
-    }
-
-    public static DateWindowDTO toDateWindowDTO(DateWindow dateWindow) {
-        if (dateWindow == null) {
-            return null;
-        }
-
-        DateWindowDTO dateWindowDTO = new DateWindowDTO();
-        dateWindowDTO.setStartDate(dateWindow.getStartDate());
-        dateWindowDTO.setEndDate(dateWindow.getEndDate());
-        return dateWindowDTO;
     }
 }

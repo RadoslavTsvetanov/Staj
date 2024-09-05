@@ -17,7 +17,7 @@ export function middleware(request: NextRequest) {
 
     // Check for authentication token
     const authToken = request.cookies.get('authToken');
-    console.log("jjjjjj"+authToken)
+    //console.log("jjjjjj")
 
     if (!authToken) {
         // Redirect to sign-in page if the token is not present

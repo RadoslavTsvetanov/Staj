@@ -67,8 +67,6 @@ const DateRangeSelector: React.FC = () => {
     }
   };
 
-  
-
   return (
     <div className="p-4 bg-blue-100 rounded-lg shadow-md flex flex-col space-y-2">
       <div className="flex items-center space-x-4">
@@ -92,7 +90,9 @@ const DateRangeSelector: React.FC = () => {
             min={startDate ?? currentDate} 
           />
         </div>
-        <span className="text-lg">{days !== null ? `${days} days` : '__ days'}</span>
+        <span className="text-lg">
+          {days !== null ? `${days} ${days === 1 ? 'day' : 'days'}` : '__ days'}
+        </span>
       </div>
       {error && <span className="text-red-600">{error}</span>}
     </div>

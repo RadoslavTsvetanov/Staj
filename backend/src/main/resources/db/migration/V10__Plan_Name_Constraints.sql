@@ -1,0 +1,1 @@
+ALTER TABLE plan DROP CONSTRAINT IF EXISTS plan_name_key;

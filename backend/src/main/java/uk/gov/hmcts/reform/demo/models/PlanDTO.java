@@ -8,9 +8,10 @@ public class PlanDTO {
     private Integer budget;
     private String name;
     private List<PlaceDTO> places;
-    private HistoryDTO history; // Use HistoryDTO instead of History
+    private DateWindowDTO dateWindow;
+    private List<String> usernames;
+    private HistoryDTO history;
 
-    // Getters and setters...
     public Long getId() {
         return id;
     }
@@ -58,6 +59,20 @@ public class PlanDTO {
     public void setHistory(HistoryDTO history) {
         this.history = history;
     }
+
+    public DateWindowDTO getDateWindow() {
+        return dateWindow;
+    }
+
+    public void setDateWindow(DateWindowDTO dateWindow) {
+        this.dateWindow = dateWindow;
+    }
+
+    public List<String> getUsernames() {
+        return usernames;
+    }
+
+    public void setUsernames(List<String> usernames) {
+        this.usernames = usernames;
+    }
 }
-
-

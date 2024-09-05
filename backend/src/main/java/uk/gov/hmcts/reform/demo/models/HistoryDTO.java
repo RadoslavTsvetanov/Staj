@@ -6,7 +6,12 @@ public class HistoryDTO {
     private Long id;
     private List<MemoryDTO> memories;
 
-    // Getters and setters
+    public <T> HistoryDTO() {
+    }
+
+    public <T> HistoryDTO(long l, List<T> ts) {
+    }
+
     public Long getId() {
         return id;
     }
